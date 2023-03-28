@@ -57,6 +57,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
@@ -64,6 +65,7 @@ public class UserControllerTest {
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
+        userPostDTO.setEmail("email@email.com");
 
         // set up userService to throw the exception
         given(userService.createUser(Mockito.any())).willReturn(user);
@@ -83,7 +85,8 @@ public class UserControllerTest {
                         .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                         .replace("Z", "+00:00"))))
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.email").doesNotExist());
     }
 
     @Test
@@ -93,6 +96,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
@@ -100,6 +104,7 @@ public class UserControllerTest {
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
+        userPostDTO.setEmail("email@email.com");
 
         // set up userService to throw the exception
         when(userService.createUser(Mockito.any())).thenThrow(new ResponseStatusException(HttpStatus.CONFLICT, format("The username provided is already taken. Therefore, the user could not be created!")));
@@ -121,6 +126,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
@@ -128,6 +134,7 @@ public class UserControllerTest {
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("");
         userPostDTO.setPassword("testPassword");
+        userPostDTO.setEmail("email@email.com");
 
         // set up userService to throw the exception
         given(userService.createUser(Mockito.any())).willReturn(user);
@@ -148,6 +155,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
@@ -155,6 +163,7 @@ public class UserControllerTest {
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername(null);
         userPostDTO.setPassword("testPassword");
+        userPostDTO.setEmail("email@email.com");
 
         // set up userService to throw the exception
         given(userService.createUser(Mockito.any())).willReturn(user);
@@ -175,6 +184,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
@@ -182,6 +192,7 @@ public class UserControllerTest {
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("");
+        userPostDTO.setEmail("email@email.com");
 
         // set up userService to throw the exception
         given(userService.createUser(Mockito.any())).willReturn(user);
@@ -202,6 +213,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
@@ -209,6 +221,65 @@ public class UserControllerTest {
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword(null);
+        userPostDTO.setEmail("email@email.com");
+
+        // set up userService to throw the exception
+        given(userService.createUser(Mockito.any())).willReturn(user);
+
+        // when/then -> build the post request
+        MockHttpServletRequestBuilder postRequest = post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createUser_whenEmptyEmail_thenThrowsBadRequest_400() throws Exception {
+        // given
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testUsername");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setToken("1");
+        user.setStatus(UserStatus.ONLINE);
+        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername("testUsername");
+        userPostDTO.setPassword("testPassword");
+        userPostDTO.setEmail("");
+
+        // set up userService to throw the exception
+        given(userService.createUser(Mockito.any())).willReturn(user);
+
+        // when/then -> build the post request
+        MockHttpServletRequestBuilder postRequest = post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createUser_whenNullEmail_thenThrowsBadRequest_400() throws Exception {
+        // given
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testUsername");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setToken("1");
+        user.setStatus(UserStatus.ONLINE);
+        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername("testUsername");
+        userPostDTO.setPassword("testPassword");
+        userPostDTO.setEmail(null);
 
         // set up userService to throw the exception
         given(userService.createUser(Mockito.any())).willReturn(user);
@@ -256,7 +327,8 @@ public class UserControllerTest {
                         .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                         .replace("Z", "+00:00"))))
                 .andExpect(jsonPath("$[0].id", is(user.getId().intValue())))
-                .andExpect(jsonPath("$[0].password").doesNotExist());
+                .andExpect(jsonPath("$[0].password").doesNotExist())
+                .andExpect(jsonPath("$[0].email").doesNotExist());
     }
 
     @Test
@@ -287,7 +359,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.creationDate", is(user.getCreationDate().toInstant()
                         .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                         .replace("Z", "+00:00"))))
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.email").doesNotExist());
     }
 
     @Test
@@ -369,6 +442,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setToken("token");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
         user.setBirthdayDate(Date.from(Instant.parse("1765-10-14T12:43:56.243+00:00")));
 
@@ -399,6 +473,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.birthdayDate", is(user.getBirthdayDate().toInstant()
                         .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                         .replace("Z", "+00:00"))))
+                .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.password").doesNotExist());
     }
 

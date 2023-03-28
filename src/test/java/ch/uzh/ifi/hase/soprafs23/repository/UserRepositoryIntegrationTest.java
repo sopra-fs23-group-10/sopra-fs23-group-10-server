@@ -28,6 +28,7 @@ public class UserRepositoryIntegrationTest {
     User user = new User();
     user.setUsername("firstname@lastname");
     user.setPassword("testPassword");
+    user.setEmail("email@email.com");
     user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
     user.setStatus(UserStatus.OFFLINE);
     user.setToken("1");
@@ -42,6 +43,7 @@ public class UserRepositoryIntegrationTest {
     assertNotNull(found.getId());
     assertEquals(found.getUsername(), user.getUsername());
     assertEquals(found.getPassword(), user.getPassword());
+    assertEquals(found.getEmail(), user.getEmail());
     assertEquals(found.getId(), user.getId());
     assertEquals(found.getToken(), user.getToken());
     assertEquals(found.getCreationDate(), user.getCreationDate());
@@ -54,6 +56,7 @@ public class UserRepositoryIntegrationTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -74,6 +77,7 @@ public class UserRepositoryIntegrationTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -88,6 +92,7 @@ public class UserRepositoryIntegrationTest {
         assertNotNull(found.getId());
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getPassword(), user.getPassword());
+        assertEquals(found.getEmail(), user.getEmail());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getCreationDate(), user.getCreationDate());
@@ -100,6 +105,7 @@ public class UserRepositoryIntegrationTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -120,6 +126,7 @@ public class UserRepositoryIntegrationTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -134,6 +141,7 @@ public class UserRepositoryIntegrationTest {
         assertNotNull(found.getId());
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getPassword(), user.getPassword());
+        assertEquals(found.getEmail(), user.getEmail());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getCreationDate(), user.getCreationDate());
@@ -146,6 +154,7 @@ public class UserRepositoryIntegrationTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
         user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
