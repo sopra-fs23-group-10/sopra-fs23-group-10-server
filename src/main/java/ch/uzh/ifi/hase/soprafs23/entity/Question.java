@@ -1,19 +1,32 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import lombok.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @ToString
 public class Question {
     private final Category category;
     private final long questionId;
     private final String correctAnswer;
     private final String question;
-    private ArrayList<ResultTuple> results;
+    private ArrayList<ResultTuple> results = new ArrayList<>();
+
+    public Question(Category category, long questionId, String correctAnswer, String question){
+        this.category = category;
+        this.questionId = questionId;
+        this.question = question;
+        this.correctAnswer =  correctAnswer;
+    }
 
     public void answerQuestion(String answer, long userId, float answeredTime) throws Exception {
         for (ResultTuple res:results){
@@ -34,4 +47,19 @@ public class Question {
         }
         return sum;
     }
+
+    public void getQuestion(Category category) throws IOException, InterruptedException, JSONException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://the-trivia-api.com/api/questions?categories=" + category.toString().toLowerCase() + "&limit=1&region=CH&difficulty=easy"))
+                .build();
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            JSONObject obj = new JSONObject(response.body());
+            System.out.println(obj);
+        }
+    }
+
 }
