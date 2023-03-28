@@ -59,7 +59,7 @@ public class UserController {
         if ((userInput.getUsername() == null) || userInput.getUsername().equals("")
                 || (userInput.getPassword() == null) || userInput.getPassword().equals("")
                 || (userInput.getEmail() == null) || userInput.getEmail() .equals("")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "Username, Email and/or Password"));
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, String.format(baseErrorMessage, "Username, Email and/or Password"));
         }
 
         // create user
@@ -111,6 +111,11 @@ public class UserController {
     public UserGetDTO login(@RequestBody UserPostDTO userPostDTO) {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+        if ((userInput.getUsername() == null) || userInput.getUsername().equals("") ||
+                (userInput.getPassword() == null) || userInput.getPassword().equals("")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Username and Password cannot be empty or null.");
+        }
 
         // validate username and password
         User checkedUser = userService.checkLoginCredentials(userInput.getUsername(), userInput.getPassword());

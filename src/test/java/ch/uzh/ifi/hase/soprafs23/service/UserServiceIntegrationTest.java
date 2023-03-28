@@ -206,7 +206,7 @@ public class UserServiceIntegrationTest {
         User testUserConflict = new User();
         testUserConflict.setUsername("conflictingUsername");
         testUserConflict.setPassword("testPassword");
-        testUserConflict.setEmail("email@email.com");
+        testUserConflict.setEmail("anotheremail@email.com");
         userService.createUser(testUserConflict);
 
         User testUser2 = new User();

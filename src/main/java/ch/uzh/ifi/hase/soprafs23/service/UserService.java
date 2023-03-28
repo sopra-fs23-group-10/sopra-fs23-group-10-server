@@ -118,11 +118,19 @@ public class UserService {
    */
     private void checkIfUserExists(User userToBeCreated) {
         User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
+        User userByEmail = userRepository.findByEmail(userToBeCreated.getEmail());
 
-        String baseErrorMessage = "The %s provided %s already taken. Therefore, the user could not be created!";
+        String baseErrorMessage = "The %s provided %s already taken. Therefore, the user could not be created.";
+        if (userByUsername != null && userByEmail != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username and email", "are"));
+        }
         if (userByUsername != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username", "is"));
         }
+        if (userByEmail != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "email", "is"));
+        }
+
     }
 
     /**

@@ -120,7 +120,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenEmptyUsername_thenThrowsBadRequest_400() throws Exception {
+    public void createUser_whenEmptyUsername_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -145,11 +145,11 @@ public class UserControllerTest {
                 .content(asJsonString(userPostDTO));
 
         // then
-        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
     }
 
     @Test
-    public void createUser_whenNullUsername_thenThrowsBadRequest_400() throws Exception {
+    public void createUser_whenNullUsername_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -174,11 +174,11 @@ public class UserControllerTest {
                 .content(asJsonString(userPostDTO));
 
         // then
-        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
     }
 
     @Test
-    public void createUser_whenEmptyPassword_thenThrowsBadRequest_400() throws Exception {
+    public void createUser_whenEmptyPassword_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -203,11 +203,11 @@ public class UserControllerTest {
                 .content(asJsonString(userPostDTO));
 
         // then
-        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
     }
 
     @Test
-    public void createUser_whenNullPassword_thenThrowsBadRequest_400() throws Exception {
+    public void createUser_whenNullPassword_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -232,11 +232,11 @@ public class UserControllerTest {
                 .content(asJsonString(userPostDTO));
 
         // then
-        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
     }
 
     @Test
-    public void createUser_whenEmptyEmail_thenThrowsBadRequest_400() throws Exception {
+    public void createUser_whenEmptyEmail_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -261,11 +261,11 @@ public class UserControllerTest {
                 .content(asJsonString(userPostDTO));
 
         // then
-        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
     }
 
     @Test
-    public void createUser_whenNullEmail_thenThrowsBadRequest_400() throws Exception {
+    public void createUser_whenNullEmail_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -290,7 +290,7 @@ public class UserControllerTest {
                 .content(asJsonString(userPostDTO));
 
         // then
-        mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
     }
 
 
