@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,31 +27,84 @@ import java.util.UUID;
 @Transactional
 public class UserService {
 
-  private final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final UserRepository userRepository;
 
-  private final UserRepository userRepository;
+    @Autowired
+    public UserService(@Qualifier("userRepository") UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-  @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+    /**
+     * This method verifies a provided token by getting the
+     * matching user from the repository.
+     * The matching user is returned or exception is thrown.
+     *
+     * @param token
+     * @throws org.springframework.web.server.ResponseStatusException
+     * @return User userByToken
+     */
+    public User verifyToken(String token) {
+        User userByToken = userRepository.findUserByToken(token);
 
-  public List<User> getUsers() {
-    return this.userRepository.findAll();
-  }
+        if (userByToken == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid.");
+        }
 
-  public User createUser(User newUser) {
-    newUser.setToken(UUID.randomUUID().toString());
-    newUser.setStatus(UserStatus.OFFLINE);
-    checkIfUserExists(newUser);
-    // saves the given entity but data is only persisted in the database once
-    // flush() is called
-    newUser = userRepository.save(newUser);
-    userRepository.flush();
+        if (userByToken.getStatus() != UserStatus.ONLINE) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User with provided token is not logged in.");
+        }
 
-    log.debug("Created Information for User: {}", newUser);
-    return newUser;
-  }
+        return userByToken;
+    }
+
+    /**
+     * This method validates a user by comparing a provided token and id with
+     * the corresponding user in the user repository.
+     *
+     * @param token
+     * @param userId
+     * @throws org.springframework.web.server.ResponseStatusException
+     */
+    public User verifyTokenWithId(String token, long userId) {
+        User userByToken = verifyToken(token);
+
+        User userById = searchUserById(userId);
+
+        if (!userByToken.getId().equals(userById.getId()) || !userByToken.getToken().equals(userById.getToken())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized.");
+        }
+        return userByToken;
+    }
+
+    /**
+     * This method returns all users currently in the userRepository.
+     *
+     * @return List<User>
+     */
+    public List<User> getUsers() {
+        return this.userRepository.findAll();
+    }
+
+    /**
+     * This method is required to create a new user with the provided data in the repository
+     *
+     * @param newUser
+     * @return User newUser
+     */
+    public User createUser(User newUser) {
+        newUser.setToken(UUID.randomUUID().toString());
+        newUser.setStatus(UserStatus.ONLINE);
+        newUser.setCreationDate(new Date());
+        checkIfUserExists(newUser);
+        // saves the given entity but data is only persisted in the database once
+        // flush() is called
+        newUser = userRepository.save(newUser);
+        userRepository.flush();
+
+        log.debug("Created Information for User: {}", newUser);
+        return newUser;
+    }
 
   /**
    * This is a helper method that will check the uniqueness criteria of the
@@ -62,18 +116,103 @@ public class UserService {
    * @throws org.springframework.web.server.ResponseStatusException
    * @see User
    */
-  private void checkIfUserExists(User userToBeCreated) {
-    User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-    User userByName = userRepository.findByName(userToBeCreated.getName());
+    private void checkIfUserExists(User userToBeCreated) {
+        User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
 
-    String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
-    if (userByUsername != null && userByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format(baseErrorMessage, "username and the name", "are"));
-    } else if (userByUsername != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
-    } else if (userByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "name", "is"));
+        String baseErrorMessage = "The %s provided %s already taken. Therefore, the user could not be created!";
+        if (userByUsername != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username", "is"));
+        }
     }
-  }
+
+    /**
+     * This method searches a user by ID, which is returned when found. Else an exception is thrown.
+     *
+     * @param userId
+     * @throws org.springframework.web.server.ResponseStatusException
+     * @return User userById
+     */
+    public User searchUserById(Long userId) {
+      User userById = userRepository.findUserById(userId);
+
+      if (userById == null) {
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist.");
+      }
+
+      return userById;
+    }
+
+    /**
+     * This method searches for an existing username in the repository and validates the provided password.
+     *
+     * @param username
+     * @param password
+     * @throws org.springframework.web.server.ResponseStatusException
+     * @return User userByUsername
+     */
+    public User checkLoginCredentials(String username, String password) {
+        User userByUsername = userRepository.findByUsername(username);
+
+        if (userByUsername == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username does not exist.");
+        } else if (!userByUsername.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Wrong password.");
+        }
+        if (userByUsername.getStatus() != UserStatus.OFFLINE) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is already logged in.");
+        }
+
+        return userByUsername;
+    }
+
+    /**
+     * This method searches a user via the provided ID and changes its username and birthdayDate if the user exists.
+     *
+     * @param userWithAdjustments
+     * @param userId
+     * @throws org.springframework.web.server.ResponseStatusException
+     * @return User userById
+     */
+    public User changeUsernameBirthday(long userId, User userWithAdjustments) {
+        User userById = this.userRepository.findUserById(userId);
+
+        if (userById == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified userID does not exist.");
+        }
+
+        userById.setBirthdayDate(userWithAdjustments.getBirthdayDate());
+
+        if (!userById.getUsername().equals(userWithAdjustments.getUsername())) {
+            checkIfUserExists(userWithAdjustments);
+            userById.setUsername(userWithAdjustments.getUsername());
+        }
+
+        return userById;
+    }
+
+    /**
+     * This method sets a user's status to ONLINE
+     *
+     * @param checkedUser
+     */
+    public void setOnline(User checkedUser) {
+        checkedUser.setStatus(UserStatus.ONLINE);
+    }
+
+    /**
+     * This method sets a user's status to offline.
+     *
+     * @param user
+     * @param userId
+     * @throws org.springframework.web.server.ResponseStatusException
+     */
+    public void setOffline(User user, Long userId) {
+        if (user == null || userId == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be logged out was not found.");
+        }
+        if (!user.getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized.");
+        }
+        user.setStatus(UserStatus.OFFLINE);
+    }
 }
