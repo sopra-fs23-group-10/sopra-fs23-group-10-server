@@ -45,6 +45,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
+        testUser.setEmail("email@email.com");
 
         // when
         User createdUser = userService.createUser(testUser);
@@ -53,6 +54,7 @@ public class UserServiceIntegrationTest {
         assertEquals(testUser.getId(), createdUser.getId());
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertEquals(testUser.getPassword(), createdUser.getPassword());
+        assertEquals(testUser.getEmail(), createdUser.getEmail());
         assertNotNull(createdUser.getToken());
         assertEquals(UserStatus.ONLINE, createdUser.getStatus());
     }
@@ -64,12 +66,14 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
+        testUser.setEmail("email@email.com");
         User createdUser = userService.createUser(testUser);
 
         // attempt to create second user with same username
         User testUser2 = new User();
         testUser2.setUsername("testUsername");
         testUser2.setPassword("testPassword");
+        testUser2.setEmail("email@email.com");
 
         assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
     }
@@ -79,6 +83,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
+        testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
 
@@ -90,6 +95,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
+        testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
 
@@ -101,12 +107,14 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
+        testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
         User found = userService.verifyTokenWithId(testUser.getToken(), testUser.getId());
 
         assertEquals(testUser.getUsername(), found.getUsername());
         assertEquals(testUser.getPassword(), found.getPassword());
+        assertEquals(testUser.getEmail(), found.getEmail());
         assertEquals(testUser.getId(), found.getId());
         assertEquals(testUser.getToken(), found.getToken());
         assertEquals(testUser.getCreationDate(), found.getCreationDate());
@@ -118,6 +126,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
+        testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
 
@@ -129,6 +138,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
+        testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
 
@@ -140,6 +150,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
+        testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
 
@@ -155,6 +166,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
+        testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
 
@@ -168,6 +180,7 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
+        testUser.setEmail("email@email.com");
         userService.createUser(testUser);
 
         User testUser2 = new User();
@@ -187,11 +200,13 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
+        testUser.setEmail("email@email.com");
         userService.createUser(testUser);
 
         User testUserConflict = new User();
         testUserConflict.setUsername("conflictingUsername");
         testUserConflict.setPassword("testPassword");
+        testUserConflict.setEmail("anotheremail@email.com");
         userService.createUser(testUserConflict);
 
         User testUser2 = new User();
