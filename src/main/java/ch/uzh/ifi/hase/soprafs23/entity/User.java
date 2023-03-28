@@ -1,8 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,8 +17,6 @@ import java.util.Date;
  * the primary key
  */
 
-@Getter
-@Setter
 @Entity
 @Table(name = "USER")
 public class User implements Serializable {
@@ -45,4 +41,59 @@ public class User implements Serializable {
     @Column
     private Date birthdayDate;
 
+    public Long getId() {
+        return this.id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getCreationDate() {
+        return this.creationDate;
+    }
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getToken() {
+        return this.token;
+    }
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public UserStatus getStatus() {
+        return this.status;
+    }
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public Date getBirthdayDate() {
+        return this.birthdayDate;
+    }
+    public void setBirthdayDate(Date birthdayDate) {
+        this.birthdayDate = birthdayDate;
+    }
 }
