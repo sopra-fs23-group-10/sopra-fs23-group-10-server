@@ -127,18 +127,15 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(checkedUser);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/logout/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO logoutStatus(@RequestHeader("token") String token, @RequestBody UserPostDTO userPostDTO) {
+    public UserGetDTO logoutStatus(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token) {
         // verify token and get matching user
         User user = userService.verifyToken(token);
 
-        // convert API user to internal representation
-        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-
         // set user status to OFFLINE
-        userService.setOffline(user, userInput.getId());
+        userService.setOffline(user, userId);
 
         // convert user to API user and return (without token)
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user);

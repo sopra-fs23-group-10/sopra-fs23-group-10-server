@@ -5,7 +5,6 @@ public class UserPostDTO {
     private String username;
     private String password;
     private String email;
-    private Long id;
 
     public String getUsername() {
         return this.username;
@@ -17,10 +16,6 @@ public class UserPostDTO {
 
     public String getEmail() {
         return this.email;
-    }
-
-    public Long getId() {
-        return this.id;
     }
 
     public void setUsername(String username) {
@@ -35,7 +30,4 @@ public class UserPostDTO {
         this.email = email;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
