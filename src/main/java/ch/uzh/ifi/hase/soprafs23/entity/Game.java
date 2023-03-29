@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Stack;
 
 
@@ -85,5 +86,29 @@ public class Game {
 
     public String toString() {
         return "Game(gameId=" + this.getId() + ", invitingUser=" + this.getInvitingUserId() + ", invitedUser=" + this.getInvitedUserId() + ", questions=" + this.getQuestions() + ", quizType=" + this.getQuizType() + ", modeType=" + this.getModeType() + ")";
+    }
+
+    public ArrayList<ArrayList<Long>> getResults() {
+        long invitedUserPoints = 0L;
+        long invitingUserPoints = 0L;
+
+        for (Question question : questions) {
+            invitedUserPoints += question.getPoints(invitedUserId);
+            invitingUserPoints += question.getPoints(invitingUserId);
+        }
+
+        ArrayList<Long> invitingUserScore = new ArrayList<>();
+        invitingUserScore.add(invitingUserId);
+        invitingUserScore.add(invitingUserPoints);
+
+        ArrayList<Long> invitedUserScore = new ArrayList<>();
+        invitedUserScore.add(invitedUserId);
+        invitedUserScore.add(invitedUserPoints);
+
+        ArrayList<ArrayList<Long>> result = new ArrayList<>();
+        result.add(invitingUserScore);
+        result.add(invitedUserScore);
+
+        return result;
     }
 }
