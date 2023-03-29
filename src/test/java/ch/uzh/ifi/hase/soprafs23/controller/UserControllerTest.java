@@ -656,6 +656,53 @@ public class UserControllerTest {
         mockMvc.perform(putRequest).andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void givenUser_whenLogout_thenReturnUser_200() throws Exception {
+        // given
+        User user = new User();
+        user.setUsername("firstname@lastname");
+        user.setStatus(UserStatus.ONLINE);
+        user.setId(1L);
+        user.setToken("token");
+        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
+
+        // this mocks the UserService -> we define above what the userService should
+        // return when getUsers() is called
+        given(userService.verifyToken(user.getToken())).willReturn(user);
+        given(userService.searchUserById(user.getId())).willReturn(user);
+
+        // when
+        MockHttpServletRequestBuilder postRequest = post("/logout/" + user.getId())
+                .header("token", user.getToken());
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+    }
+
+    @Test
+    public void givenUser_whenLogout_thenReturnUser_401() throws Exception {
+        // given
+        User user = new User();
+        user.setUsername("firstname@lastname");
+        user.setStatus(UserStatus.ONLINE);
+        user.setId(1L);
+        user.setToken("token");
+        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
+
+        // this mocks the UserService -> we define above what the userService should
+        // return when getUsers() is called
+        given(userService.verifyToken(user.getToken())).willReturn(user);
+        Mockito.doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized."))
+                .when(userService).setOffline(Mockito.any(), Mockito.any());
+        // when
+        MockHttpServletRequestBuilder postRequest = post("/logout/2")
+                .header("token", user.getToken());
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+    }
+
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
