@@ -8,6 +8,7 @@ public class QuestionDTO {
     private String id;
     private String correctAnswer;
     private String[] incorrectAnswers;
+    private String[] allAnswers;
     private String question;
 
     public long getGameId() {
@@ -28,6 +29,10 @@ public class QuestionDTO {
 
     public String[] getIncorrectAnswers() {
         return this.incorrectAnswers;
+    }
+
+    public String[] getAllAnswers() {
+        return this.allAnswers;
     }
 
     public String getQuestion() {
@@ -52,6 +57,10 @@ public class QuestionDTO {
 
     public void setIncorrectAnswers(String[] incorrectAnswers) {
         this.incorrectAnswers = incorrectAnswers;
+    }
+
+    public void setAllAnswers(String[] allAnswers) {
+        this.allAnswers = allAnswers;
     }
 
     public void setQuestion(String question) {

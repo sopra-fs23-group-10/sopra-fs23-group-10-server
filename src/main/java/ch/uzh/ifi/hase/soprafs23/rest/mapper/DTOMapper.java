@@ -73,8 +73,9 @@ public interface DTOMapper {
     @Mapping(source = "category", target = "category")
     @Mapping(source = "id", target = "id")
     @Mapping(source = "question", target = "question")
-    @Mapping(source = "correctAnswer", target = "correctAnswer")
-    @Mapping(source = "incorrectAnswers", target = "incorrectAnswers")
+    @Mapping(source = "allAnswers", target = "allAnswers")
+    @Mapping(target = "correctAnswer", ignore = true)
+    @Mapping(target = "incorrectAnswers", ignore = true)
     QuestionDTO convertQuestionEntityToDTO(Question question);
 
 }

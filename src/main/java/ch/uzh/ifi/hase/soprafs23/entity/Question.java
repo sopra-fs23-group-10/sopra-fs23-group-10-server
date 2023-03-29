@@ -49,6 +49,10 @@ public class Question {
         return this.incorrectAnswers;
     }
 
+    public String[] getAllAnswers() {
+        return this.allAnswers;
+    }
+
     public String getQuestion() {
         return this.question;
     }
@@ -75,6 +79,10 @@ public class Question {
 
     public void setIncorrectAnswers(String[] incorrectAnswers) {
         this.incorrectAnswers = incorrectAnswers;
+    }
+
+    public void setAllAnswers(String[] allAnswers) {
+        this.allAnswers = allAnswers;
     }
 
     public void setQuestion(String question) {
