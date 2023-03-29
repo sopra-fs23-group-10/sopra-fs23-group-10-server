@@ -5,11 +5,15 @@ import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
 
 public class GameDTO {
-
+    private long id;
     private long invitedUserId;
     private long invitingUserId;
     private ModeType modeType;
     private QuizType quizType;
+
+    public long getId(){
+        return this.id;
+    }
 
     public long getInvitingUserId() {
         return this.invitingUserId;
@@ -26,6 +30,7 @@ public class GameDTO {
     public QuizType getQuizType() {
         return this.quizType;
     }
+    public void setId(long id){this.id = id;}
 
     public void setInvitedUserId(long invitedUserId) {
         this.invitedUserId = invitedUserId;

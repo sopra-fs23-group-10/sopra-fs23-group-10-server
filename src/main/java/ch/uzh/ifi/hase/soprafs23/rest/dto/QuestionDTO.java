@@ -1,33 +1,14 @@
-package ch.uzh.ifi.hase.soprafs23.entity;
+package ch.uzh.ifi.hase.soprafs23.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 
-import java.util.ArrayList;
-
-public class Question {
+public class QuestionDTO {
     private long gameId;
     private Category category;
     private String id;
     private String correctAnswer;
     private String[] incorrectAnswers;
-    private String[] allAnswers;
     private String question;
-    private ArrayList<ResultTuple> results = new ArrayList<>();
-
-    public Question(String id, Category category, String correctAnswer, String question, String[] incorrectAnswers) {
-        this.category = category;
-        this.id = id;
-        this.question = question;
-        this.correctAnswer = correctAnswer;
-        this.incorrectAnswers = incorrectAnswers;
-
-        this.allAnswers = new String[incorrectAnswers.length + 1];
-        this.allAnswers[0] = correctAnswer;
-        System.arraycopy(incorrectAnswers, 0, this.allAnswers, 1, incorrectAnswers.length);
-    }
-
-    public Question() {
-    }
 
     public long getGameId() {
         return this.gameId;
@@ -53,10 +34,6 @@ public class Question {
         return this.question;
     }
 
-    public ArrayList<ResultTuple> getResults() {
-        return this.results;
-    }
-
     public void setGameId(long gameId) {
         this.gameId = gameId;
     }
@@ -79,9 +56,5 @@ public class Question {
 
     public void setQuestion(String question) {
         this.question = question;
-    }
-
-    public void setResults(ArrayList<ResultTuple> results) {
-        this.results = results;
     }
 }

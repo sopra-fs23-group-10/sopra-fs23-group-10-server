@@ -1,11 +1,9 @@
 package ch.uzh.ifi.hase.soprafs23.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
+import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserPutDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -24,7 +22,6 @@ import org.mapstruct.factory.Mappers;
 public interface DTOMapper {
 
     DTOMapper INSTANCE = Mappers.getMapper(DTOMapper.class);
-
 
     @Mapping(source = "username", target = "username")
     @Mapping(source = "password", target = "password")
@@ -56,11 +53,28 @@ public interface DTOMapper {
     @Mapping(source = "invitedUserId", target = "invitedUserId")
     @Mapping(source = "quizType", target = "quizType")
     @Mapping(source = "modeType", target = "modeType")
+    @Mapping(source = "id", target = "id")
     GameDTO convertGameEntityToPostDTO(Game game);
+
 
     @Mapping(source = "invitedUserId", target = "invitedUserId")
     @Mapping(source = "invitingUserId", target = "invitingUserId")
     @Mapping(source = "quizType", target = "quizType")
     @Mapping(source = "modeType", target = "modeType")
+    @Mapping(target = "questions", ignore = true)
     Game convertGamePostDTOtoEntity(GameDTO gameDTO);
+
+    @Mapping(source = "category", target = "category")
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "question", target = "question")
+    @Mapping(source = "correctAnswer", target = "correctAnswer")
+    @Mapping(source = "incorrectAnswers", target = "incorrectAnswers")
+    Question convertQuestionDTOtoEntity(QuestionDTO questionDTO);
+    @Mapping(source = "category", target = "category")
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "question", target = "question")
+    @Mapping(source = "correctAnswer", target = "correctAnswer")
+    @Mapping(source = "incorrectAnswers", target = "incorrectAnswers")
+    QuestionDTO convertQuestionEntityToDTO(Question question);
+
 }
