@@ -47,6 +47,7 @@ public class GameController {
         User invitedUser = userService.searchUserById(game.getInvitingUserId());
         User invitingUser = userService.searchUserById(game.getInvitedUserId());
         Question question = gameService.getQuestion(questionDTO.getCategory());
+        game.addQuestion(question);
         QuestionDTO questionDTO1 = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
         return questionDTO1;
     }

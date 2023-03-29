@@ -35,7 +35,9 @@ public class Game {
     public Game() {
     }
 
-
+    public void addQuestion(Question question){
+        questions.add(question);
+    }
 
     public long getId() {
         return this.id;
