@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs23.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserPutDTO;
@@ -49,4 +51,10 @@ public interface DTOMapper {
     @Mapping(source = "birthdayDate", target = "birthdayDate")
     @Mapping(target = "token", ignore = true)
     UserGetDTO convertEntityToUserGetDTONoToken(User user);
+
+
+    @Mapping(source = "invitedUserId", target = "invitedUserId")
+    @Mapping(source = "quizType", target = "guizType")
+    @Mapping(source = "modeType", target = "modeType")
+    GameDTO convertGamePostDTOtoEntity(GameDTO gameDTO);
 }

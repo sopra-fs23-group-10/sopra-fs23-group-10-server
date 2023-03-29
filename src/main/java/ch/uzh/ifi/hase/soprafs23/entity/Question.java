@@ -47,19 +47,4 @@ public class Question {
         }
         return sum;
     }
-
-    public void getQuestion(Category category) throws IOException, InterruptedException, JSONException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://the-trivia-api.com/api/questions?categories=" + category.toString().toLowerCase() + "&limit=1&region=CH&difficulty=easy"))
-                .build();
-        HttpResponse<String> response =
-                client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 200) {
-            JSONObject obj = new JSONObject(response.body());
-            System.out.println(obj);
-        }
-    }
-
 }
