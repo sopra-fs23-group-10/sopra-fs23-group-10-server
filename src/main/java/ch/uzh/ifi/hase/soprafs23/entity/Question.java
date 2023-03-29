@@ -92,4 +92,14 @@ public class Question {
     public void setResults(ArrayList<ResultTuple> results) {
         this.results = results;
     }
+
+    public long getPoints(long userId) {
+        long addedScore = 0L;
+        for (ResultTuple resultTuple : results) {
+            if (resultTuple.getUserId() == userId) {
+                addedScore += (long) resultTuple.getPoints();
+            }
+        }
+        return addedScore;
+    }
 }
