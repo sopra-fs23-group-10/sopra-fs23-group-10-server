@@ -52,9 +52,15 @@ public interface DTOMapper {
     @Mapping(target = "token", ignore = true)
     UserGetDTO convertEntityToUserGetDTONoToken(User user);
 
-
+    @Mapping(source = "invitingUserId", target = "invitingUserId")
     @Mapping(source = "invitedUserId", target = "invitedUserId")
     @Mapping(source = "quizType", target = "quizType")
     @Mapping(source = "modeType", target = "modeType")
-    GameDTO convertGamePostDTOtoEntity(GameDTO gameDTO);
+    GameDTO convertGameEntityToPostDTO(Game game);
+
+    @Mapping(source = "invitedUserId", target = "invitedUserId")
+    @Mapping(source = "invitingUserId", target = "invitingUserId")
+    @Mapping(source = "quizType", target = "quizType")
+    @Mapping(source = "modeType", target = "modeType")
+    Game convertGamePostDTOtoEntity(GameDTO gameDTO);
 }

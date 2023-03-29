@@ -1,17 +1,9 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
+
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import lombok.*;
 
-@Getter
-@Setter
-@ToString
 public class Question {
     private final Category category;
     private final long questionId;
@@ -44,5 +36,33 @@ public class Question {
             }
         }
         return sum;
+    }
+
+    public Category getCategory() {
+        return this.category;
+    }
+
+    public long getQuestionId() {
+        return this.questionId;
+    }
+
+    public String getCorrectAnswer() {
+        return this.correctAnswer;
+    }
+
+    public String getQuestion() {
+        return this.question;
+    }
+
+    public ArrayList<ResultTuple> getResults() {
+        return this.results;
+    }
+
+    public void setResults(ArrayList<ResultTuple> results) {
+        this.results = results;
+    }
+
+    public String toString() {
+        return "Question(category=" + this.getCategory() + ", questionId=" + this.getQuestionId() + ", correctAnswer=" + this.getCorrectAnswer() + ", question=" + this.getQuestion() + ", results=" + this.getResults() + ")";
     }
 }
