@@ -8,8 +8,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import lombok.*;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 @Getter
 @Setter

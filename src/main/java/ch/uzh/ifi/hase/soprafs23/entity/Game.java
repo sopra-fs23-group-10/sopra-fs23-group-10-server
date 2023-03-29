@@ -4,11 +4,10 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import lombok.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;

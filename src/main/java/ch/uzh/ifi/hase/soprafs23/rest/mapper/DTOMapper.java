@@ -54,7 +54,7 @@ public interface DTOMapper {
 
 
     @Mapping(source = "invitedUserId", target = "invitedUserId")
-    @Mapping(source = "quizType", target = "guizType")
+    @Mapping(source = "quizType", target = "quizType")
     @Mapping(source = "modeType", target = "modeType")
     GameDTO convertGamePostDTOtoEntity(GameDTO gameDTO);
 }
