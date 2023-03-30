@@ -58,9 +58,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -79,11 +79,9 @@ public class UserControllerTest {
         // then
         mockMvc.perform(postRequest).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
                 .andExpect(jsonPath("$.token", is(user.getToken())))
-                .andExpect(jsonPath("$.creationDate", is(user.getCreationDate().toInstant()
-                        .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                        .replace("Z", "+00:00"))))
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
@@ -97,9 +95,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -127,9 +125,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("");
@@ -156,9 +154,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername(null);
@@ -185,9 +183,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -214,9 +212,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -243,9 +241,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -272,9 +270,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
@@ -301,10 +299,11 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
         user.setStatus(UserStatus.OFFLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
 
         List<User> allUsers = Collections.singletonList(user);
 
@@ -321,11 +320,9 @@ public class UserControllerTest {
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
+                .andExpect(jsonPath("$[0].profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())))
                 .andExpect(jsonPath("$[0].token").isEmpty())
-                .andExpect(jsonPath("$[0].creationDate", is(user.getCreationDate().toInstant()
-                        .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                        .replace("Z", "+00:00"))))
                 .andExpect(jsonPath("$[0].id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$[0].password").doesNotExist())
                 .andExpect(jsonPath("$[0].email").doesNotExist());
@@ -336,10 +333,12 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
@@ -353,12 +352,10 @@ public class UserControllerTest {
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
                 .andExpect(jsonPath("$.token").isEmpty())
-                .andExpect(jsonPath("$.creationDate", is(user.getCreationDate().toInstant()
-                        .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                        .replace("Z", "+00:00"))))
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
     }
@@ -370,9 +367,10 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
         given(userService.verifyToken(user.getToken())).willReturn(user);
         when(userService.searchUserById(user.getId())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
@@ -390,10 +388,12 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
 
         String invalidToken = "someInvalidToken";
 
@@ -415,10 +415,12 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
@@ -438,22 +440,20 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setPassword("testPassword");
-        user.setEmail("email@email.com");
-        user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
-        user.setBirthdayDate(Date.from(Instant.parse("1765-10-14T12:43:56.243+00:00")));
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
-        userPutDTO.setBirthdayDate(new Date(2001, 9, 11));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsernameBirthday(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
@@ -464,17 +464,12 @@ public class UserControllerTest {
         // then
         mockMvc.perform(putRequest).andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
                 .andExpect(jsonPath("$.token").isEmpty())
-                .andExpect(jsonPath("$.creationDate", is(user.getCreationDate().toInstant()
-                        .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                        .replace("Z", "+00:00"))))
-                .andExpect(jsonPath("$.birthdayDate", is(user.getBirthdayDate().toInstant()
-                        .atZone(ZoneId.of("UTC+00:00")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                        .replace("Z", "+00:00"))))
                 .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.email").doesNotExist());
     }
 
     @Test
@@ -482,20 +477,21 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
-        userPutDTO.setBirthdayDate(new Date(2001, 9, 11));
 
         long invalidID = 56;
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsernameBirthday(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), invalidID)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
         // when
@@ -513,18 +509,19 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
-        userPutDTO.setBirthdayDate(new Date(2001, 9, 11));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsernameBirthday(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), user.getId())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
         // when
@@ -541,20 +538,21 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
-        userPutDTO.setBirthdayDate(new Date(2001, 9, 11));
 
         String invalidToken = "SomeRandomTokenThatDoesNotExist";
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsernameBirthday(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(invalidToken, user.getId())).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
 
         // when
@@ -572,20 +570,21 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
-        userPutDTO.setBirthdayDate(new Date(2001, 9, 11));
 
         long offsetId = user.getId() + 1;
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsernameBirthday(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), offsetId)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized."));
 
         // when
@@ -603,19 +602,20 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername(null);
-        userPutDTO.setBirthdayDate(new Date(2001, 9, 11));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsernameBirthday(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
@@ -632,19 +632,20 @@ public class UserControllerTest {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("2061-10-14T23:59:59.999+00:00")));
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("");
-        userPutDTO.setBirthdayDate(new Date(2001, 9, 11));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsernameBirthday(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())

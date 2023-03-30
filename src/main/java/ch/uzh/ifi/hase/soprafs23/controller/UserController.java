@@ -32,13 +32,33 @@ public class UserController {
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<UserGetDTO> getAllUsers(@RequestHeader("token") String token) {
+    public List<UserGetDTO> getUsers(@RequestHeader("token") String token) {
         // verify token
         userService.verifyToken(token);
 
         // fetch all users in the internal representation
         List<User> users = userService.getUsers();
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+
+        // convert each user to the API representation
+        for (User user : users) {
+            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user));
+        }
+        return userGetDTOs;
+    }
+
+    @GetMapping("/users/online")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<UserGetDTO> getOnlineUsers(@RequestHeader("token") String token) {
+        // verify token
+        userService.verifyToken(token);
+
+        // fetch all users in the internal representation
+        List<User> users = userService.getOnlineUsers();
+        List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
 
         // convert each user to the API representation
         for (User user : users) {
@@ -88,7 +108,7 @@ public class UserController {
 
     @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public UserGetDTO putUsernameBirthday(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token, @RequestBody UserPutDTO userPutDTO) {
+    public UserGetDTO putUsername(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token, @RequestBody UserPutDTO userPutDTO) {
         // verify token with userId from path variable to authorise changes
         User userToChange = userService.verifyTokenWithId(token, userId);
 
@@ -100,7 +120,7 @@ public class UserController {
         }
 
         // make changes to user
-        userService.changeUsernameBirthday(userId, userInput);
+        userService.changeUsername(userId, userInput);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(userToChange);
     }

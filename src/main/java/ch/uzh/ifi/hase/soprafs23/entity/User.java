@@ -33,13 +33,11 @@ public class User implements Serializable {
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
-    private Date creationDate;
+    private String profilePicture;
     @Column(nullable = false, unique = true)
     private String token;
     @Column(nullable = false)
     private UserStatus status;
-    @Column
-    private Date birthdayDate;
 
     public Long getId() {
         return this.id;
@@ -69,11 +67,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public Date getCreationDate() {
-        return this.creationDate;
+    public String getProfilePicture() {
+        return profilePicture;
     }
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public String getToken() {
@@ -88,12 +86,5 @@ public class User implements Serializable {
     }
     public void setStatus(UserStatus status) {
         this.status = status;
-    }
-
-    public Date getBirthdayDate() {
-        return this.birthdayDate;
-    }
-    public void setBirthdayDate(Date birthdayDate) {
-        this.birthdayDate = birthdayDate;
     }
 }
