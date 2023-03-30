@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
+import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
+import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
@@ -24,8 +26,7 @@ public class WebSocketController {
     }
 
     @MessageMapping("/invitation/{userId}")
-    public void inviteUser(@DestinationVariable Game game) {
-        GameDTO gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
-        this.webSocketService.sendMessageToClients("/invitations/" + game.getInvitedUserId(), gameDTO);
+    public void inviteUser(@DestinationVariable long invitedUserId, GameDTO gameDTO) {
+        this.webSocketService.sendMessageToClients("/invitations/" + invitedUserId, gameDTO);
     }
 }

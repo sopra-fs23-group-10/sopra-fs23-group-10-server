@@ -21,15 +21,9 @@ public class WebSocketService {
     protected SimpMessagingTemplate smesg;
     Logger log = LoggerFactory.getLogger(WebSocketService.class);
 
-    public WebSocketService(@Qualifier("UserRepository") UserRepository userRepository,
+    public WebSocketService(@Qualifier("userRepository") UserRepository userRepository,
                             @Lazy UserService userService) {
         this.userRepository = userRepository;
         this.userService = userService;
     }
-
-    public void sendMessageToClients(String destination, Object dto) {
-        this.smesg.convertAndSend(destination, dto);
-
-    }
-
 }

@@ -15,22 +15,15 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-
-        registry.enableSimpleBroker("/question", "/invitations", "/topics")
-                .setTaskScheduler(heartBeatScheduler());
-
-        // Set prefix for endpoints the client will send messages to
-        registry.setApplicationDestinationPrefixes("/app");
-
-        registry.setUserDestinationPrefix("/user");
+        registry.enableSimpleBroker("/questions", "/invitations", "/topics")
+                ;//.setTaskScheduler(heartBeatScheduler());
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Registers the endpoint where the connection will take place
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
-                .setHandshakeHandler(new PrincipalHandshake())
+                //.setHandshakeHandler(new PrincipalHandshake())
                 .withSockJS();
     }
 
@@ -38,5 +31,4 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public TaskScheduler heartBeatScheduler() {
         return new ThreadPoolTaskScheduler();
     }
-
 }
