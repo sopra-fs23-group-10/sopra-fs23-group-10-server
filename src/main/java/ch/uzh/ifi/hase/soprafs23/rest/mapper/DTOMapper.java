@@ -33,6 +33,7 @@ public interface DTOMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "username", target = "username")
+    @Mapping(source = "points", target = "points")
     @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "token", target = "token")
@@ -40,6 +41,7 @@ public interface DTOMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "username", target = "username")
+    @Mapping(source = "points", target = "points")
     @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "status", target = "status")
     @Mapping(target = "token", ignore = true)

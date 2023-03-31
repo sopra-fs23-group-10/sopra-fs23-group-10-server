@@ -8,6 +8,7 @@ import java.util.Date;
 public class UserGetDTO {
     private Long id;
     private String username;
+    private long points;
     private String profilePicture;
     private UserStatus status;
     private String token;
@@ -26,11 +27,11 @@ public class UserGetDTO {
         this.username = username;
     }
 
-    public String getProfilePicture() {
-        return profilePicture;
+    public long getPoints() {
+        return points;
     }
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setPoints(long points) {
+        this.points = points;
     }
 
     public UserStatus getStatus() {
@@ -45,5 +46,12 @@ public class UserGetDTO {
     }
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

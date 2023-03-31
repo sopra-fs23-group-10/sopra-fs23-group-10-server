@@ -28,16 +28,18 @@ public class User implements Serializable {
     private Long id;
     @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = false)
-    private String password;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
-    private String profilePicture;
+    private String password;
+    @Column(nullable = false)
+    private long points;
+    @Column(nullable = false)
+    private UserStatus status;
     @Column(nullable = false, unique = true)
     private String token;
     @Column(nullable = false)
-    private UserStatus status;
+    private String profilePicture;
 
     public Long getId() {
         return this.id;
@@ -53,13 +55,6 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    public String getPassword() {
-        return this.password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return this.email;
     }
@@ -67,11 +62,25 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getProfilePicture() {
-        return profilePicture;
+    public String getPassword() {
+        return this.password;
     }
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public long getPoints() {
+        return points;
+    }
+    public void setPoints(long points) {
+        this.points = points;
+    }
+
+    public UserStatus getStatus() {
+        return this.status;
+    }
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     public String getToken() {
@@ -81,10 +90,10 @@ public class User implements Serializable {
         this.token = token;
     }
 
-    public UserStatus getStatus() {
-        return this.status;
+    public String getProfilePicture() {
+        return profilePicture;
     }
-    public void setStatus(UserStatus status) {
-        this.status = status;
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }
