@@ -29,6 +29,7 @@ public class UserRepositoryIntegrationTest {
     user.setUsername("firstname@lastname");
     user.setPassword("testPassword");
     user.setEmail("email@email.com");
+    user.setPoints(2L);
     user.setProfilePicture("firstname@lastname");
     user.setStatus(UserStatus.OFFLINE);
     user.setToken("1");
@@ -44,6 +45,7 @@ public class UserRepositoryIntegrationTest {
     assertEquals(found.getUsername(), user.getUsername());
     assertEquals(found.getPassword(), user.getPassword());
     assertEquals(found.getEmail(), user.getEmail());
+    assertEquals(found.getPoints(), user.getPoints());
     assertEquals(found.getProfilePicture(), user.getProfilePicture());
     assertEquals(found.getId(), user.getId());
     assertEquals(found.getToken(), user.getToken());
@@ -57,6 +59,7 @@ public class UserRepositoryIntegrationTest {
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -78,6 +81,7 @@ public class UserRepositoryIntegrationTest {
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -93,6 +97,7 @@ public class UserRepositoryIntegrationTest {
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getPassword(), user.getPassword());
         assertEquals(found.getEmail(), user.getEmail());
+        assertEquals(found.getPoints(), user.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
@@ -106,6 +111,7 @@ public class UserRepositoryIntegrationTest {
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -127,6 +133,7 @@ public class UserRepositoryIntegrationTest {
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -142,6 +149,7 @@ public class UserRepositoryIntegrationTest {
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getPassword(), user.getPassword());
         assertEquals(found.getEmail(), user.getEmail());
+        assertEquals(found.getPoints(), user.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
@@ -155,6 +163,7 @@ public class UserRepositoryIntegrationTest {
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
         user.setEmail("email@email.com");
+        user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
         user.setEmail("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);

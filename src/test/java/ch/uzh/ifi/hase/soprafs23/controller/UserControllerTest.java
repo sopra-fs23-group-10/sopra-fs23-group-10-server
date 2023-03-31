@@ -57,6 +57,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -81,6 +82,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$.points", is(user.getPoints().intValue())))
                 .andExpect(jsonPath("$.token", is(user.getToken())))
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.password").doesNotExist())
@@ -94,6 +96,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -124,6 +127,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -153,6 +157,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -182,6 +187,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -211,6 +217,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -240,6 +247,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -269,6 +277,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setToken("1");
@@ -299,6 +308,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("testUsername");
         user.setStatus(UserStatus.OFFLINE);
@@ -322,6 +332,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
                 .andExpect(jsonPath("$[0].profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$[0].points", is(user.getPoints().intValue())))
                 .andExpect(jsonPath("$[0].token").isEmpty())
                 .andExpect(jsonPath("$[0].id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$[0].password").doesNotExist())
@@ -334,6 +345,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -355,6 +367,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$.points", is(user.getPoints().intValue())))
                 .andExpect(jsonPath("$.token").isEmpty())
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
@@ -367,6 +380,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setToken("1");
@@ -389,6 +403,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -416,6 +431,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -441,6 +457,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -467,6 +484,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$.points", is(user.getPoints().intValue())))
                 .andExpect(jsonPath("$.token").isEmpty())
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
@@ -478,6 +496,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -510,6 +529,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -539,6 +559,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -571,6 +592,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -603,6 +625,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
@@ -633,6 +656,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setPassword("testPassword");
+        user.setPoints(2L);
         user.setEmail("email@email.com");
         user.setProfilePicture("firstname@lastname");
         user.setStatus(UserStatus.ONLINE);
