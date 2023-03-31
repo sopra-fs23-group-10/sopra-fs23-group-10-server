@@ -26,4 +26,9 @@ public class WebSocketService {
         this.userRepository = userRepository;
         this.userService = userService;
     }
+
+    public void sendMessageToClients(String destination, Object dto) {
+        this.smesg.convertAndSend(destination, dto);
+
+    }
 }
