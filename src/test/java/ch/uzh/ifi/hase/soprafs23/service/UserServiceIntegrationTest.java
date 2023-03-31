@@ -55,6 +55,7 @@ public class UserServiceIntegrationTest {
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertEquals(testUser.getPassword(), createdUser.getPassword());
         assertEquals(testUser.getEmail(), createdUser.getEmail());
+        assertEquals(testUser.getUsername(), createdUser.getProfilePicture());
         assertNotNull(createdUser.getToken());
         assertEquals(UserStatus.ONLINE, createdUser.getStatus());
     }
@@ -117,7 +118,7 @@ public class UserServiceIntegrationTest {
         assertEquals(testUser.getEmail(), found.getEmail());
         assertEquals(testUser.getId(), found.getId());
         assertEquals(testUser.getToken(), found.getToken());
-        assertEquals(testUser.getCreationDate(), found.getCreationDate());
+        assertEquals(testUser.getUsername(), found.getProfilePicture());
         assertEquals(testUser.getStatus(), found.getStatus());
     }
 
@@ -176,7 +177,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void changeUsernameBirthday_allValid_success() {
+    public void changeUsername_allValid_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
@@ -184,13 +185,11 @@ public class UserServiceIntegrationTest {
         userService.createUser(testUser);
 
         User testUser2 = new User();
-        testUser2.setUsername("testUsername");
-        testUser2.setBirthdayDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
+        testUser2.setUsername("changedUsername");
 
-        User changedUser = userService.changeUsernameBirthday(testUser.getId(), testUser2);
+        User changedUser = userService.changeUsername(testUser.getId(), testUser2);
 
         assertEquals(changedUser.getUsername(), testUser2.getUsername());
-        assertEquals(changedUser.getBirthdayDate(), testUser2.getBirthdayDate());
         assertEquals(changedUser.getId(), testUser.getId());
         assertEquals(changedUser.getToken(), testUser.getToken());
     }
@@ -211,8 +210,7 @@ public class UserServiceIntegrationTest {
 
         User testUser2 = new User();
         testUser2.setUsername(testUserConflict.getUsername());
-        testUser2.setBirthdayDate(Date.from(Instant.parse("2023-03-01T22:22:22.999+00:00")));
 
-        assertThrows(ResponseStatusException.class, () -> userService.changeUsernameBirthday(testUser.getId(), testUser2));
+        assertThrows(ResponseStatusException.class, () -> userService.changeUsername(testUser.getId(), testUser2));
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,7 +52,7 @@ public class UserService {
         }
 
         if (userByToken.getStatus() != UserStatus.ONLINE) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User with provided token is not logged in.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User with provided token is currently in game or not logged in.");
         }
 
         return userByToken;
@@ -86,6 +86,17 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
+    public List<User> getOnlineUsers() {
+        List<User> allUsers = this.userRepository.findAll();
+        List<User> allOnlineUsers = new ArrayList<>();
+        for (User user : allUsers) {
+            if (user.getStatus() != UserStatus.OFFLINE) {
+                allOnlineUsers.add(user);
+            }
+        }
+        return allOnlineUsers;
+    }
+
     /**
      * This method is required to create a new user with the provided data in the repository
      *
@@ -95,7 +106,8 @@ public class UserService {
     public User createUser(User newUser) {
         newUser.setToken(UUID.randomUUID().toString());
         newUser.setStatus(UserStatus.ONLINE);
-        newUser.setCreationDate(new Date());
+        newUser.setProfilePicture(newUser.getUsername());
+        newUser.setPoints(0L);
         checkIfUserExists(newUser);
         // saves the given entity but data is only persisted in the database once
         // flush() is called
@@ -181,14 +193,12 @@ public class UserService {
      * @throws org.springframework.web.server.ResponseStatusException
      * @return User userById
      */
-    public User changeUsernameBirthday(long userId, User userWithAdjustments) {
+    public User changeUsername(long userId, User userWithAdjustments) {
         User userById = this.userRepository.findUserById(userId);
 
         if (userById == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified userID does not exist.");
         }
-
-        userById.setBirthdayDate(userWithAdjustments.getBirthdayDate());
 
         if (!userById.getUsername().equals(userWithAdjustments.getUsername())) {
             checkIfUserExists(userWithAdjustments);

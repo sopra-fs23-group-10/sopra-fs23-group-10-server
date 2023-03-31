@@ -28,18 +28,18 @@ public class User implements Serializable {
     private Long id;
     @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = false)
-    private String password;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
-    private Date creationDate;
+    private String password;
+    @Column(nullable = false)
+    private Long points;
+    @Column(nullable = false)
+    private UserStatus status;
     @Column(nullable = false, unique = true)
     private String token;
     @Column(nullable = false)
-    private UserStatus status;
-    @Column
-    private Date birthdayDate;
+    private String profilePicture;
 
     public Long getId() {
         return this.id;
@@ -55,13 +55,6 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    public String getPassword() {
-        return this.password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return this.email;
     }
@@ -69,18 +62,18 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public Date getCreationDate() {
-        return this.creationDate;
+    public String getPassword() {
+        return this.password;
     }
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getToken() {
-        return this.token;
+    public Long getPoints() {
+        return points;
     }
-    public void setToken(String token) {
-        this.token = token;
+    public void setPoints(Long points) {
+        this.points = points;
     }
 
     public UserStatus getStatus() {
@@ -90,10 +83,17 @@ public class User implements Serializable {
         this.status = status;
     }
 
-    public Date getBirthdayDate() {
-        return this.birthdayDate;
+    public String getToken() {
+        return this.token;
     }
-    public void setBirthdayDate(Date birthdayDate) {
-        this.birthdayDate = birthdayDate;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

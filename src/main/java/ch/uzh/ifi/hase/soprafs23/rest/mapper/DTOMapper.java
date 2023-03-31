@@ -29,22 +29,21 @@ public interface DTOMapper {
     User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "birthdayDate", target = "birthdayDate")
     User convertUserPutDTOtoEntity(UserPutDTO userPostDTO);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "username", target = "username")
+    @Mapping(source = "points", target = "points")
+    @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "status", target = "status")
-    @Mapping(source = "creationDate", target = "creationDate")
-    @Mapping(source = "birthdayDate", target = "birthdayDate")
     @Mapping(source = "token", target = "token")
     UserGetDTO convertEntityToUserGetDTO(User user);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "username", target = "username")
+    @Mapping(source = "points", target = "points")
+    @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "status", target = "status")
-    @Mapping(source = "creationDate", target = "creationDate")
-    @Mapping(source = "birthdayDate", target = "birthdayDate")
     @Mapping(target = "token", ignore = true)
     UserGetDTO convertEntityToUserGetDTONoToken(User user);
 
