@@ -689,7 +689,6 @@ public class UserControllerTest {
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
@@ -713,7 +712,6 @@ public class UserControllerTest {
         user.setStatus(UserStatus.ONLINE);
         user.setId(1L);
         user.setToken("token");
-        user.setCreationDate(Date.from(Instant.parse("9999-12-31T23:59:59.999+00:00")));
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
@@ -727,7 +725,6 @@ public class UserControllerTest {
         // then
         mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
     }
-
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input

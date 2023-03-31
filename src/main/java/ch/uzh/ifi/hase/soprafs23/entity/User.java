@@ -32,14 +32,16 @@ public class User implements Serializable {
     private String email;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
-    private Long points;
+    @Column(columnDefinition = "long default 0L")
+    private long points;
     @Column(nullable = false)
     private UserStatus status;
     @Column(nullable = false, unique = true)
     private String token;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(255) default 'Patrick Widmer'")
     private String profilePicture;
+    @Column(columnDefinition = "boolean default true")
+    private boolean backgroundMusic;
 
     public Long getId() {
         return this.id;
@@ -95,5 +97,12 @@ public class User implements Serializable {
     }
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public boolean getBackgroundMusic() {
+        return backgroundMusic;
+    }
+    public void setBackgroundMusic(boolean backgroundMusic) {
+        this.backgroundMusic = backgroundMusic;
     }
 }

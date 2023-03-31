@@ -4,16 +4,19 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
+import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 
@@ -33,8 +36,7 @@ public class Game {
         this.modeType = modeType;
     }
 
-    public Game() {
-    }
+    public Game() {}
 
     public void addQuestion(Question question){
         questions.add(question);
@@ -48,9 +50,7 @@ public class Game {
         return this.invitingUserId;
     }
 
-    public long getInvitedUserId() {
-        return this.invitedUserId;
-    }
+    public long getInvitedUserId() {return this.invitedUserId;}
 
     public Stack<Question> getQuestions() {
         return this.questions;
@@ -64,17 +64,13 @@ public class Game {
         return this.modeType;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    public void setId(long id) {this.id = id;}
 
     public void setInvitingUserId(long invitingUserId) {
         this.invitingUserId = invitingUserId;
     }
 
-    public void setInvitedUserId(long invitedUserId) {
-        this.invitedUserId = invitedUserId;
-    }
+    public void setInvitedUserId(long invitedUserId) {this.invitedUserId = invitedUserId;}
 
     public void setQuizType(QuizType quizType) {
         this.quizType = quizType;
@@ -88,7 +84,7 @@ public class Game {
         return "Game(gameId=" + this.getId() + ", invitingUser=" + this.getInvitingUserId() + ", invitedUser=" + this.getInvitedUserId() + ", questions=" + this.getQuestions() + ", quizType=" + this.getQuizType() + ", modeType=" + this.getModeType() + ")";
     }
 
-    public ArrayList<ArrayList<Long>> getResults() {
+    public Long[][] getResults() {
         long invitedUserPoints = 0L;
         long invitingUserPoints = 0L;
 
@@ -96,19 +92,9 @@ public class Game {
             invitedUserPoints += question.getPoints(invitedUserId);
             invitingUserPoints += question.getPoints(invitingUserId);
         }
-
-        ArrayList<Long> invitingUserScore = new ArrayList<>();
-        invitingUserScore.add(invitingUserId);
-        invitingUserScore.add(invitingUserPoints);
-
-        ArrayList<Long> invitedUserScore = new ArrayList<>();
-        invitedUserScore.add(invitedUserId);
-        invitedUserScore.add(invitedUserPoints);
-
-        ArrayList<ArrayList<Long>> result = new ArrayList<>();
-        result.add(invitingUserScore);
-        result.add(invitedUserScore);
-
-        return result;
+        //inviting User is at index 0
+        //invited User is at index 1
+        Long[][] userScores = {{invitingUserId,invitingUserPoints},{invitedUserId,invitedUserPoints}};
+        return userScores;
     }
 }
