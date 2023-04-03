@@ -1,22 +1,8 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
-import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
-import ch.uzh.ifi.hase.soprafs23.service.UserService;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONArray;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 
@@ -98,5 +84,10 @@ public class Game {
             userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + question.getPoints(userResultTuple.getInvitingPlayerId()));
         }
         return userResultTuple;
+    }
+
+    public void addAnswer(UserAnswerTuple userAnswerTuple) {
+        Question question = questions.pop();
+        question.addAnswer(userAnswerTuple);
     }
 }

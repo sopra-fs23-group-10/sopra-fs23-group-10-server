@@ -152,7 +152,7 @@ public class UserController {
     @ResponseBody
     public UserGetDTO logoutStatus(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token) {
         // verify token and get matching user
-        User user = userService.verifyToken(token);
+        User user = userService.verifyTokenWithId(token, userId);
 
         // set user status to OFFLINE
         userService.setOffline(user, userId);

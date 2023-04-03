@@ -1,9 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.rest.mapper;
 
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -77,9 +74,11 @@ public interface DTOMapper {
     @Mapping(target = "incorrectAnswers", ignore = true)
     QuestionDTO convertQuestionEntityToDTO(Question question);
 
-    @Mapping(source = "gameId", target = "gameId")
+
+    @Mapping(source = "userId", target = "userId")
     @Mapping(source = "questionId", target = "questionId")
     @Mapping(source = "answer", target = "answer")
-    QuestionResultDTO convertQuestionResultDTOtoEntitiy(QuestionResultDTO questionResultDTO);
+    @Mapping(source = "answeredTime", target = "answeredTime")
+    UserAnswerTuple convertUserAnswerDTOtoEntity(UserAnswerDTO userAnswerDTO);
 
 }

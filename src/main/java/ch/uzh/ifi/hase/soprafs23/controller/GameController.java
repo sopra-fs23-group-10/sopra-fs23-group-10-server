@@ -1,18 +1,16 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionResultDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserAnswerDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,23 +60,22 @@ public class GameController {
         return questionDTO1;
     }
 
-    @PostMapping("/game/question/{gameId}")
-    @ResponseStatus(HttpStatus.OK)
+
+    @PutMapping("/game/question/{gameId}")
+    @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void answerQuestion(@PathVariable long gameId, @RequestBody QuestionResultDTO questionResultDTO) {
-        QuestionResultDTO questionResultDTO1 = DTOMapper.INSTANCE.convertQuestionResultDTOtoEntitiy(questionResultDTO);
+    public UserAnswerTuple answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
+
+        userService.verifyToken(token);
+
+        UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
+
         Game currentGame = games.get(gameId);
+        if (currentGame == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
+        }
 
-        UserResultTuple gameResults = currentGame.getResults();
-        User invitedUser = userService.searchUserById(gameResults.getInvitedPlayerId());
-        User invitingUser = userService.searchUserById(gameResults.getInvitingPlayerId());
-
-        invitedUser.setPoints(invitedUser.getPoints() + gameResults.getInvitedPlayerResult());
-        invitingUser.setPoints(invitingUser.getPoints() + gameResults.getInvitingPlayerResult());
-
-        this.webSocketService.updatePoints(invitedUser.getPoints(),invitedUser.getId());
-        this.webSocketService.updatePoints(invitingUser.getPoints(),invitingUser.getId());
-
-        this.webSocketService.sendMessageToClients("/game/result/" + gameId, questionResultDTO);
+        currentGame.addAnswer(userAnswerTuple);
+        return userAnswerTuple;
     }
 }

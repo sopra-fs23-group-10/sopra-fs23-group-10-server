@@ -1,18 +1,20 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Question {
-    private long gameId;
     private Category category;
     private String id;
     private String correctAnswer;
     private String[] incorrectAnswers;
     private String[] allAnswers;
     private String question;
-    private ArrayList<QuestionResultTuple> results = new ArrayList<>();
+    private HashMap<Long, UserAnswerTuple> results = new HashMap<>();
 
     public Question(String id, Category category, String correctAnswer, String question, String[] incorrectAnswers) {
         this.category = category;
@@ -27,10 +29,6 @@ public class Question {
     }
 
     public Question() {
-    }
-
-    public long getGameId() {
-        return this.gameId;
     }
 
     public Category getCategory() {
@@ -57,12 +55,8 @@ public class Question {
         return this.question;
     }
 
-    public ArrayList<QuestionResultTuple> getResults() {
+    public HashMap<Long, UserAnswerTuple> getResults() {
         return this.results;
-    }
-
-    public void setGameId(long gameId) {
-        this.gameId = gameId;
     }
 
     public void setCategory(Category category) {
@@ -89,17 +83,26 @@ public class Question {
         this.question = question;
     }
 
-    public void setResults(ArrayList<QuestionResultTuple> results) {
+    public void setResults(HashMap<Long, UserAnswerTuple> results) {
         this.results = results;
     }
 
     public long getPoints(long userId) {
-        long addedScore = 0L;
-        for (QuestionResultTuple questionResultTuple : results) {
-            if (questionResultTuple.getUserId() == userId) {
-                addedScore += (long) questionResultTuple.getPoints();
+        long addedScore = 20L;
+        /*for (UserAnswerTuple userAnswerTuple : results) {
+            if (userAnswerTuple.getUserId() == userId) {
+                addedScore += (long) userAnswerTuple.getPoints();
             }
-        }
+        }*/
         return addedScore;
+    }
+
+    public void addAnswer(UserAnswerTuple userAnswerTuple) {
+        try {
+            results.put(userAnswerTuple.getUserId(), userAnswerTuple);
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
+        }
     }
 }

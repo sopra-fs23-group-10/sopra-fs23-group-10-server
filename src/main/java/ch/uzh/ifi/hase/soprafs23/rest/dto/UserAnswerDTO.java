@@ -1,13 +1,14 @@
 package ch.uzh.ifi.hase.soprafs23.rest.dto;
 
-public class QuestionResultDTO {
+public class UserAnswerDTO {
 
-    private long gameId;
+    private long userId;
     private String questionId;
     private String answer;
+    private float answeredTime;
 
-    public long getGameId() {
-        return this.gameId;
+    public long getUserId() {
+        return this.userId;
     }
 
     public String getQuestionId() {
@@ -18,8 +19,12 @@ public class QuestionResultDTO {
         return this.answer;
     }
 
-    public void setGameId(long gameId) {
-        this.gameId = gameId;
+    public float getAnsweredTime() {
+        return this.answeredTime;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public void setQuestionId(String questionId) {
@@ -28,5 +33,9 @@ public class QuestionResultDTO {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public void setAnsweredTime(float answeredTime) {
+        this.answeredTime = answeredTime;
     }
 }
