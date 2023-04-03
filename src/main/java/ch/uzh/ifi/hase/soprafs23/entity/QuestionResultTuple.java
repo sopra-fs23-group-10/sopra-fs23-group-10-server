@@ -1,12 +1,12 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
-public class ResultTuple {
+public class QuestionResultTuple {
     private final long userId;
     private final Boolean answeredCorrect;
     private final float answeredTime;
     private float points;
 
-    public ResultTuple(long userId, Boolean answeredCorrect, float answeredTime){
+    public QuestionResultTuple(long userId, Boolean answeredCorrect, float answeredTime){
         this.userId = userId;
         this.answeredCorrect = answeredCorrect;
         this.answeredTime = answeredTime;

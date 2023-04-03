@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
@@ -37,14 +38,14 @@ public class WebSocketController {
     @MessageMapping("/game/result/{gameId}")
     public void resultToUser(@DestinationVariable long GameId, GameDTO gameDTO) {
         Game currentGame = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gameDTO);
-        Long[][] resultOfGame = currentGame.getResults();
-        long additionalInvitedUserPoints = resultOfGame[1][1];
-        long additionalInvitingUserPoints = resultOfGame[0][1];
+
+        UserResultTuple gameResults = currentGame.getResults();
         User invitedUser = userService.searchUserById(gameDTO.getInvitedUserId());
         User invitingUser = userService.searchUserById(gameDTO.getInvitingUserId());
 
-        invitingUser.setPoints(invitingUser.getPoints()+additionalInvitingUserPoints);
-        invitedUser.setPoints(invitedUser.getPoints()+additionalInvitedUserPoints);
+        //TODO: Points in User DB should only be updated when a game ends completely, not between rounds
+        invitingUser.setPoints(invitingUser.getPoints() + gameResults.getInvitingPlayerResult());
+        invitedUser.setPoints(invitedUser.getPoints() + gameResults.getInvitedPlayerResult());
 
         this.webSocketService.updatePoints(invitedUser.getPoints(),invitedUser.getId());
         this.webSocketService.updatePoints(invitingUser.getPoints(),invitingUser.getId());

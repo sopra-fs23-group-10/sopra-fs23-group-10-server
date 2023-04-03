@@ -12,7 +12,7 @@ public class Question {
     private String[] incorrectAnswers;
     private String[] allAnswers;
     private String question;
-    private ArrayList<ResultTuple> results = new ArrayList<>();
+    private ArrayList<QuestionResultTuple> results = new ArrayList<>();
 
     public Question(String id, Category category, String correctAnswer, String question, String[] incorrectAnswers) {
         this.category = category;
@@ -57,7 +57,7 @@ public class Question {
         return this.question;
     }
 
-    public ArrayList<ResultTuple> getResults() {
+    public ArrayList<QuestionResultTuple> getResults() {
         return this.results;
     }
 
@@ -89,15 +89,15 @@ public class Question {
         this.question = question;
     }
 
-    public void setResults(ArrayList<ResultTuple> results) {
+    public void setResults(ArrayList<QuestionResultTuple> results) {
         this.results = results;
     }
 
     public long getPoints(long userId) {
         long addedScore = 0L;
-        for (ResultTuple resultTuple : results) {
-            if (resultTuple.getUserId() == userId) {
-                addedScore += (long) resultTuple.getPoints();
+        for (QuestionResultTuple questionResultTuple : results) {
+            if (questionResultTuple.getUserId() == userId) {
+                addedScore += (long) questionResultTuple.getPoints();
             }
         }
         return addedScore;

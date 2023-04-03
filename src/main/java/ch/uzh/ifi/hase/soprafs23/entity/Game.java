@@ -84,17 +84,19 @@ public class Game {
         return "Game(gameId=" + this.getId() + ", invitingUser=" + this.getInvitingUserId() + ", invitedUser=" + this.getInvitedUserId() + ", questions=" + this.getQuestions() + ", quizType=" + this.getQuizType() + ", modeType=" + this.getModeType() + ")";
     }
 
-    public Long[][] getResults() {
-        long invitedUserPoints = 0L;
-        long invitingUserPoints = 0L;
+    public UserResultTuple getResults() {
+
+        UserResultTuple userResultTuple = new UserResultTuple();
+
+        userResultTuple.setInvitedPlayerResult(0L);
+        userResultTuple.setInvitedPlayerId(invitedUserId);
+        userResultTuple.setInvitingPlayerResult(0L);
+        userResultTuple.setInvitingPlayerId(invitingUserId);
 
         for (Question question : questions) {
-            invitedUserPoints += question.getPoints(invitedUserId);
-            invitingUserPoints += question.getPoints(invitingUserId);
+            userResultTuple.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult() + question.getPoints(userResultTuple.getInvitedPlayerId()));
+            userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + question.getPoints(userResultTuple.getInvitingPlayerId()));
         }
-        //inviting User is at index 0
-        //invited User is at index 1
-        Long[][] userScores = {{invitingUserId,invitingUserPoints},{invitedUserId,invitedUserPoints}};
-        return userScores;
+        return userResultTuple;
     }
 }

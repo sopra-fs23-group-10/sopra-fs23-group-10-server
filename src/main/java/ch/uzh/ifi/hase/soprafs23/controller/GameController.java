@@ -3,8 +3,10 @@ package ch.uzh.ifi.hase.soprafs23.controller;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionResultDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
@@ -58,5 +60,25 @@ public class GameController {
         game.addQuestion(question);
         QuestionDTO questionDTO1 = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
         return questionDTO1;
+    }
+
+    @PostMapping("/game/question/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void answerQuestion(@PathVariable long gameId, @RequestBody QuestionResultDTO questionResultDTO) {
+        QuestionResultDTO questionResultDTO1 = DTOMapper.INSTANCE.convertQuestionResultDTOtoEntitiy(questionResultDTO);
+        Game currentGame = games.get(gameId);
+
+        UserResultTuple gameResults = currentGame.getResults();
+        User invitedUser = userService.searchUserById(gameResults.getInvitedPlayerId());
+        User invitingUser = userService.searchUserById(gameResults.getInvitingPlayerId());
+
+        invitedUser.setPoints(invitedUser.getPoints() + gameResults.getInvitedPlayerResult());
+        invitingUser.setPoints(invitingUser.getPoints() + gameResults.getInvitingPlayerResult());
+
+        this.webSocketService.updatePoints(invitedUser.getPoints(),invitedUser.getId());
+        this.webSocketService.updatePoints(invitingUser.getPoints(),invitingUser.getId());
+
+        this.webSocketService.sendMessageToClients("/game/result/" + gameId, questionResultDTO);
     }
 }
