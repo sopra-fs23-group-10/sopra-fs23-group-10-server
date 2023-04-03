@@ -692,7 +692,7 @@ public class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.verifyToken(user.getToken())).willReturn(user);
+        given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
         given(userService.searchUserById(user.getId())).willReturn(user);
 
         // when
