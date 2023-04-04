@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs23.service;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,5 +233,25 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized.");
         }
         user.setStatus(UserStatus.OFFLINE);
+    }
+    /**
+     * This method updates a user's points.
+     *
+     * @param userResultTuple
+     * @throws org.springframework.web.server.ResponseStatusException
+     */
+    public void updatePoints(UserResultTuple userResultTuple) {
+        User invitedUser = searchUserById(userResultTuple.getInvitedPlayerId());
+        User invitingUser = searchUserById(userResultTuple.getInvitingPlayerId());
+
+        long invitedUserPoints = invitedUser.getPoints()+userResultTuple.getInvitedPlayerResult();
+        long invitingUserPoints = invitingUser.getPoints()+userResultTuple.getInvitingPlayerResult();
+
+        userRepository.updatePoints(invitedUserPoints, invitedUser.getId());
+        userRepository.updatePoints(invitingUserPoints, invitingUser.getId());
+    }
+
+    public long getPoints(long userId) {
+        return userRepository.findUserById(userId).getPoints();
     }
 }

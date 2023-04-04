@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserAnswerDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
@@ -77,5 +78,49 @@ public class GameController {
 
         currentGame.addAnswer(userAnswerTuple);
         return userAnswerTuple;
+    }
+
+    @DeleteMapping("/game/finish/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserResultTupleDTO finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+        userService.verifyToken(token);
+        Game currentGame = games.get(gameId);
+        if (currentGame == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
+        }
+        UserResultTuple userResultTuple = currentGame.getResults();
+        userService.updatePoints(userResultTuple);
+        long invitingUserPoints = userService.getPoints(userResultTuple.getInvitingPlayerId());
+        long invitedUserPoints = userService.getPoints(userResultTuple.getInvitingPlayerId());
+
+        UserResultTuple finalResult = new UserResultTuple(gameId,userResultTuple.getInvitingPlayerId(),userResultTuple.getInvitingPlayerId());
+        finalResult.setInvitingPlayerResult(invitingUserPoints);
+        finalResult.setInvitedPlayerResult(invitedUserPoints);
+
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(finalResult);
+
+        webSocketController.endResultToUser(gameId, userResultTupleDTO);
+
+        return userResultTupleDTO;
+    }
+
+    @DeleteMapping("/game/intermediate/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserResultTupleDTO intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+        userService.verifyToken(token);
+        Game currentGame = games.get(gameId);
+        if (currentGame == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
+        }
+        UserResultTuple userResultTuple = currentGame.getResults();
+        userService.updatePoints(userResultTuple);
+
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+
+        webSocketController.endResultToUser(gameId, userResultTupleDTO);
+
+        return userResultTupleDTO;
     }
 }
