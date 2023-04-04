@@ -88,13 +88,11 @@ public class Question {
     }
 
     public long getPoints(long userId) {
-        long addedScore = 20L;
-        /*for (UserAnswerTuple userAnswerTuple : results) {
-            if (userAnswerTuple.getUserId() == userId) {
-                addedScore += (long) userAnswerTuple.getPoints();
-            }
-        }*/
-        return addedScore;
+
+        UserAnswerTuple answerTuple = results.get(userId);
+
+        return answerTuple.getAnswer().equals(this.correctAnswer) ?
+                10L/(long) answerTuple.getAnsweredTime() : 0L;
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {

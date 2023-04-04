@@ -15,7 +15,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/questions", "/invitations", "/topics")
+        registry.enableSimpleBroker("/questions", "/invitations", "/topics", "/game/result")
                 ;//.setTaskScheduler(heartBeatScheduler());
     }
 
