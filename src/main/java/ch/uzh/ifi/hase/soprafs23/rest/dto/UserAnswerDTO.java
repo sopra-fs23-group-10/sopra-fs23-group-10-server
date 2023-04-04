@@ -2,12 +2,12 @@ package ch.uzh.ifi.hase.soprafs23.rest.dto;
 
 public class UserAnswerDTO {
 
-    private long userId;
+    private Long userId;
     private String questionId;
     private String answer;
-    private float answeredTime;
+    private Long answeredTime;
 
-    public long getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
@@ -19,11 +19,11 @@ public class UserAnswerDTO {
         return this.answer;
     }
 
-    public float getAnsweredTime() {
+    public Long getAnsweredTime() {
         return this.answeredTime;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -35,7 +35,7 @@ public class UserAnswerDTO {
         this.answer = answer;
     }
 
-    public void setAnsweredTime(float answeredTime) {
+    public void setAnsweredTime(Long answeredTime) {
         this.answeredTime = answeredTime;
     }
 }

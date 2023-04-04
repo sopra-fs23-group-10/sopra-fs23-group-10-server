@@ -65,7 +65,7 @@ public class GameController {
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public UserAnswerTuple answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
+    public UserAnswerDTO answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
 
         userService.verifyToken(token);
 
@@ -77,7 +77,7 @@ public class GameController {
         }
 
         currentGame.addAnswer(userAnswerTuple);
-        return userAnswerTuple;
+        return DTOMapper.INSTANCE.convertUserAnswerEntitytoDTO(userAnswerTuple);
     }
 
     @DeleteMapping("/game/finish/{gameId}")

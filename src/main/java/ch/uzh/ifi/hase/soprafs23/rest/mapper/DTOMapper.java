@@ -81,6 +81,12 @@ public interface DTOMapper {
     @Mapping(source = "answeredTime", target = "answeredTime")
     UserAnswerTuple convertUserAnswerDTOtoEntity(UserAnswerDTO userAnswerDTO);
 
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "questionId", target = "questionId")
+    @Mapping(source = "answer", target = "answer")
+    @Mapping(source = "answeredTime", target = "answeredTime")
+    UserAnswerDTO convertUserAnswerEntitytoDTO(UserAnswerTuple userAnswerTuple);
+
     @Mapping(source = "gameId", target = "gameId")
     @Mapping(source = "invitingPlayerId", target = "invitingPlayerId")
     @Mapping(source = "invitingPlayerResult", target = "invitingPlayerResult")

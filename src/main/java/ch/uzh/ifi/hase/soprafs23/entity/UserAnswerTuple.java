@@ -4,9 +4,9 @@ public class UserAnswerTuple {
     private long userId;
     private String questionId;
     private String answer;
-    private float answeredTime;
+    private Long answeredTime;
 
-    public UserAnswerTuple(long userId, String questionId, String answer, float answeredTime) {
+    public UserAnswerTuple(long userId, String questionId, String answer, long answeredTime) {
         this.userId = userId;
         this.questionId = questionId;
         this.answer = answer;
@@ -32,7 +32,7 @@ public class UserAnswerTuple {
         return this.answer;
     }
 
-    public float getAnsweredTime() {
+    public Long getAnsweredTime() {
         return this.answeredTime;
     }
 
@@ -48,7 +48,7 @@ public class UserAnswerTuple {
         this.answer = answer;
     }
 
-    public void setAnsweredTime(float answeredTime) {
+    public void setAnsweredTime(Long answeredTime) {
         this.answeredTime = answeredTime;
     }
 }
