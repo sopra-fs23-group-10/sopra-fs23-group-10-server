@@ -57,8 +57,8 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token) throws IOException {
         Game game = games.get(questionDTO.getGameId());
-        User invitedUser = userService.searchUserById(game.getInvitedUserId());
-        User invitingUser = userService.searchUserById(game.getInvitingUserId());
+        userService.searchUserById(game.getInvitedUserId());
+        userService.searchUserById(game.getInvitingUserId());
         Question question = gameService.getQuestion(questionDTO.getCategory());
         game.addQuestion(question);
         return DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
