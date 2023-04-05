@@ -48,7 +48,6 @@ public class GameService {
             System.err.println("Error sending HTTP request: " + e.getMessage());
             return null;
         }
-
         if (response.statusCode() == 200) {
             try {
                 JSONArray jsonArray = new JSONArray(response.body());
