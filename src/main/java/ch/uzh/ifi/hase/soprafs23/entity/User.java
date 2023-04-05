@@ -33,7 +33,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)//, columnDefinition = "long default 0L")
-    private long points;
+    private Long points;
     @Column(nullable = false)
     private UserStatus status;
     @Column(nullable = false, unique = true)

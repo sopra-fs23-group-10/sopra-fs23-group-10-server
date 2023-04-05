@@ -178,4 +178,37 @@ public class UserRepositoryIntegrationTest {
         // then
         assertNull(found);
     }
+
+    @Test
+    public void updatePoints_success() {
+        // given
+        User user = new User();
+        user.setUsername("firstname@lastname");
+        user.setPassword("testPassword");
+        user.setEmail("email@email.com");
+        user.setPoints(0L);
+        user.setProfilePicture("firstname@lastname");
+        user.setStatus(UserStatus.OFFLINE);
+        user.setToken("1");
+
+        entityManager.persist(user);
+        entityManager.flush();
+
+        user.setPoints(4L);
+
+        // when
+        userRepository.updatePoints(4L,user.getId());
+        User found = userRepository.findUserById(user.getId());
+
+        // then
+        assertEquals(found.getId(), user.getId());
+        assertEquals(found.getUsername(), user.getUsername());
+        assertEquals(found.getPassword(), user.getPassword());
+        assertEquals(found.getEmail(), user.getEmail());
+        assertEquals(found.getPoints(), 4L);
+        assertEquals(found.getProfilePicture(), user.getProfilePicture());
+        assertEquals(found.getId(), user.getId());
+        assertEquals(found.getToken(), user.getToken());
+        assertEquals(found.getStatus(), user.getStatus());
+    }
 }

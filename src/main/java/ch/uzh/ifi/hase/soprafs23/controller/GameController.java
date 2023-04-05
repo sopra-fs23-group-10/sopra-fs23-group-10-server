@@ -92,9 +92,9 @@ public class GameController {
         UserResultTuple userResultTuple = currentGame.getResults();
         userService.updatePoints(userResultTuple);
         long invitingUserPoints = userService.getPoints(userResultTuple.getInvitingPlayerId());
-        long invitedUserPoints = userService.getPoints(userResultTuple.getInvitingPlayerId());
+        long invitedUserPoints = userService.getPoints(userResultTuple.getInvitedPlayerId());
 
-        UserResultTuple finalResult = new UserResultTuple(gameId,userResultTuple.getInvitingPlayerId(),userResultTuple.getInvitingPlayerId());
+        UserResultTuple finalResult = new UserResultTuple(gameId,userResultTuple.getInvitingPlayerId(),userResultTuple.getInvitedPlayerId());
         finalResult.setInvitingPlayerResult(invitingUserPoints);
         finalResult.setInvitedPlayerResult(invitedUserPoints);
 
@@ -105,7 +105,7 @@ public class GameController {
         return userResultTupleDTO;
     }
 
-    @DeleteMapping("/game/intermediate/{gameId}")
+    @PutMapping("/game/intermediate/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserResultTupleDTO intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
