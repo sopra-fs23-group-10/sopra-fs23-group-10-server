@@ -33,6 +33,10 @@ public class GameController {
         this.webSocketController = webSocketController;
     }
 
+    protected HashMap<Long, Game> getGames() {
+        return games;
+    }
+
     @PostMapping("/game/creation")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -49,7 +53,7 @@ public class GameController {
 
 
     @PostMapping("/game/topics")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token) throws IOException {
         Game game = games.get(questionDTO.getGameId());
@@ -57,8 +61,7 @@ public class GameController {
         User invitingUser = userService.searchUserById(game.getInvitingUserId());
         Question question = gameService.getQuestion(questionDTO.getCategory());
         game.addQuestion(question);
-        QuestionDTO questionDTO1 = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
-        return questionDTO1;
+        return DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
     }
 
 
