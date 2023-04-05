@@ -78,47 +78,6 @@ public class GameControllerTest {
     @Autowired
     private GameController gameController;
 
-    /*
-    @Test
-    public void answerQuestion_whenQuestionNotAnswered_thenReturnTuple_200() throws Exception {
-        // given
-        Game game = new Game(1L, 1L, 2L, quizType, "DUEL");
-
-        User user1 = new User();
-        user1.setId(1L);
-        user1.setUsername("testUsername");
-        user1.setPassword("testPassword");
-        user1.setPoints(2L);
-        user1.setEmail("email@email.com");
-        user1.setProfilePicture("testUsername");
-        user1.setToken("1");
-        user1.setStatus(UserStatus.IN_GAME);
-
-        UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
-        userAnswerDTO.setUserId(user1.getId());
-        userAnswerDTO.setQuestionId("questionID");
-        userAnswerDTO.setAnswer("someAnswer");
-        userAnswerDTO.setAnsweredTime(112L);
-
-        games.put(game.getId(), game);
-
-        // set up userService to throw the exception
-        given(userService.verifyToken(Mockito.any())).willReturn(user1);
-
-
-        // when/then -> build the post request
-        MockHttpServletRequestBuilder postRequest = put("/game/question/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userAnswerDTO));
-
-        // then
-        mockMvc.perform(postRequest).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.userId", is(user1.getId())))
-                .andExpect(jsonPath("$.questionId", is(userAnswerDTO.getQuestionId())))
-                .andExpect(jsonPath("$.answer", is(userAnswerDTO.getAnswer())))
-                .andExpect(jsonPath("$.answeredTime", is(userAnswerDTO.getAnsweredTime().toString())));
-    }*/
-
     private String asJsonString(final Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);
@@ -155,7 +114,6 @@ public class GameControllerTest {
         questionDTO.setCategory(Category.GENERAL_KNOWLEDGE);
         questionDTO.setGameId(0);
 
-        //given(DTOMapper.INSTANCE.convertQuestionEntityToDTO(question)).willReturn(questionDTO);
         given(userService.searchUserById(Mockito.any())).willReturn(new User());
         given(gameService.getQuestion(Mockito.any())).willReturn(question);
 
