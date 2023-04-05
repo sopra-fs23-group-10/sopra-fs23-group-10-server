@@ -40,15 +40,15 @@ public class GameController {
     @PostMapping("/game/creation")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GameDTO createGame(@RequestBody GameDTO gameDTO, @RequestHeader("token") String token) {
-        User invitedUser = userService.searchUserById(gameDTO.getInvitedUserId());
-        User invitingUser = userService.searchUserById(gameDTO.getInvitingUserId());
-        Game game = new Game(this.index, invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType());
+    public GameDTO createGame(@RequestBody GameDTO requestedGameDTO, @RequestHeader("token") String token) {
+        User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
+        User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
+        Game game = new Game(this.index, invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
         this.index ++;
         this.games.put(game.getId(), game);
-        gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
-        webSocketController.inviteUser(game.getInvitedUserId(), gameDTO );
-        return gameDTO;
+        GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
+        webSocketController.inviteUser(game.getInvitedUserId(), createdGameDTO);
+        return createdGameDTO;
     }
 
 
