@@ -2,9 +2,9 @@ package ch.uzh.ifi.hase.soprafs23.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserPutDTO;
+import ch.uzh.ifi.hase.soprafs23.entity.UserAnswerTuple;
+import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -92,5 +92,55 @@ public class DTOMapperTest {
 
         // check content
         assertEquals(userPutDTO.getUsername(), user.getUsername());
+    }
+
+    @Test
+    public void testUserResultTuple_fromEntityToDTO_success() {
+        // create UserPutDTO
+        UserResultTuple userResultTuple = new UserResultTuple(1L,1L,2L);
+
+        // MAP -> Create user
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+
+        // check content
+        assertEquals(userResultTuple.getGameId(), userResultTupleDTO.getGameId());
+        assertEquals(userResultTuple.getInvitingPlayerId(), userResultTupleDTO.getInvitingPlayerId());
+        assertEquals(userResultTuple.getInvitingPlayerResult(), userResultTupleDTO.getInvitingPlayerResult());
+        assertEquals(userResultTuple.getInvitedPlayerId(), userResultTupleDTO.getInvitedPlayerId());
+        assertEquals(userResultTuple.getInvitedPlayerResult(), userResultTupleDTO.getInvitedPlayerResult());
+    }
+
+    @Test
+    public void testUserAnswerTuple_fromEntityToDTO_success() {
+        // create UserPutDTO
+        UserAnswerTuple userAnswerTuple = new UserAnswerTuple(1L,"Is it ture?","True",10L);
+
+        // MAP -> Create user
+        UserAnswerDTO userAnswerTupleDTO = DTOMapper.INSTANCE.convertUserAnswerEntitytoDTO(userAnswerTuple);
+
+        // check content
+        assertEquals(userAnswerTuple.getUserId(), userAnswerTupleDTO.getUserId());
+        assertEquals(userAnswerTuple.getQuestionId(), userAnswerTupleDTO.getQuestionId());
+        assertEquals(userAnswerTuple.getAnswer(), userAnswerTupleDTO.getAnswer());
+        assertEquals(userAnswerTuple.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
+    }
+
+    @Test
+    public void testUserAnswerTupleDTO_fromDTOToEntity_success() {
+        // create UserPutDTO
+        UserAnswerDTO userAnswerTupleDTO = new UserAnswerDTO();
+        userAnswerTupleDTO.setUserId(1L);
+        userAnswerTupleDTO.setQuestionId("1");
+        userAnswerTupleDTO.setAnswer("True");
+        userAnswerTupleDTO.setAnsweredTime(10L);
+
+        // MAP -> Create user
+        UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerTupleDTO);
+
+        // check content
+        assertEquals(userAnswerTuple.getUserId(), userAnswerTupleDTO.getUserId());
+        assertEquals(userAnswerTuple.getQuestionId(), userAnswerTupleDTO.getQuestionId());
+        assertEquals(userAnswerTuple.getAnswer(), userAnswerTupleDTO.getAnswer());
+        assertEquals(userAnswerTuple.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
     }
 }
