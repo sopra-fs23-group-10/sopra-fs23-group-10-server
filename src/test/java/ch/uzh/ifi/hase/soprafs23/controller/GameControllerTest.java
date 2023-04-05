@@ -174,7 +174,5 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$.incorrectAnswers").value(nullValue()))
                 .andExpect(jsonPath("$.allAnswers", containsInAnyOrder("me", "you", "allOfUs", "WhoKnows?")))
                 .andExpect(jsonPath("$.question", is(question.getQuestion())));
-
     }
-
 }
