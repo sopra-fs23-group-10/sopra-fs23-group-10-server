@@ -88,9 +88,7 @@ public class Question {
     }
 
     public long getPoints(long userId) {
-
         UserAnswerTuple answerTuple = results.get(userId);
-
         return answerTuple.getAnswer().equals(this.correctAnswer) ?
                 10L/(long) answerTuple.getAnsweredTime() : 0L;
     }
@@ -102,5 +100,9 @@ public class Question {
         catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
         }
+    }
+
+    public Boolean completelyAnswered(){
+        return results.size() >= 2;
     }
 }

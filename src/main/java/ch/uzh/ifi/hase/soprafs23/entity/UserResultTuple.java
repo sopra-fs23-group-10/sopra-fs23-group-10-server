@@ -1,11 +1,19 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
+import org.springframework.data.util.Pair;
+
+import java.util.ArrayList;
+
 public class UserResultTuple {
     private long gameId;
     private long invitingPlayerId;
     private long invitingPlayerResult;
     private long invitedPlayerId;
     private long invitedPlayerResult;
+
+    private ArrayList<Pair<Integer, Long>> invitedPlayerHistory = new ArrayList<>();
+    private ArrayList<Pair<Integer, Long>> invitingPlayerHistory = new ArrayList<>();
+
 
     public UserResultTuple(long gameId, long invitingPlayerId, long invitedPlayerId) {
         this.gameId = gameId;

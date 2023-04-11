@@ -1,12 +1,8 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
-import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
-import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
 import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
@@ -47,7 +43,7 @@ public class WebSocketController {
     }
 
     @MessageMapping("/game/finalResult/{gameId}")
-    public void endResultToUser(@DestinationVariable long GameId, UserResultTupleDTO userResultTupleDTO) {
+    public void resultToUser(@DestinationVariable long GameId, UserResultTupleDTO userResultTupleDTO) {
 
         this.webSocketService.sendMessageToClients("/game/result/" + GameId, userResultTupleDTO);
     }

@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.Stack;
 
 
@@ -14,15 +16,24 @@ public class Game {
     private QuizType quizType;
     private ModeType modeType;
 
+    private Date lastChange;
+
     public Game(long gameId, long invitingUserId, long invitedUserId, QuizType quizType, ModeType modeType) {
         this.id = gameId;
         this.invitingUserId = invitingUserId;
         this.invitedUserId = invitedUserId;
         this.quizType = quizType;
         this.modeType = modeType;
+        this.lastChange = new Date();
     }
 
     public Game() {}
+
+    private Boolean timeRunUp(){
+        long seconds = (new Date().getTime()-this.lastChange.getTime())/1000;
+        this.lastChange = seconds > 20 ? this.lastChange : new Date();
+        return seconds > 20;
+    }
 
     public void addQuestion(Question question){
         questions.add(question);
@@ -71,9 +82,7 @@ public class Game {
     }
 
     public UserResultTuple getResults() {
-
         UserResultTuple userResultTuple = new UserResultTuple(this.id, invitedUserId,invitingUserId);
-
         for (Question question : questions) {
             userResultTuple.setInvitedPlayerResult(question.getPoints(this.invitedUserId));
             userResultTuple.setInvitingPlayerResult(question.getPoints(this.invitingUserId));
@@ -82,7 +91,24 @@ public class Game {
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
-        Question question = questions.pop();
-        question.addAnswer(userAnswerTuple);
+        if(timeRunUp()){
+            Question question = questions.peek();
+            question.addAnswer(
+                    new UserAnswerTuple(userAnswerTuple.getUserId(),
+                            userAnswerTuple.getQuestionId(),
+                            "WrongAnswerAnyway",
+                            1000L
+                    )
+            );
+        }
+        else {
+            Question question = questions.peek();
+            question.addAnswer(userAnswerTuple);
+        }
+
+    }
+
+    public Boolean completelyAnswered(){
+        return questions.peek().completelyAnswered();
     }
 }
