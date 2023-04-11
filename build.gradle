@@ -3,7 +3,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'idea'
-    id "org.sonarqube" version "3.1.1"
+    id 'jacoco'
+    id "org.sonarqube" version "3.5.0.2730"
 }
 
 group 'ch.uzh.ifi.hasel'
@@ -60,6 +61,20 @@ dependencies {
 
 bootJar {
     archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "sopra-fs23-group-10_sopra-fs23-group-10-server"
+        property "sonar.organization", "sopra-fs23-group-10"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
 }
 
 test {
