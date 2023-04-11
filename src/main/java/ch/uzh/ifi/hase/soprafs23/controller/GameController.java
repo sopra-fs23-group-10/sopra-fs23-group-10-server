@@ -89,7 +89,7 @@ public class GameController {
         }
         return userResultTuple;
     }
-    
+
     @GetMapping("game/online/{gameId}")
     @ResponseStatus
     public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
