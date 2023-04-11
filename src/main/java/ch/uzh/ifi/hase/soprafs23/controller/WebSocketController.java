@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
+import ch.uzh.ifi.hase.soprafs23.WebSockets.WebSocketSessionRegistry;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
@@ -8,18 +9,20 @@ import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class WebSocketController {
     private final UserService userService;
     private final GameService gameService;
+
+    @Autowired
+    private WebSocketSessionRegistry sessionRegistry;
     private final WebSocketService webSocketService;
-    Logger log = LoggerFactory.getLogger(WebSocketController.class);
 
     public WebSocketController(UserService userService, GameService gameService, WebSocketService webSocketService) {
         this.userService = userService;
@@ -46,5 +49,19 @@ public class WebSocketController {
     public void resultToUser(@DestinationVariable long GameId, UserResultTupleDTO userResultTupleDTO) {
 
         this.webSocketService.sendMessageToClients("/game/result/" + GameId, userResultTupleDTO);
+    }
+
+    @MessageMapping("/register")
+    public void register(@Payload String userId) {
+        Long id = Long.parseLong(userId);
+        userService.setOnline(userService.searchUserById(id));
+        System.out.printf("User with userID: %s has logged IN", userId);
+    }
+
+    @MessageMapping("/unregister")
+    public void unregister(@Payload String userId) {
+        Long id = Long.parseLong(userId);
+        userService.setOffline(userService.searchUserById(id), id);
+        System.out.printf("User with userID: %s has logged OUT", userId);
     }
 }

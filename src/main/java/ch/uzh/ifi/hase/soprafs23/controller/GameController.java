@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
+import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
@@ -26,22 +27,14 @@ public class GameController {
     private final UserService userService;
     private final WebSocketService webSocketService;
     private final WebSocketController webSocketController;
-
-    @Autowired
-    private final WebSocketSessionHandler webSocketSessionHandler;
     private final HashMap<Long, Game> games = new HashMap<>();
     private long index = 0;
 
-    GameController(GameService gameService, UserService userService, WebSocketService webSocketService, WebSocketController webSocketController, WebSocketSessionHandler webSocketSessionHandler) {
+    GameController(GameService gameService, UserService userService, WebSocketService webSocketService, WebSocketController webSocketController) {
         this.gameService = gameService;
         this.userService = userService;
         this.webSocketService = webSocketService;
         this.webSocketController = webSocketController;
-        this.webSocketSessionHandler = webSocketSessionHandler;
-    }
-
-    private boolean isUserConnected(long userId) {
-        return webSocketSessionHandler.isClientConnected(userId);
     }
 
     protected HashMap<Long, Game> getGames() {
@@ -96,20 +89,17 @@ public class GameController {
         }
         return userResultTuple;
     }
-
+    
     @GetMapping("game/online/{gameId}")
     @ResponseStatus
     public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
         Game game = games.get(gameId);
-        boolean invitingUserIsConnected = isUserConnected(game.getInvitingUserId());
-        boolean invitedUserIsConnected = isUserConnected(game.getInvitedUserId());
         return Collections.singletonMap(
                 "status",
-                invitingUserIsConnected && invitedUserIsConnected
+                userService.searchUserById(game.getInvitingUserId()).getStatus().equals(UserStatus.ONLINE)
+                && userService.searchUserById(game.getInvitedUserId()).getStatus().equals(UserStatus.ONLINE)
         );
     }
-
-
 
     @DeleteMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
