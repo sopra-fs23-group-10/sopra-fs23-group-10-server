@@ -35,6 +35,11 @@ public class WebSocketController {
         this.webSocketService.sendMessageToClients("/invitations/" + invitedUserId, gameDTO);
     }
 
+    @MessageMapping("/game/topicSelection/{userId}")
+    public void sendTopicSelection(@DestinationVariable Long invitingUserId, GameDTO gameDTO) {
+        this.webSocketService.sendMessageToClients("/game/topicSelection/" + invitingUserId, gameDTO);
+    }
+
     @MessageMapping("/game/intermediateResult/{gameId}")
     public void resultToUser(@DestinationVariable long GameId, GameDTO gameDTO) {
         Game currentGame = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gameDTO);

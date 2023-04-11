@@ -55,6 +55,26 @@ public class GameController {
         return createdGameDTO;
     }
 
+    @PostMapping("/game/invitation/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameDTO sendTopicSelection(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token) {
+        userService.verifyToken(token);
+
+        Game game = this.games.get(gameId);
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
+        }
+
+        GameDTO gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
+
+        if (response) {
+            webSocketController.sendTopicSelection(game.getNextPlayer(), gameDTO);
+        }
+        //TODO: Terminate game and inform inviting User when invited User declines
+        return gameDTO;
+    }
+
 
     @PostMapping("/game/topics")
     @ResponseStatus(HttpStatus.CREATED)
