@@ -57,6 +57,8 @@ dependencies {
 
     implementation 'org.springframework:spring-context:5.3.14'
 
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.postgresql:postgresql:42.3.1'
 
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.json:json:20210307'
@@ -91,8 +93,6 @@ if (secretPropsFile.exists()) {
     Properties p = new Properties()
     p.load(new FileInputStream(secretPropsFile))
     p.each { name, value ->
-        ext[name] = value
+        ext[name as String] = value
     }
 }
-
-defaultTasks 'bootJar', 'build'

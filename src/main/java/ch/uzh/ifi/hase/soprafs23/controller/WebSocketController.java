@@ -47,7 +47,6 @@ public class WebSocketController {
 
     @MessageMapping("/game/finalResult/{gameId}")
     public void resultToUser(@DestinationVariable long GameId, UserResultTupleDTO userResultTupleDTO) {
-
         this.webSocketService.sendMessageToClients("/game/result/" + GameId, userResultTupleDTO);
     }
 
@@ -55,13 +54,13 @@ public class WebSocketController {
     public void register(@Payload String userId) {
         Long id = Long.parseLong(userId);
         userService.setOnline(userService.searchUserById(id));
-        System.out.printf("User with userID: %s has logged IN", userId);
+        System.out.printf("User with userID: %s has logged IN\n", userId);
     }
 
     @MessageMapping("/unregister")
     public void unregister(@Payload String userId) {
         Long id = Long.parseLong(userId);
         userService.setOffline(userService.searchUserById(id), id);
-        System.out.printf("User with userID: %s has logged OUT", userId);
+        System.out.printf("User with userID: %s has logged OUT\n", userId);
     }
 }
