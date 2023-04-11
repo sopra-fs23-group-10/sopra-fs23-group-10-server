@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
+import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
@@ -9,12 +10,15 @@ import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class GameController {
@@ -68,19 +72,33 @@ public class GameController {
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public UserAnswerDTO answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
-
+    public UserResultTuple answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-
         Game currentGame = games.get(gameId);
         if (currentGame == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
         }
+        UserResultTuple userResultTuple = currentGame.getResults();
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+        if (currentGame.completelyAnswered()){
+            webSocketController.resultToUser(gameId, userResultTupleDTO);
+        }
+        else {
+            currentGame.addAnswer(userAnswerTuple);
+        }
+        return userResultTuple;
+    }
 
-        currentGame.addAnswer(userAnswerTuple);
-        return DTOMapper.INSTANCE.convertUserAnswerEntitytoDTO(userAnswerTuple);
+    @GetMapping("game/online/{gameId}")
+    @ResponseStatus
+    public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
+        Game game = games.get(gameId);
+        return Collections.singletonMap(
+                "status",
+                userService.searchUserById(game.getInvitingUserId()).getStatus().equals(UserStatus.ONLINE)
+                && userService.searchUserById(game.getInvitedUserId()).getStatus().equals(UserStatus.ONLINE)
+        );
     }
 
     @DeleteMapping("/game/finish/{gameId}")
@@ -103,7 +121,7 @@ public class GameController {
 
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(finalResult);
 
-        webSocketController.endResultToUser(gameId, userResultTupleDTO);
+        webSocketController.resultToUser(gameId, userResultTupleDTO);
 
         return userResultTupleDTO;
     }
@@ -118,11 +136,13 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
         }
         UserResultTuple userResultTuple = currentGame.getResults();
-        userService.updatePoints(userResultTuple);
+
+        // TODO: why is this line needed? I think the logic is wrong with it, the poinst should not get updated.
+        //userService.updatePoints(userResultTuple);
 
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
 
-        webSocketController.endResultToUser(gameId, userResultTupleDTO);
+        webSocketController.resultToUser(gameId, userResultTupleDTO);
 
         return userResultTupleDTO;
     }

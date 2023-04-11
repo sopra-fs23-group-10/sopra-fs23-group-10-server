@@ -55,7 +55,10 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
-	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.springframework:spring-context:5.3.14'
+
+
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.json:json:20210307'
 }
 
