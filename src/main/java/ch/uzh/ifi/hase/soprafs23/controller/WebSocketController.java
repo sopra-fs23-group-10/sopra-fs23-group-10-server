@@ -15,6 +15,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
+import java.util.Map;
+
 @Controller
 public class WebSocketController {
     private final UserService userService;
@@ -35,9 +37,9 @@ public class WebSocketController {
         this.webSocketService.sendMessageToClients("/invitations/" + invitedUserId, gameDTO);
     }
 
-    @MessageMapping("/game/topicSelection/{userId}")
-    public void sendTopicSelection(@DestinationVariable Long invitingUserId, GameDTO gameDTO) {
-        this.webSocketService.sendMessageToClients("/game/topicSelection/" + invitingUserId, gameDTO);
+    @MessageMapping("/invitation/answer/{userId}")
+    public void sendGameStart(@DestinationVariable Long userId, GameDTO gameDTO) {
+        this.webSocketService.sendMessageToClients("/invitation/answer/" + userId, gameDTO);
     }
 
     @MessageMapping("/game/intermediateResult/{gameId}")

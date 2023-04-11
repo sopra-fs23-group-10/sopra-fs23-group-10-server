@@ -58,7 +58,7 @@ public class GameController {
     @PostMapping("/game/invitation/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameDTO sendTopicSelection(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token) {
+    public GameDTO sendInvitationAnswer(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token) {
         userService.verifyToken(token);
 
         Game game = this.games.get(gameId);
@@ -67,9 +67,11 @@ public class GameController {
         }
 
         GameDTO gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
+        game.getNextPlayer();
 
         if (response) {
-            webSocketController.sendTopicSelection(game.getNextPlayer(), gameDTO);
+            webSocketController.sendGameStart(game.getInvitedUserId(), gameDTO);
+            webSocketController.sendGameStart(game.getInvitingUserId(), gameDTO);
         }
         //TODO: Terminate game and inform inviting User when invited User declines
         return gameDTO;
@@ -101,7 +103,7 @@ public class GameController {
         }
         UserResultTuple userResultTuple = currentGame.getResults();
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
-        if (currentGame.completelyAnswered()){
+        if (currentGame.completelyAnswered()) {
             webSocketController.resultToUser(gameId, userResultTupleDTO);
         }
         else {
