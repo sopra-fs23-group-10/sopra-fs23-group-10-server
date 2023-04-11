@@ -47,7 +47,6 @@ public class WebSocketController {
 
     @MessageMapping("/game/finalResult/{gameId}")
     public void resultToUser(@DestinationVariable long GameId, UserResultTupleDTO userResultTupleDTO) {
-
         this.webSocketService.sendMessageToClients("/game/result/" + GameId, userResultTupleDTO);
     }
 
