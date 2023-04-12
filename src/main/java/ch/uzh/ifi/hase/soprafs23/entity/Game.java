@@ -32,7 +32,7 @@ public class Game {
 
     public Game() {}
 
-    private Boolean timeRunUp(){
+    private boolean timeRunUp(){
         long seconds = (new Date().getTime()-this.lastChange.getTime())/1000;
         this.lastChange = seconds > 20 ? this.lastChange : new Date();
         return seconds > 20;

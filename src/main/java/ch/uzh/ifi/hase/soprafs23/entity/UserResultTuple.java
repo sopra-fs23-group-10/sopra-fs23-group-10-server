@@ -11,10 +11,6 @@ public class UserResultTuple {
     private long invitedPlayerId;
     private long invitedPlayerResult;
 
-    private ArrayList<Pair<Integer, Long>> invitedPlayerHistory = new ArrayList<>();
-    private ArrayList<Pair<Integer, Long>> invitingPlayerHistory = new ArrayList<>();
-
-
     public UserResultTuple(long gameId, long invitingPlayerId, long invitedPlayerId) {
         this.gameId = gameId;
         this.invitingPlayerId = invitingPlayerId;

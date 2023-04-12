@@ -23,13 +23,8 @@ import java.net.http.HttpResponse;
 @Transactional
 public class GameService {
 
-    private final Logger log = LoggerFactory.getLogger(GameService.class);
-    private final UserRepository userRepository;
-
     @Autowired
-    public GameService(@Qualifier("userRepository") UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    public GameService() {}
 
     public Question getQuestion(Category category) {
         HttpClient client = HttpClient.newHttpClient();

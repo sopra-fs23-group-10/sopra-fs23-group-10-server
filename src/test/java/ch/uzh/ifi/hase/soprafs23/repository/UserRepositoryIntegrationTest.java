@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class UserRepositoryIntegrationTest {
+class UserRepositoryIntegrationTest {
 
   @Autowired
   private TestEntityManager entityManager;
@@ -19,7 +19,7 @@ public class UserRepositoryIntegrationTest {
   private UserRepository userRepository;
 
   @Test
-  public void findByUsername_success() {
+  void findByUsername_success() {
     // given
     User user = new User();
     user.setUsername("firstname@lastname");
@@ -49,7 +49,7 @@ public class UserRepositoryIntegrationTest {
   }
 
     @Test
-    public void findByUsername_failure() {
+    void findByUsername_failure() {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -71,7 +71,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    public void findUserById_success() {
+    void findUserById_success() {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -101,7 +101,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    public void findUserById_failure() {
+    void findUserById_failure() {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -123,7 +123,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    public void findUserByToken_success() {
+    void findUserByToken_success() {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -153,7 +153,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    public void findUserByToken_failure() {
+    void findUserByToken_failure() {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -176,7 +176,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    public void updatePoints_success() {
+    void updatePoints_success() {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -201,7 +201,7 @@ public class UserRepositoryIntegrationTest {
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getPassword(), user.getPassword());
         assertEquals(found.getEmail(), user.getEmail());
-        assertEquals(found.getPoints(), 4L);
+        assertEquals(4L, found.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());

@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Tests if the mapping between the internal and the external/API representation
  * works.
  */
-public class DTOMapperTest {
+class DTOMapperTest {
   @Test
-  public void testCreateUser_fromUserPostDTO_toUser_success() {
+  void testCreateUser_fromUserPostDTO_toUser_success() {
     // create UserPostDTO
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setUsername("username");
@@ -34,7 +34,7 @@ public class DTOMapperTest {
   }
 
   @Test
-  public void testGetUser_fromUser_toUserGetDTO_success() {
+  void testGetUser_fromUser_toUserGetDTO_success() {
     // create User
     User user = new User();
     user.setUsername("firstname@lastname");
@@ -56,7 +56,7 @@ public class DTOMapperTest {
   }
 
     @Test
-    public void testGetUser_fromUser_toUserGetDTONoToken_success() {
+    void testGetUser_fromUser_toUserGetDTONoToken_success() {
         // create User
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -79,7 +79,7 @@ public class DTOMapperTest {
     }
 
     @Test
-    public void testCreateUser_fromUserPutDTO_toUser_success() {
+    void testCreateUser_fromUserPutDTO_toUser_success() {
         // create UserPutDTO
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("username");
@@ -92,7 +92,7 @@ public class DTOMapperTest {
     }
 
     @Test
-    public void testUserResultTuple_fromEntityToDTO_success() {
+    void testUserResultTuple_fromEntityToDTO_success() {
         // create UserPutDTO
         UserResultTuple userResultTuple = new UserResultTuple(1L,1L,2L);
 
@@ -108,7 +108,7 @@ public class DTOMapperTest {
     }
 
     @Test
-    public void testUserAnswerTuple_fromEntityToDTO_success() {
+    void testUserAnswerTuple_fromEntityToDTO_success() {
         // create UserPutDTO
         UserAnswerTuple userAnswerTuple = new UserAnswerTuple(1L,"Is it ture?","True",10L);
 
@@ -123,7 +123,7 @@ public class DTOMapperTest {
     }
 
     @Test
-    public void testUserAnswerTupleDTO_fromDTOToEntity_success() {
+    void testUserAnswerTupleDTO_fromDTOToEntity_success() {
         // create UserPutDTO
         UserAnswerDTO userAnswerTupleDTO = new UserAnswerDTO();
         userAnswerTupleDTO.setUserId(1L);

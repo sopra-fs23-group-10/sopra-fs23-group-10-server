@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -86,7 +86,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenUserExists_thenThrowsConflict_409() throws Exception {
+    void createUser_whenUserExists_thenThrowsConflict_409() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -117,7 +117,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenEmptyUsername_thenThrowsForbidden_403() throws Exception {
+    void createUser_whenEmptyUsername_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -147,7 +147,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenNullUsername_thenThrowsForbidden_403() throws Exception {
+    void createUser_whenNullUsername_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -177,7 +177,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenEmptyPassword_thenThrowsForbidden_403() throws Exception {
+    void createUser_whenEmptyPassword_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -207,7 +207,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenNullPassword_thenThrowsForbidden_403() throws Exception {
+    void createUser_whenNullPassword_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -237,7 +237,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenEmptyEmail_thenThrowsForbidden_403() throws Exception {
+    void createUser_whenEmptyEmail_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -267,7 +267,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_whenNullEmail_thenThrowsForbidden_403() throws Exception {
+    void createUser_whenNullEmail_thenThrowsForbidden_403() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -299,7 +299,7 @@ public class UserControllerTest {
 
 // Tests of GetMappings
     @Test
-    public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
+    void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -336,7 +336,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenUser_whenGetUser_thenReturnUser_200() throws Exception {
+    void givenUser_whenGetUser_thenReturnUser_200() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -370,7 +370,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenNonexistentUser_whenGetUser_thenThrowsNotFound_404() throws Exception {
+    void givenNonexistentUser_whenGetUser_thenThrowsNotFound_404() throws Exception {
     // given
         User user = new User();
         user.setId(1L);
@@ -394,7 +394,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenUser_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
+    void givenUser_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -422,7 +422,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenUser_whenMissingToken_thenThrowBadRequest_400() throws Exception {
+    void givenUser_whenMissingToken_thenThrowBadRequest_400() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -448,7 +448,7 @@ public class UserControllerTest {
 
 // Tests of PutMappings
     @Test
-    public void givenPutUser_whenUserExists_thenThrowsNoContent_204() throws Exception {
+    void givenPutUser_whenUserExists_thenThrowsNoContent_204() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -487,7 +487,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenPutUser_whenWrongUserId_thenThrowsNotFound_404() throws Exception {
+    void givenPutUser_whenWrongUserId_thenThrowsNotFound_404() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -520,7 +520,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenPutUser_whenNoToken_thenThrowsBadRequest_400() throws Exception {
+    void givenPutUser_whenNoToken_thenThrowsBadRequest_400() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -550,7 +550,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenPutUser_whenInvalidToken_thenThrowsUnauthorized_401() throws Exception {
+    void givenPutUser_whenInvalidToken_thenThrowsUnauthorized_401() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -583,7 +583,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenPutUser_whenNotMatchingID_thenThrowsUnauthorized_401() throws Exception {
+    void givenPutUser_whenNotMatchingID_thenThrowsUnauthorized_401() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -616,7 +616,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenPutUser_whenNullUsername_thenThrowsBadRequest_400() throws Exception {
+    void givenPutUser_whenNullUsername_thenThrowsBadRequest_400() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -647,7 +647,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenPutUser_whenEmptyUsername_thenThrowsBadRequest_400() throws Exception {
+    void givenPutUser_whenEmptyUsername_thenThrowsBadRequest_400() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -678,7 +678,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenUser_whenLogout_thenReturnUser_200() throws Exception {
+    void givenUser_whenLogout_thenReturnUser_200() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -701,7 +701,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenUser_whenLogout_thenReturnUser_401() throws Exception {
+    void givenUser_whenLogout_thenReturnUser_401() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");

@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GameController.class)
-public class GameControllerTest {
+class GameControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -73,7 +73,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void createQuestion_thenQuestionCreated_201() throws Exception {
+    void createQuestion_thenQuestionCreated_201() throws Exception {
         Game game = new Game(0, 0, 1, QuizType.TEXT, ModeType.DUEL);
         gameController.getGames().put(game.getId(), game);
 

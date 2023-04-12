@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @WebAppConfiguration
 @SpringBootTest
-public class UserServiceIntegrationTest {
+class UserServiceIntegrationTest {
 
   @Qualifier("userRepository")
   @Autowired
@@ -35,7 +35,7 @@ public class UserServiceIntegrationTest {
   }
 
     @Test
-    public void createUser_validInputs_success() {
+    void createUser_validInputs_success() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -58,7 +58,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void createUser_duplicateUsername_throwsException() {
+    void createUser_duplicateUsername_throwsException() {
         assertNull(userRepository.findByUsername("testUsername"));
 
         User testUser = new User();
@@ -77,7 +77,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyToken_validToken_success() {
+    void verifyToken_validToken_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
@@ -89,7 +89,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyToken_invalidToken_ThrowsUnauthorized() {
+    void verifyToken_invalidToken_ThrowsUnauthorized() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
@@ -101,7 +101,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyTokenWithId_bothValid_success() {
+    void verifyTokenWithId_bothValid_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
@@ -120,7 +120,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyTokenWithId_invalidToken_throwsUnauthorized() {
+    void verifyTokenWithId_invalidToken_throwsUnauthorized() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
@@ -132,7 +132,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyTokenWithId_noMatchingId_throwsUnauthorized() {
+    void verifyTokenWithId_noMatchingId_throwsUnauthorized() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
@@ -144,7 +144,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void checkDoLogout_success() {
+    void checkDoLogout_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
@@ -160,7 +160,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void checkDoLogout_noMatchingId_failure() {
+    void checkDoLogout_noMatchingId_failure() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("password");
@@ -174,7 +174,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void changeUsername_allValid_success() {
+    void changeUsername_allValid_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
@@ -192,7 +192,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void changeUsernameBirthday_duplicateUsername_success() {
+    void changeUsernameBirthday_duplicateUsername_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");

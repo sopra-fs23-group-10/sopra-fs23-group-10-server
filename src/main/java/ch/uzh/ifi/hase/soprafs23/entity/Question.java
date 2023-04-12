@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Question {
     private Category category;
@@ -12,13 +13,13 @@ public class Question {
     private String correctAnswer;
     private String[] incorrectAnswers;
     private String[] allAnswers;
-    private String question;
-    private HashMap<Long, UserAnswerTuple> results = new HashMap<>();
+    private String questionString;
+    private Map<Long, UserAnswerTuple> results = new HashMap<>();
 
     public Question(String id, Category category, String correctAnswer, String question, String[] incorrectAnswers) {
         this.category = category;
         this.id = id;
-        this.question = question;
+        this.questionString = question;
         this.correctAnswer = correctAnswer;
         this.incorrectAnswers = incorrectAnswers;
 
@@ -51,10 +52,10 @@ public class Question {
     }
 
     public String getQuestion() {
-        return this.question;
+        return this.questionString;
     }
 
-    public HashMap<Long, UserAnswerTuple> getResults() {
+    public Map<Long, UserAnswerTuple> getResults() {
         return this.results;
     }
 
@@ -79,17 +80,17 @@ public class Question {
     }
 
     public void setQuestion(String question) {
-        this.question = question;
+        this.questionString = question;
     }
 
-    public void setResults(HashMap<Long, UserAnswerTuple> results) {
+    public void setResults(Map<Long, UserAnswerTuple> results) {
         this.results = results;
     }
 
     public long getPoints(long userId) {
         UserAnswerTuple answerTuple = results.get(userId);
         return answerTuple.getAnswer().equals(this.correctAnswer) ?
-                10L/(long) answerTuple.getAnsweredTime() : 0L;
+                10L/answerTuple.getAnsweredTime() : 0L;
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {

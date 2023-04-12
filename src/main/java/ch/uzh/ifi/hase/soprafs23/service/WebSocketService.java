@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class WebSocketService {
 
-    private final UserService userService;
     private final UserRepository userRepository;
 
     @Autowired
@@ -24,7 +23,6 @@ public class WebSocketService {
     public WebSocketService(@Qualifier("userRepository") UserRepository userRepository,
                             @Lazy UserService userService) {
         this.userRepository = userRepository;
-        this.userService = userService;
     }
 
     public void sendMessageToClients(String destination, Object dto) {
