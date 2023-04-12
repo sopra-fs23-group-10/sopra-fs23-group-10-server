@@ -95,7 +95,7 @@ if (secretPropsFile.exists()) {
     Properties p = new Properties()
     p.load(new FileInputStream(secretPropsFile))
     p.each { name, value ->
-        ext[name as String] = value
+        ext[name] = value
     }
 }
 
