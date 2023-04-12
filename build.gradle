@@ -49,17 +49,21 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
     implementation 'org.springframework:spring-context:5.3.14'
 
 
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.json:json:20210307'
+
+    implementation 'org.postgresql:postgresql:42.3.1'
+    implementation 'com.google.cloud.sql:postgres-socket-factory:1.11.1'
+
 }
 
 bootJar {
@@ -91,7 +95,7 @@ if (secretPropsFile.exists()) {
     Properties p = new Properties()
     p.load(new FileInputStream(secretPropsFile))
     p.each { name, value ->
-        ext[name] = value
+        ext[name as String] = value
     }
 }
 
