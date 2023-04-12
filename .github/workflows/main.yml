@@ -26,6 +26,7 @@ jobs:
       - name: Test and analyze
         run: ./gradlew test jacocoTestReport sonarqube
         env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{secrets.GCP_SERVICE_CREDENTIALS}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SP_DS_UR: ${{ secrets.H2_URL }}
