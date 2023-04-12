@@ -17,6 +17,11 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v2
 
+      - name: Authenticate with Google Cloud
+        uses: actions/google-gcloud/auth@v0.5.0
+        with:
+          credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
+
       - name: Install Java 17
         uses: actions/setup-java@v3
         with:
@@ -31,7 +36,7 @@ jobs:
           SP_DS_UR: ${{ secrets.SPRING_DATASOURCE_URL }}
           SP_DS_UN: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
           SP_DS_PW: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          GOOGLE_APPLICATION_CREDENTIALS : ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
   deploy:
     name: Deploying to Google Cloud
     runs-on: ubuntu-latest
@@ -40,6 +45,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Authenticate with Google Cloud
+        uses: actions/google-gcloud/auth@v0.5.0
+        with:
+          credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
 
       - name: Deploy to App Engine
         id: deploy
