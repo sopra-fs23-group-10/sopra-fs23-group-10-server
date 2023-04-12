@@ -17,6 +17,7 @@ jobs:
       - name: Print environment variables
         run: |
           echo "SP_DS_DRIVER: ${{ env.SP_DS_DRIVER }}"
+          echo "SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}"
       - name: Checkout repository code
         uses: actions/checkout@v2
 
@@ -34,7 +35,7 @@ jobs:
           SP_DS_UR: ${{ secrets.H2_URL }}
           SP_DS_UN: ${{ secrets.H2_USERNAME }}
           SP_DS_PW: ${{ secrets.H2_PASSWORD }}
-          SP_DS_DRIVER: '${{ secrets.H2_DRIVER }}'
+          SP_DS_DRIVER: "${{ secrets.H2_DRIVER }}"
           SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}
           
   deploy:
@@ -46,6 +47,7 @@ jobs:
       - name: Print environment variables
         run: |
           echo "SP_DS_DRIVER: ${{ env.SP_DS_DRIVER }}"
+          echo "SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}"
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -60,7 +62,7 @@ jobs:
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
           SP_DS_UN: ${{ secrets.SP_DS_UN }}
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
-          SP_DS_DRIVER: $${{ secrets.SP_DS_DRIVER }}
+          SP_DS_DRIVER: "${{ secrets.SP_DS_DRIVER }}"
           SP_DS_PLATFORM: ${{ secrets.SP_DS_PLATFORM }}
 
       - name: Test
