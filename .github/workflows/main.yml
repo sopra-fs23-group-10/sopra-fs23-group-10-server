@@ -54,7 +54,7 @@ jobs:
           SP_DS_UR: ${{ secrets.SPRING_DATASOURCE_URL }}
           SP_DS_UN: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
           SP_DS_PW: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          SP_DS_DRIVER: ${{ secrets.SPRINT_DATASOURCE_DRIVER }}
+          SP_DS_DRIVER: "org.postgresql.Driver"
           SP_DS_PLATFORM: ${{ secrets.SPRING_DATASOURCE_PLATFORM }}
 
       - name: Test
