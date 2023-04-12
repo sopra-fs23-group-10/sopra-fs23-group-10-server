@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Print environment variables
         run: |
-          echo "SP_DS_DRIVER: ${{ env.SP_DS_DRIVER }}"
+          echo "SP_DS_DRIVER: ${{ secrets.SP_DS_DRIVER }}"
           echo "SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}"
           echo "SP_DS_DRIVER_VAR: ${{ env.SP_DS_DRIVER_VAR }}"
       - name: Checkout
