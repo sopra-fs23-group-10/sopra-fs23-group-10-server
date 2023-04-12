@@ -82,7 +82,7 @@ public class GameController {
     @GetMapping("/game/topics/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Category> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
+    public Map<String, List<Category>> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
         User requestingUser = userService.verifyToken(token);
 
         Game game = games.get(gameId);
@@ -102,7 +102,7 @@ public class GameController {
 
         game.changeCurrentPlayer();
 
-        return randomTopics;
+        return Collections.singletonMap("topics", randomTopics);
     }
 
 
