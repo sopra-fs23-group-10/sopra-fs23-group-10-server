@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
+import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
@@ -10,15 +11,16 @@ import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.*;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+
+import static java.lang.String.format;
 
 @RestController
 public class GameController {
@@ -67,7 +69,7 @@ public class GameController {
         }
 
         GameDTO gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
-        game.getNextPlayer();
+        game.changeCurrentPlayer();
 
         if (response) {
             webSocketController.sendGameStart(game.getInvitedUserId(), gameDTO);
@@ -75,6 +77,32 @@ public class GameController {
         }
         //TODO: Terminate game and inform inviting User when invited User declines
         return gameDTO;
+    }
+
+    @GetMapping("/game/topics/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<Category> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
+        User requestingUser = userService.verifyToken(token);
+
+        Game game = games.get(gameId);
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
+        }
+
+        Long currentPlayerId = game.getCurrentPlayer();
+        if (!requestingUser.getId().equals(currentPlayerId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
+        }
+
+        List<Category> randomTopics = Arrays.asList(Category.values());
+        while (randomTopics.size() > 3) {
+            randomTopics.remove((int) ((Math.random() * randomTopics.size())));
+        }
+
+        game.changeCurrentPlayer();
+
+        return randomTopics;
     }
 
 

@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.Stack;
 
@@ -25,7 +24,7 @@ public class Game {
         this.invitedUserId = invitedUserId;
         this.quizType = quizType;
         this.modeType = modeType;
-        this.currentPlayer = invitingUserId;
+        this.currentPlayer = invitedUserId;
         this.lastChange = new Date();
     }
 
@@ -61,6 +60,10 @@ public class Game {
 
     public ModeType getModeType() {
         return this.modeType;
+    }
+
+    public long getCurrentPlayer() {
+        return currentPlayer;
     }
 
     public void setId(long id) {this.id = id;}
@@ -114,7 +117,7 @@ public class Game {
         return questions.peek().completelyAnswered();
     }
 
-    public Long getNextPlayer() {
+    public Long changeCurrentPlayer() {
         currentPlayer = (currentPlayer == invitingUserId) ? invitedUserId : invitingUserId;
         return currentPlayer;
     }
