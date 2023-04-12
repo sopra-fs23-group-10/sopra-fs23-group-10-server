@@ -1,8 +1,5 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
-import lombok.AllArgsConstructor;
-
-
 public class UserAnswerTuple {
     private long userId;
     private String questionId;

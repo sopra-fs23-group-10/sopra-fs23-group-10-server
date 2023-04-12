@@ -100,10 +100,8 @@ public class UserController {
         User user = userService.searchUserById(userId);
 
         // convert the returned user to API user (without token)
-        UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user);
-
         // return the API user
-        return userGetDTO;
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user);
     }
 
     @PutMapping("/users/{userId}")

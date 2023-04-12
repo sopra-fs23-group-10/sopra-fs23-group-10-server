@@ -7,9 +7,6 @@ import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.*;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

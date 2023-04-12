@@ -3,7 +3,9 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
+import java.util.ArrayDeque;
 import java.util.Date;
+import java.util.Deque;
 import java.util.Stack;
 
 
@@ -11,7 +13,7 @@ public class Game {
     private long id;
     private long invitingUserId;
     private long invitedUserId;
-    private final Stack<Question> questions = new Stack<>();
+    private final Deque<Question> questions = new ArrayDeque<>();
     private QuizType quizType;
     private ModeType modeType;
 
@@ -37,7 +39,7 @@ public class Game {
     }
 
     public void addQuestion(Question question){
-        questions.add(question);
+        questions.addFirst(question);
     }
 
     public long getId() {
@@ -50,7 +52,7 @@ public class Game {
 
     public long getInvitedUserId() {return this.invitedUserId;}
 
-    public Stack<Question> getQuestions() {
+    public Deque<Question> getQuestions() {
         return this.questions;
     }
 

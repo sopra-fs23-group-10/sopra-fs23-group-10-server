@@ -11,9 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest {

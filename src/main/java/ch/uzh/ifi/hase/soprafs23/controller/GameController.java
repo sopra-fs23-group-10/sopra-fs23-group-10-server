@@ -10,30 +10,24 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
-import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
-import java.io.IOException;
 
 @RestController
 public class GameController {
 
     private final GameService gameService;
     private final UserService userService;
-    private final WebSocketService webSocketService;
     private final WebSocketController webSocketController;
     private final HashMap<Long, Game> games = new HashMap<>();
     private long index = 0;
 
-    GameController(GameService gameService, UserService userService, WebSocketService webSocketService, WebSocketController webSocketController) {
+    GameController(GameService gameService, UserService userService, WebSocketController webSocketController) {
         this.gameService = gameService;
         this.userService = userService;
-        this.webSocketService = webSocketService;
         this.webSocketController = webSocketController;
     }
 
@@ -58,7 +52,7 @@ public class GameController {
     @PostMapping("/game/invitation/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Map<Long, Boolean> respondInviation(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token){
+    public Map<Long, Boolean> respondInvitation(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token){
         userService.verifyToken(token);
         Game game = games.get(gameId);
         if(game==null) {
@@ -105,7 +99,7 @@ public class GameController {
     @PostMapping("/game/topics")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token) throws IOException {
+    public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         Game game = games.get(questionDTO.getGameId());
         userService.searchUserById(game.getInvitedUserId());
         userService.searchUserById(game.getInvitingUserId());
@@ -122,9 +116,7 @@ public class GameController {
         userService.verifyToken(token);
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
         Game currentGame = games.get(gameId);
-        if (currentGame == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
-        }
+        this.checkGame(currentGame);
         UserResultTuple userResultTuple = currentGame.getResults();
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         if (currentGame.completelyAnswered()) {
@@ -153,9 +145,8 @@ public class GameController {
     public UserResultTupleDTO finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Game currentGame = games.get(gameId);
-        if (currentGame == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
-        }
+        this.checkGame(currentGame);
+
         UserResultTuple userResultTuple = currentGame.getResults();
         userService.updatePoints(userResultTuple);
         long invitingUserPoints = userService.getPoints(userResultTuple.getInvitingPlayerId());
@@ -178,9 +169,7 @@ public class GameController {
     public UserResultTupleDTO intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Game currentGame = games.get(gameId);
-        if (currentGame == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
-        }
+        this.checkGame(currentGame);
         UserResultTuple userResultTuple = currentGame.getResults();
 
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
@@ -188,5 +177,11 @@ public class GameController {
         webSocketController.resultToUser(gameId, userResultTupleDTO);
 
         return userResultTupleDTO;
+    }
+
+    private void checkGame(Game currentGame){
+        if (currentGame == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
+        }
     }
 }

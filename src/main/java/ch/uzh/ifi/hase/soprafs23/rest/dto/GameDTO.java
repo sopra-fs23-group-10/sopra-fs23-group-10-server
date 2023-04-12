@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs23.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
 
 public class GameDTO {
     private long id;

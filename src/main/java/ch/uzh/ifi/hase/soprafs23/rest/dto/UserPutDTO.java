@@ -1,7 +1,5 @@
 package ch.uzh.ifi.hase.soprafs23.rest.dto;
 
-import java.util.Date;
-
 public class UserPutDTO {
 
     private String username;

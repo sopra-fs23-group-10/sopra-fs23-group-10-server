@@ -1,9 +1,7 @@
 package ch.uzh.ifi.hase.soprafs23.service;
 
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.UserAnswerTuple;
 import ch.uzh.ifi.hase.soprafs23.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
