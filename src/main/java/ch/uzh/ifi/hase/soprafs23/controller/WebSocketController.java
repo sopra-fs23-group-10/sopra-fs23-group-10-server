@@ -38,8 +38,8 @@ public class WebSocketController {
     }
 
     @MessageMapping("/invitation/answer/{userId}")
-    public void sendGameStart(@DestinationVariable Long userId, GameDTO gameDTO) {
-        this.webSocketService.sendMessageToClients("/invitation/answer/" + userId, gameDTO);
+    public void sendInviationRespond(@DestinationVariable Long userId, Map map) {
+        this.webSocketService.sendMessageToClients("/invitation/answer/" + userId, map);
     }
 
     @MessageMapping("/game/intermediateResult/{gameId}")

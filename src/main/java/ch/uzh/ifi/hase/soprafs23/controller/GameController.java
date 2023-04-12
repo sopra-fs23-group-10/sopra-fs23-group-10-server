@@ -58,25 +58,22 @@ public class GameController {
     @PostMapping("/game/invitation/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameDTO sendInvitationAnswer(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token) {
+    public Map<Long, Boolean> respondInviation(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token){
         userService.verifyToken(token);
-
-        Game game = this.games.get(gameId);
-        if (game == null) {
+        Game game = games.get(gameId);
+        if(game==null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
 
-        GameDTO gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
-        game.getNextPlayer();
-
-        if (response) {
-            webSocketController.sendGameStart(game.getInvitedUserId(), gameDTO);
-            webSocketController.sendGameStart(game.getInvitingUserId(), gameDTO);
+        if(!response){
+            games.remove(gameId);
         }
-        //TODO: Terminate game and inform inviting User when invited User declines
-        return gameDTO;
-    }
 
+        Map answer = Collections.singletonMap(gameId,response);
+        webSocketController.sendInviationRespond(game.getInvitedUserId(), answer);
+        webSocketController.sendInviationRespond(game.getInvitingUserId(), answer);
+        return answer;
+    }
 
     @PostMapping("/game/topics")
     @ResponseStatus(HttpStatus.CREATED)
@@ -158,9 +155,6 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
         }
         UserResultTuple userResultTuple = currentGame.getResults();
-
-        // TODO: why is this line needed? I think the logic is wrong with it, the poinst should not get updated.
-        //userService.updatePoints(userResultTuple);
 
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
 
