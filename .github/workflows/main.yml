@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Print environment variables
         run: |
-          env
+          echo "SP_DS_DRIVER: ${{ env.SP_DS_DRIVER }}"
       - name: Checkout repository code
         uses: actions/checkout@v2
 
@@ -45,7 +45,7 @@ jobs:
     steps:
       - name: Print environment variables
         run: |
-          env
+          echo "SP_DS_DRIVER: ${{ env.SP_DS_DRIVER }}"
       - name: Checkout
         uses: actions/checkout@v2
 
