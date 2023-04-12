@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs23.WebSockets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 
 @Component
