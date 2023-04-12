@@ -95,7 +95,7 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
         }
 
-        List<Category> randomTopics = Arrays.asList(Category.values());
+        List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
         while (randomTopics.size() > 3) {
             randomTopics.remove((int) ((Math.random() * randomTopics.size())));
         }
