@@ -34,7 +34,7 @@ jobs:
           SP_DS_UR: ${{ secrets.H2_URL }}
           SP_DS_UN: ${{ secrets.H2_USERNAME }}
           SP_DS_PW: ${{ secrets.H2_PASSWORD }}
-          SP_DS_DRIVER: ${{ secrets.H2_DRIVER }}
+          SP_DS_DRIVER: '${{ secrets.H2_DRIVER }}'
           SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}
           
   deploy:
