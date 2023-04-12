@@ -14,11 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print environment variables
-        run: |
-          echo "SP_DS_DRIVER: ${{ env.SP_DS_DRIVER }}"
-          echo "SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}"
-          echo "SP_DS_DRIVER_VAR: ${{ env.SP_DS_DRIVER_VAR }}"
       - name: Checkout repository code
         uses: actions/checkout@v2
 
@@ -31,7 +26,6 @@ jobs:
       - name: Test and analyze
         run: ./gradlew test jacocoTestReport sonarqube
         env:
-          SP_DS_DRIVER_VAR : ${{ env.SP_DS_DRIVER_VAR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SP_DS_UR: ${{ secrets.H2_URL }}
@@ -39,18 +33,17 @@ jobs:
           SP_DS_PW: ${{ secrets.H2_PASSWORD }}
           SP_DS_DRIVER: ${{ secrets.H2_DRIVER }}
           SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}
-          
+      - name: Print environment variables
+        run: |
+          echo "SP_DS_DRIVER: ${{ secrets.H2_DRIVER }}"
+          echo "SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}"
+
   deploy:
     name: Deploying to Google Cloud
     runs-on: ubuntu-latest
     needs: test
 
     steps:
-      - name: Print environment variables
-        run: |
-          echo "SP_DS_DRIVER: ${{ secrets.SP_DS_DRIVER }}"
-          echo "SP_DS_PLATFORM: ${{ secrets.H2_PLATFORM }}"
-          echo "SP_DS_DRIVER_VAR: ${{ env.SP_DS_DRIVER_VAR }}"
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -68,6 +61,10 @@ jobs:
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
           SP_DS_DRIVER: ${{ secrets.SP_DS_DRIVER }}
           SP_DS_PLATFORM: ${{ secrets.SP_DS_PLATFORM }}
-
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
+      - name: Print environment variables
+        run: |
+          echo "SP_DS_DRIVER: ${{ secrets.SP_DS_DRIVER }}"
+          echo "SP_DS_PLATFORM: ${{ secrets.SP_DS_PLATFORM }}"
+          echo "SP_DS_DRIVER_VAR: ${{ env.SP_DS_DRIVER_VAR }}"
