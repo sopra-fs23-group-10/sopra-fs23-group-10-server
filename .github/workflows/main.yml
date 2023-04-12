@@ -31,6 +31,7 @@ jobs:
           SP_DS_UR: ${{ secrets.SPRING_DATASOURCE_URL }}
           SP_DS_UN: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
           SP_DS_PW: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          GOOGLE_APPLICATION_CREDENTIALS : ${{ secrets.GCP_SERVICE_CREDENTIALS }}
   deploy:
     name: Deploying to Google Cloud
     runs-on: ubuntu-latest
