@@ -25,11 +25,14 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")
+                .setAllowedOrigins("*")
                 .setHandshakeHandler(new DefaultHandshakeHandler())
-                .addInterceptors(new HttpSessionHandshakeInterceptor())
-                .withSockJS()
-                .setWebSocketEnabled(true);
+                .addInterceptors(new HttpSessionHandshakeInterceptor());
+
+        registry.addEndpoint("/wss")
+                .setAllowedOrigins("*")
+                .setHandshakeHandler(new DefaultHandshakeHandler())
+                .addInterceptors(new HttpSessionHandshakeInterceptor());
     }
 
     @Bean

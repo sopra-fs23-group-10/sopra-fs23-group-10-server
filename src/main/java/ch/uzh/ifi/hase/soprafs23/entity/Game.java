@@ -16,6 +16,7 @@ public class Game {
     private QuizType quizType;
     private ModeType modeType;
 
+    private long currentPlayer;
     private Date lastChange;
 
     public Game(long gameId, long invitingUserId, long invitedUserId, QuizType quizType, ModeType modeType) {
@@ -24,6 +25,7 @@ public class Game {
         this.invitedUserId = invitedUserId;
         this.quizType = quizType;
         this.modeType = modeType;
+        this.currentPlayer = invitingUserId;
         this.lastChange = new Date();
     }
 
@@ -110,5 +112,10 @@ public class Game {
 
     public Boolean completelyAnswered(){
         return questions.peek().completelyAnswered();
+    }
+
+    public Long getNextPlayer() {
+        currentPlayer = (currentPlayer == invitingUserId) ? invitedUserId : invitingUserId;
+        return currentPlayer;
     }
 }
