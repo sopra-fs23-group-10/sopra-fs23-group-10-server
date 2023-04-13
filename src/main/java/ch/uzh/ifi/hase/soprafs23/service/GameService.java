@@ -37,8 +37,11 @@ public class GameService {
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e){
             System.err.println("Error sending HTTP request: " + e.getMessage());
+            return null;
+        } catch(IOException i){
+            System.err.println("Error sending HTTP request: " + i.getMessage());
             return null;
         }
         if (response.statusCode() == 200) {
