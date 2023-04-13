@@ -37,13 +37,13 @@ jobs:
           sp_ds_platform: "org.hibernate.dialect.H2Dialect"
       - name: print environment variables
         run: |
-          echo "sp_ds_driver: ${{sp_ds_driver}}"
-          echo "sp_ds_platform: ${{sp_ds_platform}}"
+          echo "sp_ds_driver: ${{SP_DS_DRIVER}}"
+          echo "sp_ds_platform: ${{SP_DS_DRIVER}}"
 
   deploy:
     name: Deploying to Google Cloud
     runs-on: ubuntu-latest
-    #needs: test
+    needs: test
 
     steps:
       - name: Checkout
