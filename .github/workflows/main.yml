@@ -36,7 +36,7 @@ jobs:
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
-        
+
       - name: Print environment variables
         run: |
           echo "SP_DS_DRIVER: ${{ secrets.SP_DS_DRIVER }}"
