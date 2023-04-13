@@ -95,6 +95,17 @@ public class GameController {
         return Collections.singletonMap("topics", randomTopics);
     }
 
+    @GetMapping("/game/topics/all")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Map<String, List<Category>> getTopicSelection(@RequestHeader("token") String token) {
+        User requestingUser = userService.verifyToken(token);
+
+        List<Category> allTopics = new ArrayList<>(Arrays.asList(Category.values()));
+
+        return Collections.singletonMap("topics", allTopics);
+    }
+
 
     @PostMapping("/game/topics")
     @ResponseStatus(HttpStatus.CREATED)
