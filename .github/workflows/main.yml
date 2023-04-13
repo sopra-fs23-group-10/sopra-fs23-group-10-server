@@ -10,6 +10,36 @@ on:
 
 jobs:
 
+
+  test:
+    name: test and sonarqube
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository code
+        uses: actions/checkout@v2
+
+      - name: install java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: test and analyze
+        run: ./gradlew test jacocotestreport sonarqube
+        env:
+          github_token: ${{ secrets.github_token }}
+          sonar_token: ${{ secrets.sonar_token }}
+          sp_ds_ur: "jdbc:h2:mem:testdb"
+          sp_ds_un: "username"
+          sp_ds_pw: "password"
+          sp_ds_driver: "org.h2.Driver"
+          sp_ds_platform: "org.hibernate.dialect.H2Dialect"
+      - name: print environment variables
+        run: |
+          echo "sp_ds_driver: ${{sp_ds_driver}}"
+          echo "sp_ds_platform: ${{sp_ds_platform}}"
+
   deploy:
     name: Deploying to Google Cloud
     runs-on: ubuntu-latest
@@ -27,18 +57,16 @@ jobs:
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
         env:
-          SP_DS_DRIVER_VAR : ${{ env.SP_DS_DRIVER_VAR }}
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
           SP_DS_UN: ${{ secrets.SP_DS_UN }}
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
-          SP_DS_DRIVER: ${{ secrets.SP_DS_DRIVER }}
-          SP_DS_PLATFORM: ${{ secrets.SP_DS_PLATFORM }}
+          SP_DS_DRIVER: "org.postgresql.Driver"
+          SP_DS_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
 
       - name: Print environment variables
         run: |
-          echo "SP_DS_DRIVER: ${{ secrets.SP_DS_DRIVER }}"
-          echo "SP_DS_PLATFORM: ${{ secrets.SP_DS_PLATFORM }}"
-          echo "SP_DS_DRIVER_VAR: ${{ env.SP_DS_DRIVER_VAR }}"
+          echo "SP_DS_DRIVER: ${{SP_DS_DRIVER}}"
+          echo "SP_DS_PLATFORM: ${{SP_DS_PLATFORM}}"
