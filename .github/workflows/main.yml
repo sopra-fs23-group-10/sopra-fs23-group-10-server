@@ -10,7 +10,6 @@ on:
 
 jobs:
 
-
   test:
     name: test and sonarqube
     runs-on: ubuntu-latest
@@ -32,11 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SPRING_DATASOURCE_URL: "jdbc:h2:mem:testdb"
-          SPRING_DATASOURCE_USERNAME: "username"
-          SPRING_DATASOURCE_PASSWORD: "password"
-          SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.h2.Driver"
-          SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.H2Dialect"
+          SPRING_PROFILES_ACTIVE: dev
 
   deploy:
     name: Deploying to Google Cloud
@@ -60,6 +55,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SP_DS_PW }}
           SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
           SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
+          SPRING_PROFILES_ACTIVE: prod
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
