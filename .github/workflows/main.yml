@@ -27,6 +27,9 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: build project
+        run: ./gradlew build --no-build-cache
+
       - name: test and analyze
         run: ./gradlew test jacocotestreport sonar
         env:
