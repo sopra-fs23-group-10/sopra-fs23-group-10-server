@@ -30,11 +30,11 @@ jobs:
         env:
           github_token: ${{ secrets.github_token }}
           sonar_token: ${{ secrets.sonar_token }}
-          sp_ds_ur: "jdbc:h2:mem:testdb"
-          sp_ds_un: "username"
-          sp_ds_pw: "password"
-          sp_ds_driver: "org.h2.Driver"
-          sp_ds_platform: "org.hibernate.dialect.H2Dialect"
+          SP_DS_UR: "jdbc:h2:mem:testdb"
+          SP_DS_UN: "username"
+          SP_DS_PW: "password"
+          SP_DS_DRIVER: "org.h2.Driver"
+          SP_DS_PLATFORM: "org.hibernate.dialect.H2Dialect"
       - name: print environment variables
         run: |
           echo "sp_ds_driver: ${{SP_DS_DRIVER}}"
