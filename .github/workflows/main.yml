@@ -28,8 +28,8 @@ jobs:
       - name: test and analyze
         run: ./gradlew test jacocotestreport sonarqube
         env:
-          github_token: ${{ secrets.github_token }}
-          sonar_token: ${{ secrets.sonar_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
           SP_DS_UR: "jdbc:h2:mem:testdb"
           SP_DS_UN: "username"
           SP_DS_PW: "password"
