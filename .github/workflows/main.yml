@@ -32,11 +32,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SP_DS_UR: "jdbc:h2:mem:testdb"
-          SP_DS_UN: "username"
-          SP_DS_PW: "password"
-          SP_DS_DRIVER: "org.h2.Driver"
-          SP_DS_PLATFORM: "org.hibernate.dialect.H2Dialect"
+          SPRING_DATASOURCE_URL: "jdbc:h2:mem:testdb"
+          SPRING_DATASOURCE_USERNAME: "username"
+          SPRING_DATASOURCE_PASSWORD: "password"
+          SPRING_DATASOURCE_DRIVER-CLASS-NAME: "org.h2.Driver"
+          SPRING_DATASOURCE_DATABASE-PLATFORM: "org.hibernate.dialect.H2Dialect"
 
   deploy:
     name: Deploying to Google Cloud
