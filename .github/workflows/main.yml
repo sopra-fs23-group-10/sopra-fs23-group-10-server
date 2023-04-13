@@ -45,6 +45,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install Cloud SQL Proxy
+        run: |
+          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          chmod +x cloud_sql_proxy
+          sudo mv cloud_sql_proxy /usr/local/bin/
+
+      - name: Start Cloud SQL Proxy
+        run: |
+          sudo /usr/local/bin/cloud_sql_proxy \
+            -instances=${{ secrets.DB_PROJECT_ID }}:${{ secrets.DB_REGION }}:${{ secrets.DB_INSTANCE_ID }}=tcp:5432 \
+            -credential_file=<(echo ${{ secrets.GCP_SERVICE_CREDENTIALS }}) &
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
