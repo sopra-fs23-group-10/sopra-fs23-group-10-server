@@ -35,10 +35,6 @@ jobs:
           SP_DS_PW: "password"
           SP_DS_DRIVER: "org.h2.Driver"
           SP_DS_PLATFORM: "org.hibernate.dialect.H2Dialect"
-      - name: print environment variables
-        run: |
-          echo "sp_ds_driver: ${{SP_DS_DRIVER}}"
-          echo "sp_ds_platform: ${{SP_DS_DRIVER}}"
 
   deploy:
     name: Deploying to Google Cloud
@@ -65,8 +61,3 @@ jobs:
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
-
-      - name: Print environment variables
-        run: |
-          echo "SP_DS_DRIVER: ${{SP_DS_DRIVER}}"
-          echo "SP_DS_PLATFORM: ${{SP_DS_PLATFORM}}"
