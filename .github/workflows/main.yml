@@ -45,9 +45,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Print environment variables
-        run: printenv
-
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
@@ -60,6 +57,9 @@ jobs:
           SP_DS_UN: ${{ secrets.SP_DS_UN }}
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
           SPRING_PROFILES_ACTIVE: dev
+
+      - name: Print Environment Variables
+        run: env SP_DS_UR=${{ secrets.SP_DS_UR }} SP_DS_UN=${{ secrets.SP_DS_UN }} SP_DS_PW=${{ secrets.SP_DS_PW }} SPRING_PROFILES_ACTIVE=dev env
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
