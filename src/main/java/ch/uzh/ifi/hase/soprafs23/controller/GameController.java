@@ -49,6 +49,7 @@ public class GameController {
         return createdGameDTO;
     }
 
+
     @PostMapping("/game/invitation/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -95,7 +96,7 @@ public class GameController {
         return Collections.singletonMap("topics", randomTopics);
     }
 
-    @GetMapping("/game/topics")
+    @GetMapping("/game/topics/all")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Map<String, List<Category>> getAllTopics(@RequestHeader("token") String token) {
