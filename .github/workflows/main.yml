@@ -58,8 +58,11 @@ jobs:
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
           SPRING_PROFILES_ACTIVE: dev
 
-      - name: Print Environment Variables
-        run: env SP_DS_UR=${{ secrets.SP_DS_UR }} SP_DS_UN=${{ secrets.SP_DS_UN }} SP_DS_PW=${{ secrets.SP_DS_PW }} SPRING_PROFILES_ACTIVE=dev env
+        run: |
+          echo "SP_DS_UR=$SP_DS_UR"
+          echo "SP_DS_UN=$SP_DS_UN"
+          echo "SP_DS_PW=$SP_DS_PW"
+          echo "SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE"
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
