@@ -9,3 +9,7 @@ network:
 
 env_variables:
   spring_profiles_active: "dev"
+  SP_DS_UR: ${{ secrets.SP_DS_UR }}
+  SP_DS_UN: ${{ secrets.SP_DS_UN }}
+  SP_DS_PW: ${{ secrets.SP_DS_PW }}
+
