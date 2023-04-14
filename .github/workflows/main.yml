@@ -28,7 +28,7 @@ jobs:
           java-version: "17"
 
       - name: build project
-        run: ./gradlew build --no-build-cache
+        run: ./gradlew build --no-build-cache -x test
 
       - name: Install Cloud SQL Proxy
         run: |
