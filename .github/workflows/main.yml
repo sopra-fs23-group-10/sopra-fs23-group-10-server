@@ -30,29 +30,11 @@ jobs:
       - name: build project
         run: ./gradlew build --no-build-cache -x test
 
-      - name: Install Cloud SQL Proxy
-        run: |
-          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-          chmod +x cloud_sql_proxy
-          sudo mv cloud_sql_proxy /usr/local/bin/
-
-      - name: Start Cloud SQL Proxy
-        run: |
-          sudo /usr/local/bin/cloud_sql_proxy \
-            -instances=${{ secrets.DB_PROJECT_ID }}:${{ secrets.DB_REGION }}:${{ secrets.DB_INSTANCE_ID }}=tcp:5432 \
-            -credential_file=<(echo ${{ secrets.GCP_SERVICE_CREDENTIALS }}) &
-
       - name: test and analyze
-        run: ./gradlew test jacocotestreport sonar
+        run: ./gradlew test jacocotestreport sonar --args='--spring.profiles.active=test'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SP_DS_UR: ${{ secrets.SP_DS_UR }}
-          SP_DS_UN: ${{ secrets.SP_DS_UN }}
-          SP_DS_PW: ${{ secrets.SP_DS_PW }}
-          SP_DS_DRIVER: org.postgresql.Driver
-          SP_DS_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
-
 
   deploy:
     name: Deploying to Google Cloud
@@ -63,18 +45,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install Cloud SQL Proxy
-        run: |
-          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-          chmod +x cloud_sql_proxy
-          sudo mv cloud_sql_proxy /usr/local/bin/
-
-      - name: Start Cloud SQL Proxy
-        run: |
-          sudo /usr/local/bin/cloud_sql_proxy \
-            -instances=${{ secrets.DB_PROJECT_ID }}:${{ secrets.DB_REGION }}:${{ secrets.DB_INSTANCE_ID }}=tcp:5432 \
-            -credential_file=<(echo ${{ secrets.GCP_SERVICE_CREDENTIALS }}) &
-
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
@@ -83,11 +53,10 @@ jobs:
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
         env:
+          SPRING_PROFILES_ACTIVE: dev
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
           SP_DS_UN: ${{ secrets.SP_DS_UN }}
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
-          SP_DS_DRIVER: org.postgresql.Driver
-          SP_DS_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
