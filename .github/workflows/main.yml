@@ -31,8 +31,9 @@ jobs:
         run: ./gradlew build --no-build-cache -x test
 
       - name: test and analyze
-        run: ./gradlew test jacocotestreport sonar --args='--spring.profiles.active=test'
+        run: ./gradlew test jacocotestreport sonar
         env:
+          SPRING_PROFILES_ACTIVE: test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
