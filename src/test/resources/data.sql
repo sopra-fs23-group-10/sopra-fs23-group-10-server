@@ -7,4 +7,4 @@ INSERT INTO PLAYER (
     BACKGROUND_MUSIC,
     PROFILE_PICTURE,
     TOKEN)
-VALUES ('b', 'b@b.b', 'b', 0, 'ACTIVE', 0, 'b', 'tokenXYZ');
+VALUES ('b', 'b@b.b', 'b', 0, 0, 0, 'b', 'tokenXYZ');
