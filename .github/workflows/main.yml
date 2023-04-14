@@ -60,6 +60,5 @@ jobs:
           echo "SP_DS_UN=$SP_DS_UN"
           echo "SP_DS_PW=$SP_DS_PW"
           echo "SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE"
-
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
