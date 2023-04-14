@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+                                 http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <persistence-unit name="sopraGroup10PersistenceUnit">
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="${SP_DS_UR}"/>
+            <property name="javax.persistence.jdbc.user" value="${SP_DS_UN}"/>
+            <property name="javax.persistence.jdbc.password" value="${SP_DS_PW}"/>
+        </properties>
+    </persistence-unit>
+</persistence>

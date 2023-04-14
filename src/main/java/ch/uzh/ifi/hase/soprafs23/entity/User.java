@@ -37,9 +37,9 @@ public class User implements Serializable {
     private UserStatus status;
     @Column(nullable = false, unique = true)
     private String token;
-    @Column(nullable = false)//, columnDefinition = "varchar(255) default 'John Snow'")
+    @Column(name="profile_picture", nullable = false)//, columnDefinition = "varchar(255) default 'John Snow'")
     private String profilePicture;
-    @Column(nullable = false)//, columnDefinition = "boolean default true")
+    @Column(name="background_music", nullable = false)//, columnDefinition = "boolean default true")
     private boolean backgroundMusic;
 
     public Long getId() {

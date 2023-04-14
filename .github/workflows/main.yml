@@ -65,11 +65,11 @@ jobs:
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
         env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SP_DS_UR }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SP_DS_UN }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SP_DS_PW }}
-          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-          SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+          SP_DS_UR: ${{ secrets.SP_DS_UR }}
+          SP_DS_UN: ${{ secrets.SP_DS_UN }}
+          SP_DS_PW: ${{ secrets.SP_DS_PW }}
+          SP_DS_DRIVER: org.postgresql.Driver
+          SP_DS_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
