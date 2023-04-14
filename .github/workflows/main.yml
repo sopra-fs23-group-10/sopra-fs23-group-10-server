@@ -43,13 +43,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Print Environment Variables
-        run: |
-          echo "SP_DS_UR=${{ secrets.SP_DS_UR }}"
-          echo "SP_DS_UN=${{ secrets.SP_DS_UN }}"
-          echo "SP_DS_PW=${{ secrets.SP_DS_PW }}"
-          echo "SPRING_PROFILES_ACTIVE=dev"
-
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
