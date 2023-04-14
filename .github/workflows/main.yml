@@ -28,12 +28,11 @@ jobs:
           java-version: "17"
 
       - name: build project
-        run: ./gradlew build --no-build-cache -x test
+        run: ./gradlew clean build --no-build-cache -x test
 
       - name: test and analyze
         run: ./gradlew test jacocotestreport sonar
         env:
-          SPRING_PROFILES_ACTIVE: test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -54,7 +53,6 @@ jobs:
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
         env:
-          SPRING_PROFILES_ACTIVE: dev
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
           SP_DS_UN: ${{ secrets.SP_DS_UN }}
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
