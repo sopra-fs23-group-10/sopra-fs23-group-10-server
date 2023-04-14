@@ -33,6 +33,7 @@ jobs:
       - name: test and analyze
         run: ./gradlew test jacocotestreport sonar
         env:
+          SPRING_PROFILES_ACTIVE: test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -56,6 +57,7 @@ jobs:
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
           SP_DS_UN: ${{ secrets.SP_DS_UN }}
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
+          SPRING_PROFILES_ACTIVE: dev
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
