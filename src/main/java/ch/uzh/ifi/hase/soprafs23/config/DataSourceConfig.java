@@ -12,20 +12,21 @@ import java.util.Properties;
 @Configuration
 public class DataSourceConfig {
 
-    @Value("${SP_DS_UR}")
+    @Value("${SP_DS_UR:jdbc:h2:mem:testdb}")
     private String url;
 
-    @Value("${SP_DS_UN}")
+    @Value("${SP_DS_UN:username}")
     private String username;
 
-    @Value("${SP_DS_PW}")
+    @Value("${SP_DS_PW:password}")
     private String password;
 
-    @Value("${SP_DS_DRIVER}")
+    @Value("${SP_DS_DRIVER:org.h2.Driver}")
     private String driver;
 
-    @Value("${SP_DS_PLATFORM}")
+    @Value("${SP_DS_PLATFORM:org.hibernate.dialect.H2Dialect}")
     private String platform;
+
 
     @Bean
     public DataSource dataSource() {

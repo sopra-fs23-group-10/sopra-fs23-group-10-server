@@ -30,16 +30,29 @@ jobs:
       - name: build project
         run: ./gradlew build --no-build-cache
 
+      - name: Install Cloud SQL Proxy
+        run: |
+          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          chmod +x cloud_sql_proxy
+          sudo mv cloud_sql_proxy /usr/local/bin/
+
+      - name: Start Cloud SQL Proxy
+        run: |
+          sudo /usr/local/bin/cloud_sql_proxy \
+            -instances=${{ secrets.DB_PROJECT_ID }}:${{ secrets.DB_REGION }}:${{ secrets.DB_INSTANCE_ID }}=tcp:5432 \
+            -credential_file=<(echo ${{ secrets.GCP_SERVICE_CREDENTIALS }}) &
+
       - name: test and analyze
         run: ./gradlew test jacocotestreport sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SP_DS_UR: "jdbc:h2:mem:testdb"
-          SP_DS_UN: "username"
-          SP_DS_PW: "password"
-          SP_DS_DRIVER: "org.h2.Driver"
-          SP_DS_PLATFORM: "org.hibernate.dialect.H2Dialect"
+          SP_DS_UR: ${{ secrets.SP_DS_UR }}
+          SP_DS_UN: ${{ secrets.SP_DS_UN }}
+          SP_DS_PW: ${{ secrets.SP_DS_PW }}
+          SP_DS_DRIVER: org.postgresql.Driver
+          SP_DS_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+
 
   deploy:
     name: Deploying to Google Cloud
