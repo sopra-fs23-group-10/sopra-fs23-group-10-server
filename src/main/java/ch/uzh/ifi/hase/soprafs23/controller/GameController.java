@@ -127,6 +127,11 @@ public class GameController {
     public UserResultTuple answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
+
+        if (userAnswerTuple == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
+        }
+
         Game currentGame = games.get(gameId);
         this.checkGame(currentGame);
         UserResultTuple userResultTuple = currentGame.getResults();
