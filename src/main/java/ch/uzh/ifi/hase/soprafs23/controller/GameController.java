@@ -24,7 +24,6 @@ public class GameController {
     private final UserService userService;
     private final WebSocketController webSocketController;
     private final GameMap gameMap = GameMap.getInstance();
-    private long index = 0;
 
     GameController(GameService gameService, UserService userService, WebSocketController webSocketController) {
         this.gameService = gameService;
@@ -32,20 +31,19 @@ public class GameController {
         this.webSocketController = webSocketController;
     }
 
-    protected GameMap getGames() {
-        return gameMap;
-    }
-
     @PostMapping("/game/creation")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public GameDTO createGame(@RequestBody GameDTO requestedGameDTO, @RequestHeader("token") String token) {
+        userService.verifyToken(token);
+
         User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
         User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
-        Game game = new Game(this.index, invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
-        this.index ++;
-        this.gameMap.put(game);
+
+        Game game = gameService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
+
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
+
         webSocketController.inviteUser(game.getInvitedUserId(), createdGameDTO);
         return createdGameDTO;
     }
@@ -56,13 +54,15 @@ public class GameController {
     @ResponseBody
     public Map<Long, Boolean> respondInvitation(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token){
         userService.verifyToken(token);
-        Game game = gameMap.get(gameId);
+
+        Game game = gameService.getGame(gameId);
+
         if(game==null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
 
         if(!response){
-            gameMap.remove(gameId);
+            gameService.removeGame(gameId);
         }
 
         Map<Long, Boolean> answer = Collections.singletonMap(gameId,response);
@@ -75,26 +75,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Map<String, List<Category>> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
-        User requestingUser = userService.verifyToken(token);
-
-        Game game = gameMap.get(gameId);
-        if (game == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
-        }
-
-        Long currentPlayerId = game.getCurrentPlayer();
-        if (!requestingUser.getId().equals(currentPlayerId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
-        }
-
-        List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
-        while (randomTopics.size() > 3) {
-            randomTopics.remove((int) ((Math.random() * randomTopics.size())));
-        }
-
-        game.changeCurrentPlayer();
-
-        return Collections.singletonMap("topics", randomTopics);
+        return gameService.getRandomTopics(gameId, userService.verifyToken(token).getId());
     }
 
     @GetMapping("/game/topics/all")
@@ -102,10 +83,7 @@ public class GameController {
     @ResponseBody
     public Map<String, List<Category>> getAllTopics(@RequestHeader("token") String token) {
         userService.verifyToken(token);
-
-        List<Category> allTopics = new ArrayList<>(Arrays.asList(Category.values()));
-
-        return Collections.singletonMap("topics", allTopics);
+        return gameService.getAllTopics();
     }
 
 
@@ -113,15 +91,8 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
-        Game game = gameMap.get(questionDTO.getGameId());
-
-        userService.searchUserById(game.getInvitedUserId());
-        userService.searchUserById(game.getInvitingUserId());
-
-        Question question = gameService.getQuestion(questionDTO.getCategory());
-        game.addQuestion(question);
-
-        return DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
+        userService.verifyToken(token);
+        return DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId(), userService));
     }
 
 
@@ -130,32 +101,16 @@ public class GameController {
     @ResponseBody
     public UserResultTuple answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
+
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
 
-        if (userAnswerTuple == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
-        }
-
-        Game currentGame = gameMap.get(gameId);
-        this.checkGame(currentGame);
-
-        UserResultTuple userResultTuple = currentGame.getResults();
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
-
-        if (currentGame.completelyAnswered()) {
-            webSocketController.resultToUser(gameId, userResultTupleDTO);
-        }
-        else {
-            currentGame.addAnswer(userAnswerTuple);
-        }
-
-        return userResultTuple;
+        return gameService.answerQuestion(gameId, userAnswerTuple, webSocketController);
     }
 
     @GetMapping("game/online/{gameId}")
     @ResponseStatus
     public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
-        Game game = gameMap.get(gameId);
+        Game game = gameService.getGame(gameId);
         return Collections.singletonMap(
                 "status",
                 userService.searchUserById(game.getInvitingUserId()).getStatus().equals(UserStatus.ONLINE)
@@ -168,22 +123,10 @@ public class GameController {
     @ResponseBody
     public UserResultTupleDTO finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        Game currentGame = gameMap.get(gameId);
-        this.checkGame(currentGame);
 
-        UserResultTuple userResultTuple = currentGame.getResults();
-        userService.updatePoints(userResultTuple);
-        long invitingUserPoints = userService.getPoints(userResultTuple.getInvitingPlayerId());
-        long invitedUserPoints = userService.getPoints(userResultTuple.getInvitedPlayerId());
-
-        UserResultTuple finalResult = new UserResultTuple(gameId,userResultTuple.getInvitingPlayerId(),userResultTuple.getInvitedPlayerId());
-        finalResult.setInvitingPlayerResult(invitingUserPoints);
-        finalResult.setInvitedPlayerResult(invitedUserPoints);
-
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(finalResult);
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(gameService.finishGame(gameId, userService));
 
         webSocketController.resultToUser(gameId, userResultTupleDTO);
-
         return userResultTupleDTO;
     }
 
@@ -192,20 +135,10 @@ public class GameController {
     @ResponseBody
     public UserResultTupleDTO intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        Game currentGame = gameMap.get(gameId);
-        this.checkGame(currentGame);
-        UserResultTuple userResultTuple = currentGame.getResults();
 
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(gameService.intermediateResults(gameId));
 
         webSocketController.resultToUser(gameId, userResultTupleDTO);
-
         return userResultTupleDTO;
-    }
-
-    private void checkGame(Game currentGame){
-        if (currentGame == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
-        }
     }
 }

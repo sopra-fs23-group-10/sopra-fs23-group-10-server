@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs23.controller;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
+import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
@@ -74,9 +75,17 @@ class GameControllerTest {
 
     @Test
     void createQuestion_thenQuestionCreated_201() throws Exception {
-        Game game = new Game(0, 0, 1, QuizType.TEXT, ModeType.DUEL);
-        gameController.getGames().put(game);
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testUsername");
+        user.setPassword("testPassword");
+        user.setPoints(2L);
+        user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
+        user.setToken("1");
+        user.setStatus(UserStatus.ONLINE);
 
+        Game game = new Game(0, 0, 1, QuizType.TEXT, ModeType.DUEL);
 
         Question question = new Question();
         question.setId("62433573cfaae40c129614a9");
@@ -99,8 +108,8 @@ class GameControllerTest {
         questionDTO.setCategory(Category.GENERAL_KNOWLEDGE);
         questionDTO.setGameId(0);
 
-        given(userService.searchUserById(Mockito.any())).willReturn(new User());
-        given(gameService.getQuestion(Mockito.any())).willReturn(question);
+        given(userService.verifyToken(Mockito.any())).willReturn(user);
+        given(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId(), userService)).willReturn(question);
 
 
         MockHttpServletRequestBuilder postRequest = post("/game/topics")
