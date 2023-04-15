@@ -95,7 +95,7 @@ public class Question {
         }
 
         return answerTuple.getAnswer().equals(this.correctAnswer) ?
-                10L/answerTuple.getAnsweredTime() : 0L;
+                (long) (500L - (0.5 * answerTuple.getAnsweredTime())) : 0L;
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {

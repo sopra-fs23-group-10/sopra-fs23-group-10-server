@@ -6,7 +6,6 @@ import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import java.util.ArrayDeque;
 import java.util.Date;
 import java.util.Deque;
-import java.util.Stack;
 
 
 public class Game {
@@ -91,8 +90,8 @@ public class Game {
     public UserResultTuple getResults() {
         UserResultTuple userResultTuple = new UserResultTuple(this.id, invitedUserId,invitingUserId);
         for (Question question : questions) {
-            userResultTuple.setInvitedPlayerResult(question.getPoints(this.invitedUserId));
-            userResultTuple.setInvitingPlayerResult(question.getPoints(this.invitingUserId));
+            userResultTuple.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult() + question.getPoints(this.invitedUserId));
+            userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + question.getPoints(this.invitingUserId));
         }
         return userResultTuple;
     }
@@ -100,27 +99,34 @@ public class Game {
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
         if(timeRunUp()){
             Question question = questions.peek();
-            question.addAnswer(
-                    new UserAnswerTuple(userAnswerTuple.getUserId(),
-                            userAnswerTuple.getQuestionId(),
-                            "WrongAnswerAnyway",
-                            1000L
-                    )
-            );
+            if (question != null) {
+                question.addAnswer(
+                        new UserAnswerTuple(userAnswerTuple.getUserId(),
+                                userAnswerTuple.getQuestionId(),
+                                "WrongAnswerAnyway",
+                                1000L
+                        )
+                );
+            }
         }
         else {
             Question question = questions.peek();
-            question.addAnswer(userAnswerTuple);
+            if (question != null) {
+                question.addAnswer(userAnswerTuple);
+            }
         }
 
     }
 
     public Boolean completelyAnswered(){
-        return questions.peek().completelyAnswered();
+        Question question = questions.peek();
+        if (question != null) {
+            return question.completelyAnswered();
+        }
+        return false;
     }
 
-    public Long changeCurrentPlayer() {
+    public void changeCurrentPlayer() {
         currentPlayer = (currentPlayer == invitingUserId) ? invitedUserId : invitingUserId;
-        return currentPlayer;
     }
 }

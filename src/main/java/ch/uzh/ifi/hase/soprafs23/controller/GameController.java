@@ -113,10 +113,13 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         Game game = games.get(questionDTO.getGameId());
+
         userService.searchUserById(game.getInvitedUserId());
         userService.searchUserById(game.getInvitingUserId());
+
         Question question = gameService.getQuestion(questionDTO.getCategory());
         game.addQuestion(question);
+
         return DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
     }
 
@@ -134,14 +137,17 @@ public class GameController {
 
         Game currentGame = games.get(gameId);
         this.checkGame(currentGame);
+
         UserResultTuple userResultTuple = currentGame.getResults();
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+
         if (currentGame.completelyAnswered()) {
             webSocketController.resultToUser(gameId, userResultTupleDTO);
         }
         else {
             currentGame.addAnswer(userAnswerTuple);
         }
+
         return userResultTuple;
     }
 
@@ -180,7 +186,7 @@ public class GameController {
         return userResultTupleDTO;
     }
 
-    @PutMapping("/game/intermediate/{gameId}")
+    @GetMapping("/game/intermediate/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserResultTupleDTO intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
