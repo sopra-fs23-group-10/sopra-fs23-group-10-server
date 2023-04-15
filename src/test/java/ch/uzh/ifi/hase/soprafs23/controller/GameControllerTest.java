@@ -75,7 +75,7 @@ class GameControllerTest {
     @Test
     void createQuestion_thenQuestionCreated_201() throws Exception {
         Game game = new Game(0, 0, 1, QuizType.TEXT, ModeType.DUEL);
-        gameController.getGames().put(game.getId(), game);
+        gameController.getGames().put(game);
 
 
         Question question = new Question();
