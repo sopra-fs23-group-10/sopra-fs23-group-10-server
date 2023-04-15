@@ -163,10 +163,6 @@ public class GameService {
         return currentGame.getResults();
     }
 
-    public GameMap getGames() {
-        return gameMap;
-    }
-
     public void checkGame(Long gameId){
         if (gameMap.get(gameId) == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");

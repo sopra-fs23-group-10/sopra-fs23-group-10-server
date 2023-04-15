@@ -23,7 +23,6 @@ public class GameController {
     private final GameService gameService;
     private final UserService userService;
     private final WebSocketController webSocketController;
-    private final GameMap gameMap = GameMap.getInstance();
 
     GameController(GameService gameService, UserService userService, WebSocketController webSocketController) {
         this.gameService = gameService;

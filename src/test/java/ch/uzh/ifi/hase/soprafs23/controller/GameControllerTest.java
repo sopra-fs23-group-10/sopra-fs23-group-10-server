@@ -64,15 +64,6 @@ class GameControllerTest {
     private GameController gameController;
 
 
-    private String asJsonString(final Object object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    format("The request body could not be created.%s", e.toString()));
-        }
-    }
-
     @Test
     void createQuestion_thenQuestionCreated_201() throws Exception {
         User user = new User();
@@ -281,4 +272,15 @@ class GameControllerTest {
                     format("The request body could not be created.%s", e.toString()));
         }
     }*/
+
+
+    private String asJsonString(final Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    format("The request body could not be created.%s", e.toString()));
+        }
+    }
+
 }
