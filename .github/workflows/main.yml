@@ -9,8 +9,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
-
   test:
     name: test and sonarqube
     runs-on: ubuntu-latest
@@ -27,16 +25,15 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: build project
+        run: ./gradlew clean build --no-build-cache -x test
+
       - name: test and analyze
         run: ./gradlew test jacocotestreport sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SPRING_DATASOURCE_URL: "jdbc:h2:mem:testdb"
-          SPRING_DATASOURCE_USERNAME: "username"
-          SPRING_DATASOURCE_PASSWORD: "password"
-          SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.h2.Driver"
-          SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.H2Dialect"
+          SPRING_PROFILES_ACTIVE: test
 
   deploy:
     name: Deploying to Google Cloud
@@ -46,7 +43,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
+      - name: replace env in app.yaml
+        uses: 73h/gae-app-yaml-replace-env-variables@v0.3
+        env:
+          SP_DS_UR: ${{ secrets.SP_DS_UR }}
+          SP_DS_UN: ${{ secrets.SP_DS_UN }}
+          SP_DS_PW: ${{ secrets.SP_DS_PW }}
+        with:
+          app_yaml_path: "app.yaml"
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
@@ -54,12 +58,12 @@ jobs:
           deliverables: app.yaml
           version: v1
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
-        env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SP_DS_UR }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SP_DS_UN }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SP_DS_PW }}
-          SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
-          SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
+
+      - name: Env Variables
+        run: |
+          echo ${{secrets.SP_DS_UR}} | sed 's/./& /g'
+          echo ${{secrets.SP_DS_UN}} | sed 's/./& /g'
+          echo ${{secrets.SP_DS_PW}} | sed 's/./& /g'

@@ -3,3 +3,12 @@
 
 runtime: java17
 instance_class: F2
+
+network:
+  session_affinity: true
+
+env_variables:
+  spring_profiles_active: "dev"
+  SP_DS_UR: $SP_DS_UR
+  SP_DS_UN: $SP_DS_UN
+  SP_DS_PW: $SP_DS_PW
