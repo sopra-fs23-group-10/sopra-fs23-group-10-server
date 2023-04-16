@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Replace env in app.yaml
+      - name: Setup for Deployment
         uses: 73h/gae-app-yaml-replace-env-variables@v0.3
         env:
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
