@@ -99,7 +99,7 @@ public class GameController {
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public UserResultTuple answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
+    public UserResultTupleDTO answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
 
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);

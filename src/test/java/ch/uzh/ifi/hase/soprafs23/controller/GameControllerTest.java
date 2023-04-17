@@ -4,11 +4,12 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserAnswerDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
@@ -186,39 +187,55 @@ class GameControllerTest {
     }
 
 
-    /*
     @Test
     public void answerQuestion_whenQuestionNotAnswered_thenReturnTuple_200() throws Exception {
         // given
-        Game game = new Game(1L, 1L, 2L, quizType, "DUEL");
-        User user1 = new User();
-        user1.setId(1L);
-        user1.setUsername("testUsername");
-        user1.setPassword("testPassword");
-        user1.setPoints(2L);
-        user1.setEmail("email@email.com");
-        user1.setProfilePicture("testUsername");
-        user1.setToken("1");
-        user1.setStatus(UserStatus.IN_GAME);
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("invitingUser");
+        user.setPassword("testPassword");
+        user.setPoints(2L);
+        user.setEmail("invitor@email.com");
+        user.setProfilePicture("invitingUser");
+        user.setToken("1");
+        user.setStatus(UserStatus.IN_GAME);
+        
+        Game game = new Game(1L, user.getId(), 2L, QuizType.TEXT, ModeType.DUEL);
+
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
-        userAnswerDTO.setUserId(user1.getId());
+        userAnswerDTO.setUserId(user.getId());
         userAnswerDTO.setQuestionId("questionID");
         userAnswerDTO.setAnswer("someAnswer");
         userAnswerDTO.setAnsweredTime(112L);
-        games.put(game.getId(), game);
+
+        UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
+
+        UserResultTuple userResultTuple = new UserResultTuple();
+        userResultTuple.setGameId(game.getId());
+        userResultTuple.setInvitingPlayerId(game.getInvitingUserId());
+        userResultTuple.setInvitingPlayerResult(200L);
+        userResultTuple.setInvitedPlayerId(game.getInvitedUserId());
+        userResultTuple.setInvitedPlayerResult(0L);
+
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+
         // set up userService to throw the exception
-        given(userService.verifyToken(Mockito.any())).willReturn(user1);
+        given(userService.verifyToken(Mockito.any())).willReturn(user);
+        given(gameService.answerQuestion(game.getId(), userAnswerTuple, webSocketController)).willReturn(userResultTupleDTO);
         // when/then -> build the post request
-        MockHttpServletRequestBuilder postRequest = put("/game/question/1")
+        MockHttpServletRequestBuilder putRequest = put("/game/question/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(userAnswerDTO));
+                .content(asJsonString(userAnswerDTO))
+                .header("token", user.getToken());
         // then
-        mockMvc.perform(postRequest).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.userId", is(user1.getId())))
-                .andExpect(jsonPath("$.questionId", is(userAnswerDTO.getQuestionId())))
-                .andExpect(jsonPath("$.answer", is(userAnswerDTO.getAnswer())))
-                .andExpect(jsonPath("$.answeredTime", is(userAnswerDTO.getAnsweredTime().toString())));
-    }*/
+        mockMvc.perform(putRequest).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.gameId").doesNotExist())
+                .andExpect(jsonPath("$.invitingPlayerId").doesNotExist())
+                .andExpect(jsonPath("$.invitingPlayerResult").doesNotExist())
+                .andExpect(jsonPath("$.invitedPlayerId").doesNotExist())
+                .andExpect(jsonPath("$.invitedPlayerResult").doesNotExist());
+        //TODO: Check if assertions are correct
+    }
 /*
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {

@@ -119,7 +119,7 @@ public class GameService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public UserResultTuple answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, WebSocketController webSocketController) {
+    public UserResultTupleDTO answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, WebSocketController webSocketController) {
 
         if (userAnswerTuple == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
@@ -138,7 +138,7 @@ public class GameService {
             currentGame.addAnswer(userAnswerTuple);
         }
 
-        return userResultTuple;
+        return userResultTupleDTO;
     }
 
     public UserResultTuple finishGame(long gameId, UserService userService) {
