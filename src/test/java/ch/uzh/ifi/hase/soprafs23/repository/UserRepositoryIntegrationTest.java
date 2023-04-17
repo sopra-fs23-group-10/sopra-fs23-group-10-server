@@ -27,6 +27,7 @@ class UserRepositoryIntegrationTest {
     user.setEmail("email@email.com");
     user.setPoints(2L);
     user.setProfilePicture("firstname@lastname");
+    user.setBackgroundMusic(false);
     user.setStatus(UserStatus.OFFLINE);
     user.setToken("1");
 
@@ -43,6 +44,7 @@ class UserRepositoryIntegrationTest {
     assertEquals(found.getEmail(), user.getEmail());
     assertEquals(found.getPoints(), user.getPoints());
     assertEquals(found.getProfilePicture(), user.getProfilePicture());
+    assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
     assertEquals(found.getId(), user.getId());
     assertEquals(found.getToken(), user.getToken());
     assertEquals(found.getStatus(), user.getStatus());
@@ -57,6 +59,7 @@ class UserRepositoryIntegrationTest {
         user.setEmail("email@email.com");
         user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
+        user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
 
@@ -79,6 +82,7 @@ class UserRepositoryIntegrationTest {
         user.setEmail("email@email.com");
         user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
+        user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
 
@@ -95,6 +99,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getEmail(), user.getEmail());
         assertEquals(found.getPoints(), user.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
+        assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());
@@ -109,6 +114,7 @@ class UserRepositoryIntegrationTest {
         user.setEmail("email@email.com");
         user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
+        user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
 
@@ -131,6 +137,7 @@ class UserRepositoryIntegrationTest {
         user.setEmail("email@email.com");
         user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
+        user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
 
@@ -147,6 +154,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getEmail(), user.getEmail());
         assertEquals(found.getPoints(), user.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
+        assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());
@@ -161,6 +169,7 @@ class UserRepositoryIntegrationTest {
         user.setEmail("email@email.com");
         user.setPoints(2L);
         user.setProfilePicture("firstname@lastname");
+        user.setBackgroundMusic(false);
         user.setEmail("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
@@ -184,6 +193,7 @@ class UserRepositoryIntegrationTest {
         user.setEmail("email@email.com");
         user.setPoints(0L);
         user.setProfilePicture("firstname@lastname");
+        user.setBackgroundMusic(false);
         user.setStatus(UserStatus.ONLINE);
         user.setToken("1");
 
@@ -203,6 +213,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getEmail(), user.getEmail());
         assertEquals(4L, found.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
+        assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());
