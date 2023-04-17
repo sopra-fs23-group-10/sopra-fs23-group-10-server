@@ -120,7 +120,7 @@ public class Game {
 
     }
 
-    public Boolean completelyAnswered(){
+    public Boolean completelyAnswered() {
         return questions.peek().completelyAnswered();
     }
 

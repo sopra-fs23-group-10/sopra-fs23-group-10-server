@@ -105,7 +105,7 @@ class GameControllerTest {
         questionDTO.setGameId(0);
 
         given(userService.verifyToken(Mockito.any())).willReturn(user);
-        given(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId(), userService)).willReturn(question);
+        given(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId())).willReturn(question);
 
 
         MockHttpServletRequestBuilder postRequest = post("/game/topics")

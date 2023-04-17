@@ -33,11 +33,14 @@ public class GameService {
 
     private long index = 0;
     private final GameMap gameMap = GameMap.getInstance();
+    private final UserService userService;
 
     @Autowired
-    public GameService() {}
+    public GameService(UserService userService) {
+        this.userService = userService;
+    }
 
-    public Question getQuestion(Category category, Long gameId, UserService userService) {
+    public Question getQuestion(Category category, Long gameId) {
 
         Game game = gameMap.get(gameId);
         userService.searchUserById(game.getInvitedUserId());
@@ -131,20 +134,19 @@ public class GameService {
         Game currentGame = gameMap.get(gameId);
         this.checkGame(currentGame.getId());
 
+        currentGame.addAnswer(userAnswerTuple);
+
         UserResultTuple userResultTuple = currentGame.getResults();
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
 
         if (currentGame.completelyAnswered()) {
             webSocketController.resultToUser(gameId, userResultTupleDTO);
         }
-        else {
-            currentGame.addAnswer(userAnswerTuple);
-        }
 
         return userResultTupleDTO;
     }
 
-    public UserResultTuple finishGame(long gameId, UserService userService) {
+    public UserResultTuple finishGame(long gameId) {
         Game currentGame = gameMap.get(gameId);
         this.checkGame(currentGame.getId());
 
@@ -164,21 +166,6 @@ public class GameService {
         Game currentGame = gameMap.get(gameId);
         this.checkGame(currentGame.getId());
         return currentGame.getResults();
-    }
-
-    public Map<Long, Long> answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, UserService userService){
-
-        Game currentGame = gameMap.get(gameId);
-        this.checkGame(currentGame.getId());
-        currentGame.addAnswer(userAnswerTuple);
-        Map scoredPoints = currentGame.getPoints(userAnswerTuple.getUserId());
-        if (currentGame.completelyAnswered()) {
-            this.finishGame(gameId,userService);
-        }
-        else {
-            currentGame.addAnswer(userAnswerTuple);
-        }
-        return scoredPoints;
     }
 
     public void checkGame(Long gameId){
