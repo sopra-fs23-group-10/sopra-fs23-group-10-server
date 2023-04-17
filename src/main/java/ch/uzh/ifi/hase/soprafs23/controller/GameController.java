@@ -74,7 +74,8 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Map<String, List<Category>> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
-        return gameService.getRandomTopics(gameId, userService.verifyToken(token).getId());
+        User requestingUser = userService.verifyToken(token);
+        return gameService.getRandomTopics(gameId, requestingUser.getId());
     }
 
     @GetMapping("/game/topics/all")

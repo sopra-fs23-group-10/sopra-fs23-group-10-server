@@ -28,11 +28,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -119,9 +123,67 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.question", is(question.getQuestion())));
     }
 
+    @Test
+    public void getTopicSelection_whenValid_thenReturnTopics_200() throws Exception {
+        User user = new User();
+        user.setId(2L);
+        user.setUsername("testUsername");
+        user.setPassword("testPassword");
+        user.setPoints(2L);
+        user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
+        user.setToken("1");
+        user.setStatus(UserStatus.ONLINE);
 
+        Game game = new Game(0L, 1L, user.getId(), QuizType.TEXT, ModeType.DUEL);
 
+        List<Category> categories = new ArrayList<>();
+        categories.add(Category.MUSIC);
+        categories.add(Category.FILM_TV);
+        categories.add(Category.GENERAL_KNOWLEDGE);
 
+        given(userService.verifyToken(user.getToken())).willReturn(user);
+        given(gameService.getRandomTopics(0L, user.getId())).willReturn(Collections.singletonMap("topics", categories));
+
+        MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
+                .header("token", user.getToken());
+
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.topics[0]", is(categories.get(0).toString())))
+                .andExpect(jsonPath("$.topics[1]", is(categories.get(1).toString())))
+                .andExpect(jsonPath("$.topics[2]", is(categories.get(2).toString())));
+    }
+
+    @Test
+    public void getTopicSelection_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
+        User user = new User();
+        user.setId(2L);
+        user.setUsername("testUsername");
+        user.setPassword("testPassword");
+        user.setPoints(2L);
+        user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
+        user.setToken("1");
+        user.setStatus(UserStatus.ONLINE);
+
+        Game game = new Game(0L, 1L, user.getId(), QuizType.TEXT, ModeType.DUEL);
+
+        List<Category> categories = new ArrayList<>();
+        categories.add(Category.MUSIC);
+        categories.add(Category.FILM_TV);
+        categories.add(Category.GENERAL_KNOWLEDGE);
+
+        String invalidToken = "someInvalidToken";
+
+        when(userService.verifyToken(invalidToken)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(userService.searchUserById(user.getId())).willReturn(user);
+
+        MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
+                .header("token", invalidToken);
+
+        mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
+    }
 
 
     /*
