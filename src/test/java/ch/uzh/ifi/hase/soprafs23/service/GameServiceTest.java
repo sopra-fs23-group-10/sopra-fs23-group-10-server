@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -86,6 +88,29 @@ class GameServiceTest {
     }
 
     @Test
+    public void getQuestion_checkTopics_success() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testUsername");
+        user.setPassword("testPassword");
+        user.setPoints(2L);
+        user.setEmail("email@email.com");
+        user.setProfilePicture("testUsername");
+        user.setToken("1");
+        user.setStatus(UserStatus.IN_GAME);
+
+        when(userService.searchUserById(Mockito.any())).thenReturn(user);
+
+        List<Category> allTopics = new ArrayList<>(Arrays.asList(Category.values()));
+
+        for (Category category : allTopics) {
+            Question receivedQuestion = gameService.getQuestion(category, prepTestTextDuelGame.getId());
+            assertNotNull(receivedQuestion);
+            assertEquals(category, receivedQuestion.getCategory());
+        }
+    }
+
+    @Test
     public void getQuestion_invalidID_throwsException() {
         User user = new User();
         user.setId(1L);
@@ -101,7 +126,7 @@ class GameServiceTest {
 
         boolean tester = false;
         try {
-            Question receivedQuestion = gameService.getQuestion(Category.MUSIC, prepTestTextDuelGame.getId());
+            gameService.getQuestion(Category.MUSIC, prepTestTextDuelGame.getId());
         } catch (Exception e) {
             tester = true;
         }
