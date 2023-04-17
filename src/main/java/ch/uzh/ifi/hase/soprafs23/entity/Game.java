@@ -3,10 +3,7 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
-import java.util.ArrayDeque;
-import java.util.Date;
-import java.util.Deque;
-import java.util.Stack;
+import java.util.*;
 
 
 public class Game {
@@ -95,6 +92,14 @@ public class Game {
             userResultTuple.setInvitingPlayerResult(question.getPoints(this.invitingUserId));
         }
         return userResultTuple;
+    }
+
+    public Map<Long,Long> getPoints(long userId) {
+        long points = 0L;
+        for (Question question : questions) {
+            points += question.getPoints(userId);
+        }
+        return Collections.singletonMap(userId,points);
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {

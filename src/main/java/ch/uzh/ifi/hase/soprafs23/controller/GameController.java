@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
@@ -123,20 +124,20 @@ public class GameController {
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public UserResultTuple answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
+    public Map<Long, Long> answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
         Game currentGame = games.get(gameId);
         this.checkGame(currentGame);
-        UserResultTuple userResultTuple = currentGame.getResults();
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+        currentGame.addAnswer(userAnswerTuple);
+        Map scoredPoints = currentGame.getPoints(userAnswerDTO.getUserId());
         if (currentGame.completelyAnswered()) {
-            webSocketController.resultToUser(gameId, userResultTupleDTO);
+            this.finishGame(gameId,token);
         }
         else {
             currentGame.addAnswer(userAnswerTuple);
         }
-        return userResultTuple;
+        return scoredPoints;
     }
 
     @GetMapping("game/online/{gameId}")
