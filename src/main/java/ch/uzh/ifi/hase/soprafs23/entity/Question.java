@@ -88,22 +88,21 @@ public class Question {
     }
 
     public long getPoints(long userId) {
-        UserAnswerTuple answerTuple = results.get(userId);
+        UserAnswerTuple userAnswerTuple = results.get(userId);
 
-        if (answerTuple == null) {
-            return 0L;
+        if (userAnswerTuple == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "UserAnswerTuple seems to be null!");
         }
 
-        return answerTuple.getAnswer().equals(this.correctAnswer) ?
-                (long) (500L - (0.5 * answerTuple.getAnsweredTime())) : 0L;
+        return userAnswerTuple.getAnswer().equals(this.correctAnswer) ?
+                (long) (500L - (0.5 * userAnswerTuple.getAnsweredTime())) : 0L;
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
-        try {
-            results.put(userAnswerTuple.getUserId(), userAnswerTuple);
-        }
-        catch (Exception e) {
+        if (results.get(userAnswerTuple.getUserId()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
+        } else {
+            results.put(userAnswerTuple.getUserId(), userAnswerTuple);
         }
     }
 

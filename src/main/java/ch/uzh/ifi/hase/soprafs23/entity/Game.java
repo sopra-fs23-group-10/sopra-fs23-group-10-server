@@ -86,7 +86,7 @@ public class Game {
     }
 
     public UserResultTuple getResults() {
-        UserResultTuple userResultTuple = new UserResultTuple(this.id, invitedUserId,invitingUserId);
+        UserResultTuple userResultTuple = new UserResultTuple(this.id, invitingUserId, invitedUserId);
         for (Question question : questions) {
             userResultTuple.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult() + question.getPoints(this.invitedUserId));
             userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + question.getPoints(this.invitingUserId));
@@ -114,7 +114,7 @@ public class Game {
             );
         }
         else {
-            Question question = questions.peek();
+            Question question = questions.peekFirst();
             question.addAnswer(userAnswerTuple);
         }
 
