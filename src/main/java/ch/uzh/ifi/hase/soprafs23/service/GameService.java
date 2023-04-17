@@ -152,8 +152,8 @@ public class GameService {
 
         UserResultTuple userResultTuple = currentGame.getResults();
         userService.updatePoints(userResultTuple);
-        long invitingUserPoints = userService.getPoints(userResultTuple.getInvitingPlayerId());
-        long invitedUserPoints = userService.getPoints(userResultTuple.getInvitedPlayerId());
+        long invitingUserPoints = currentGame.getPoints(userResultTuple.getInvitingPlayerId());
+        long invitedUserPoints = currentGame.getPoints(userResultTuple.getInvitedPlayerId());
 
         UserResultTuple finalResult = new UserResultTuple(gameId,userResultTuple.getInvitingPlayerId(),userResultTuple.getInvitedPlayerId());
         finalResult.setInvitingPlayerResult(invitingUserPoints);

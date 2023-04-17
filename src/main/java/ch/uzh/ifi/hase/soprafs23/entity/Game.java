@@ -94,12 +94,12 @@ public class Game {
         return userResultTuple;
     }
 
-    public Map<Long,Long> getPoints(long userId) {
+    public long getPoints(long userId) {
         long points = 0L;
         for (Question question : questions) {
             points += question.getPoints(userId);
         }
-        return Collections.singletonMap(userId,points);
+        return points;
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
