@@ -418,6 +418,7 @@ class GameServiceTest {
         assertEquals(prepTextDuelGame.getInvitedUserId(), finalResult.getInvitedPlayerId());
         assertEquals((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())) , finalResult.getInvitedPlayerResult());
 
+        assertNull(gameService.getGame(game.getId()));
     }
 
     @Test
