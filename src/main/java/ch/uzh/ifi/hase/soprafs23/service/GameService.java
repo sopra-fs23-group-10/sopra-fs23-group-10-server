@@ -122,27 +122,6 @@ public class GameService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public UserResultTuple answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, WebSocketController webSocketController) {
-
-        if (userAnswerTuple == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
-        }
-
-        Game currentGame = gameMap.get(gameId);
-        this.checkGame(currentGame.getId());
-
-        UserResultTuple userResultTuple = currentGame.getResults();
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
-
-        if (currentGame.completelyAnswered()) {
-            webSocketController.resultToUser(gameId, userResultTupleDTO);
-        }
-        else {
-            currentGame.addAnswer(userAnswerTuple);
-        }
-
-        return userResultTuple;
-    }
 
     public UserResultTuple finishGame(long gameId, UserService userService) {
         Game currentGame = gameMap.get(gameId);
@@ -164,6 +143,21 @@ public class GameService {
         Game currentGame = gameMap.get(gameId);
         this.checkGame(currentGame.getId());
         return currentGame.getResults();
+    }
+
+    public Map<Long, Long> answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, UserService userService){
+
+        Game currentGame = gameMap.get(gameId);
+        this.checkGame(currentGame.getId());
+        currentGame.addAnswer(userAnswerTuple);
+        Map scoredPoints = currentGame.getPoints(userAnswerTuple.getUserId());
+        if (currentGame.completelyAnswered()) {
+            this.finishGame(gameId,userService);
+        }
+        else {
+            currentGame.addAnswer(userAnswerTuple);
+        }
+        return scoredPoints;
     }
 
     public void checkGame(Long gameId){

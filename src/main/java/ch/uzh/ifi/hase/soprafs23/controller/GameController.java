@@ -99,19 +99,8 @@ public class GameController {
     @ResponseBody
     public Map<Long, Long> answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-        Game currentGame = games.get(gameId);
-        this.checkGame(currentGame);
-        currentGame.addAnswer(userAnswerTuple);
-        Map scoredPoints = currentGame.getPoints(userAnswerDTO.getUserId());
-        if (currentGame.completelyAnswered()) {
-            this.finishGame(gameId,token);
-        }
-        else {
-            currentGame.addAnswer(userAnswerTuple);
-        }
-        return scoredPoints;
+        return gameService.answerQuestion(gameId, userAnswerTuple,userService);
     }
 
     @GetMapping("game/online/{gameId}")
