@@ -1,14 +1,16 @@
 package ch.uzh.ifi.hase.soprafs23.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs23.constant.Category;
+import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
+import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
-import ch.uzh.ifi.hase.soprafs23.entity.UserAnswerTuple;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.*;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DTOMapperTest
@@ -90,6 +92,61 @@ class DTOMapperTest {
         // check content
         assertEquals(userPutDTO.getUsername(), user.getUsername());
     }
+    @Test
+    void testGame_fromEntity_toDTO_success() {
+        Game game = new Game();
+        game.setInvitingUserId(1L);
+        game.setInvitedUserId(2L);
+        game.setQuizType(QuizType.IMAGE);
+        game.setModeType(ModeType.SINGLE);
+        game.setId(1L);
+
+        GameDTO gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
+
+        assertEquals(game.getInvitingUserId(), gameDTO.getInvitingUserId());
+        assertEquals(game.getInvitedUserId(), gameDTO.getInvitedUserId());
+        assertEquals(game.getQuizType(), gameDTO.getQuizType());
+        assertEquals(game.getModeType(), gameDTO.getModeType());
+        assertEquals(game.getId(), gameDTO.getId());
+    }
+
+    @Test
+    void testGame_fromDTO_toEntity_success() {
+        GameDTO gameDTO = new GameDTO();
+        gameDTO.setInvitingUserId(1L);
+        gameDTO.setInvitedUserId(2L);
+        gameDTO.setQuizType(QuizType.IMAGE);
+        gameDTO.setModeType(ModeType.SINGLE);
+
+        Game game = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gameDTO);
+
+        assertEquals(gameDTO.getInvitingUserId(), game.getInvitingUserId());
+        assertEquals(gameDTO.getInvitedUserId(), game.getInvitedUserId());
+        assertEquals(gameDTO.getQuizType(), game.getQuizType());
+        assertEquals(game.getModeType(), game.getModeType());
+        assertNotNull(game.getQuestions());
+        assertEquals(0, game.getQuestions().size());
+    }
+
+    @Test
+    void testQuestion_fromEntity_toDTO_success() {
+        Question question = new Question();
+        question.setCategory(Category.MUSIC);
+        question.setId("questionId");
+        question.setQuestion("Who do music?");
+        question.setAllAnswers(new String[]{"Wlarbenborb", "Herbert Cheese", "Frank Sinotra", "John Lennon"});
+        question.setCorrectAnswer("John Lennon");
+        question.setIncorrectAnswers(new String[]{"Wlarbenborb", "Herbert Cheese", "Frank Sinotra"});
+
+        QuestionDTO questionDTO = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
+
+        assertEquals(question.getId(), questionDTO.getId());
+        assertEquals(question.getCategory(), questionDTO.getCategory());
+        assertEquals(question.getQuestion(), questionDTO.getQuestion());
+        assertArrayEquals(question.getAllAnswers(), questionDTO.getAllAnswers());
+        assertNull(questionDTO.getCorrectAnswer());
+        assertNull(questionDTO.getIncorrectAnswers());
+    }
 
     @Test
     void testUserResultTuple_fromEntityToDTO_success() {
@@ -139,5 +196,23 @@ class DTOMapperTest {
         assertEquals(userAnswerTuple.getQuestionId(), userAnswerTupleDTO.getQuestionId());
         assertEquals(userAnswerTuple.getAnswer(), userAnswerTupleDTO.getAnswer());
         assertEquals(userAnswerTuple.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
+    }
+
+    @Test
+    void testUserResultTuple_fromEntity_toDTO_success() {
+        UserResultTuple userResultTuple = new UserResultTuple();
+        userResultTuple.setGameId(1L);
+        userResultTuple.setInvitingPlayerId(1L);
+        userResultTuple.setInvitingPlayerResult(200L);
+        userResultTuple.setInvitedPlayerId(2L);
+        userResultTuple.setInvitedPlayerResult(400L);
+
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+
+        assertEquals(userResultTuple.getGameId(), userResultTupleDTO.getGameId());
+        assertEquals(userResultTuple.getInvitingPlayerId(), userResultTupleDTO.getInvitingPlayerId());
+        assertEquals(userResultTuple.getInvitingPlayerResult(), userResultTupleDTO.getInvitingPlayerResult());
+        assertEquals(userResultTuple.getInvitedPlayerId(), userResultTupleDTO.getInvitedPlayerId());
+        assertEquals(userResultTuple.getInvitedPlayerResult(), userResultTupleDTO.getInvitedPlayerResult());
     }
 }
