@@ -31,12 +31,12 @@ public class WebSocketController {
 
     @MessageMapping("/invitation/{userId}")
     public void inviteUser(@DestinationVariable long invitedUserId, GameDTO gameDTO) {
-        this.webSocketService.sendMessageToClients("/invitation/" + invitedUserId, gameDTO);
+        this.webSocketService.sendMessageToClients("/invitations/" + invitedUserId, gameDTO);
     }
 
-    @MessageMapping("/invitation/answer/{userId}")
+    @MessageMapping("/invitations/answer/{userId}")
     public void sendInviationRespond(@DestinationVariable Long userId, Map map) {
-        this.webSocketService.sendMessageToClients("/invitation/answer/" + userId, map);
+        this.webSocketService.sendMessageToClients("/invitations/answer/" + userId, map);
     }
 
     @MessageMapping("/game/intermediateResult/{gameId}")
