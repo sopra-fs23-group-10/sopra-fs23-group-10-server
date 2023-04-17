@@ -89,9 +89,13 @@ public class Question {
 
     public long getPoints(long userId) {
         UserAnswerTuple answerTuple = results.get(userId);
-        System.out.println(answerTuple.getAnswer());
+
+        if (answerTuple == null) {
+            return 0L;
+        }
+
         return answerTuple.getAnswer().equals(this.correctAnswer) ?
-                10L/answerTuple.getAnsweredTime() : 0L;
+                (long) (500L - (0.5 * answerTuple.getAnsweredTime())) : 0L;
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {

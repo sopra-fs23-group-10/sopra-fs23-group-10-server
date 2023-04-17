@@ -88,8 +88,8 @@ public class Game {
     public UserResultTuple getResults() {
         UserResultTuple userResultTuple = new UserResultTuple(this.id, invitedUserId,invitingUserId);
         for (Question question : questions) {
-            userResultTuple.setInvitedPlayerResult(question.getPoints(this.invitedUserId));
-            userResultTuple.setInvitingPlayerResult(question.getPoints(this.invitingUserId));
+            userResultTuple.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult() + question.getPoints(this.invitedUserId));
+            userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + question.getPoints(this.invitingUserId));
         }
         return userResultTuple;
     }
@@ -124,8 +124,7 @@ public class Game {
         return questions.peek().completelyAnswered();
     }
 
-    public Long changeCurrentPlayer() {
+    public void changeCurrentPlayer() {
         currentPlayer = (currentPlayer == invitingUserId) ? invitedUserId : invitingUserId;
-        return currentPlayer;
     }
 }

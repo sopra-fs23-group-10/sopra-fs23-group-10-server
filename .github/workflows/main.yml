@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: replace env in app.yaml
+      - name: Setup for Deployment
         uses: 73h/gae-app-yaml-replace-env-variables@v0.3
         env:
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
@@ -56,14 +56,7 @@ jobs:
         uses: google-github-actions/deploy-appengine@v0.2.0
         with:
           deliverables: app.yaml
-          version: v1
+          version: v2
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
-
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
-
-      - name: Env Variables
-        run: |
-          echo ${{secrets.SP_DS_UR}} | sed 's/./& /g'
-          echo ${{secrets.SP_DS_UN}} | sed 's/./& /g'
-          echo ${{secrets.SP_DS_PW}} | sed 's/./& /g'
