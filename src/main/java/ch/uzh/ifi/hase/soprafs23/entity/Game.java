@@ -3,9 +3,7 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
-import java.util.ArrayDeque;
-import java.util.Date;
-import java.util.Deque;
+import java.util.*;
 
 
 public class Game {
@@ -96,34 +94,34 @@ public class Game {
         return userResultTuple;
     }
 
+    public Map<Long,Long> getPoints(long userId) {
+        long points = 0L;
+        for (Question question : questions) {
+            points += question.getPoints(userId);
+        }
+        return Collections.singletonMap(userId,points);
+    }
+
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
         if(timeRunUp()){
             Question question = questions.peek();
-            if (question != null) {
-                question.addAnswer(
-                        new UserAnswerTuple(userAnswerTuple.getUserId(),
-                                userAnswerTuple.getQuestionId(),
-                                "WrongAnswerAnyway",
-                                1000L
-                        )
-                );
-            }
+            question.addAnswer(
+                    new UserAnswerTuple(userAnswerTuple.getUserId(),
+                            userAnswerTuple.getQuestionId(),
+                            "WrongAnswerAnyway",
+                            1000L
+                    )
+            );
         }
         else {
             Question question = questions.peek();
-            if (question != null) {
-                question.addAnswer(userAnswerTuple);
-            }
+            question.addAnswer(userAnswerTuple);
         }
 
     }
 
     public Boolean completelyAnswered(){
-        Question question = questions.peek();
-        if (question != null) {
-            return question.completelyAnswered();
-        }
-        return false;
+        return questions.peek().completelyAnswered();
     }
 
     public void changeCurrentPlayer() {

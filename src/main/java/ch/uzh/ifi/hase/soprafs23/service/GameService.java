@@ -54,8 +54,11 @@ public class GameService {
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e){
             System.err.println("Error sending HTTP request: " + e.getMessage());
+            return null;
+        } catch (IOException i){
+            System.err.println("Error sending HTTP request: " + i.getMessage());
             return null;
         }
         if (response.statusCode() == 200) {
@@ -161,6 +164,21 @@ public class GameService {
         Game currentGame = gameMap.get(gameId);
         this.checkGame(currentGame.getId());
         return currentGame.getResults();
+    }
+
+    public Map<Long, Long> answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, UserService userService){
+
+        Game currentGame = gameMap.get(gameId);
+        this.checkGame(currentGame.getId());
+        currentGame.addAnswer(userAnswerTuple);
+        Map scoredPoints = currentGame.getPoints(userAnswerTuple.getUserId());
+        if (currentGame.completelyAnswered()) {
+            this.finishGame(gameId,userService);
+        }
+        else {
+            currentGame.addAnswer(userAnswerTuple);
+        }
+        return scoredPoints;
     }
 
     public void checkGame(Long gameId){
