@@ -108,11 +108,47 @@ class GameServiceTest {
     }
 
     @Test
-    public void getRandomTopics_success() {
+    public void getRandomTopics_once_success() {
         Map<String, List<Category>> topicsMap = gameService.getRandomTopics(prepTestTextDuelGame.getId(), prepTestTextDuelGame.getInvitedUserId());
         List<Category> topicsList = topicsMap.get("topics");
 
         assertEquals(3, topicsList.size());
+    }
+
+    @Test
+    public void getRandomTopics_rotating_success() {
+        int counterInvited = 0;
+        int counterInviting = 0;
+
+        for (int i = 0; i < 5; i++) {
+            Map<String, List<Category>> topicsMap = gameService.getRandomTopics(prepTestTextDuelGame.getId(), prepTestTextDuelGame.getInvitedUserId());
+            List<Category> topicsList = topicsMap.get("topics");
+            assertEquals(3, topicsList.size());
+            counterInvited += 1;
+
+            topicsMap = gameService.getRandomTopics(prepTestTextDuelGame.getId(), prepTestTextDuelGame.getInvitingUserId());
+            topicsList = topicsMap.get("topics");
+            assertEquals(3, topicsList.size());
+            counterInviting += 1;
+        }
+        assertEquals(counterInvited, counterInviting);
+    }
+
+    @Test
+    public void getRandomTopics_requestedTwice_throwsException() {
+        boolean tester = false;
+
+        Map<String, List<Category>> topicsMap = gameService.getRandomTopics(prepTestTextDuelGame.getId(), prepTestTextDuelGame.getInvitedUserId());
+        List<Category> topicsList = topicsMap.get("topics");
+        assertEquals(3, topicsList.size());
+
+        try {
+            gameService.getRandomTopics(prepTestTextDuelGame.getId(), prepTestTextDuelGame.getInvitedUserId());
+        } catch (Exception e) {
+            tester = true;
+        }
+        
+        assertTrue(tester);
     }
 
     @Test
