@@ -13,7 +13,6 @@ public class Game {
     private final Deque<Question> questions = new ArrayDeque<>();
     private QuizType quizType;
     private ModeType modeType;
-
     private long currentPlayer;
     private Date lastChange;
 

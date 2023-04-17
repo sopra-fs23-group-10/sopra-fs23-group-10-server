@@ -91,7 +91,7 @@ public class Question {
         UserAnswerTuple userAnswerTuple = results.get(userId);
 
         if (userAnswerTuple == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "UserAnswerTuple seems to be null!");
+            return 0L;
         }
 
         return userAnswerTuple.getAnswer().equals(this.correctAnswer) ?

@@ -221,7 +221,7 @@ class GameControllerTest {
 
         // set up userService to throw the exception
         given(userService.verifyToken(Mockito.any())).willReturn(user);
-        given(gameService.answerQuestion(game.getId(), userAnswerTuple, webSocketController)).willReturn(userResultTupleDTO);
+        given(gameService.answerQuestion(game.getId(), userAnswerTuple, webSocketController)).willReturn(userResultTuple);
         // when/then -> build the post request
         MockHttpServletRequestBuilder putRequest = put("/game/question/1")
                 .contentType(MediaType.APPLICATION_JSON)

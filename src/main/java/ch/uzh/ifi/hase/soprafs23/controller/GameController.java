@@ -104,7 +104,9 @@ public class GameController {
 
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
 
-        return gameService.answerQuestion(gameId, userAnswerTuple, webSocketController);
+        UserResultTuple userResultTuple = gameService.answerQuestion(gameId, userAnswerTuple, webSocketController);
+
+        return DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
     }
 
     @GetMapping("game/online/{gameId}")

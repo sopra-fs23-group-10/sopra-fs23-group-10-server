@@ -29,7 +29,9 @@ public class WebSocketService {
         this.smesg.convertAndSend(destination, dto);
     }
 
+    /*
     public void updatePoints(long userPoints, long userId) {
         userRepository.updatePoints(userPoints,userId);
     }
+    */
 }

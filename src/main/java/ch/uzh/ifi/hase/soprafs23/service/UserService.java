@@ -235,7 +235,7 @@ public class UserService {
         user.setStatus(UserStatus.OFFLINE);
     }
     /**
-     * This method updates a user's points.
+     * This method updates a user's points at the end of a game.
      *
      * @param userResultTuple
      * @throws org.springframework.web.server.ResponseStatusException
@@ -250,9 +250,9 @@ public class UserService {
         invitingUser.setPoints(invitingUser.getPoints() + invitingUserPoints);
         invitedUser.setPoints(invitedUser.getPoints() + invitedUserPoints);
 
-        /*userRepository.updatePoints(invitedUserPoints, invitedUser.getId());
+        /*
+        userRepository.updatePoints(invitedUserPoints, invitedUser.getId());
         userRepository.updatePoints(invitingUserPoints, invitingUser.getId());
-
          */
     }
 

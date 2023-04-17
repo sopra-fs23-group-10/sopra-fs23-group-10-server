@@ -9,7 +9,6 @@ import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.UserAnswerTuple;
 import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.handler.GameMap;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -125,7 +124,7 @@ public class GameService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public UserResultTupleDTO answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, WebSocketController webSocketController) {
+    public UserResultTuple answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, WebSocketController webSocketController) {
 
         if (userAnswerTuple == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
@@ -137,13 +136,12 @@ public class GameService {
         currentGame.addAnswer(userAnswerTuple);
 
         UserResultTuple userResultTuple = currentGame.getResults();
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
 
         if (currentGame.completelyAnswered()) {
-            webSocketController.resultToUser(gameId, userResultTupleDTO);
+            webSocketController.resultToUser(gameId, DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple));
         }
 
-        return userResultTupleDTO;
+        return userResultTuple;
     }
 
     public UserResultTuple finishGame(long gameId) {
@@ -155,15 +153,17 @@ public class GameService {
         long invitingUserPoints = currentGame.getPoints(userResultTuple.getInvitingPlayerId());
         long invitedUserPoints = currentGame.getPoints(userResultTuple.getInvitedPlayerId());
 
-        UserResultTuple finalResult = new UserResultTuple(gameId,userResultTuple.getInvitingPlayerId(),userResultTuple.getInvitedPlayerId());
+        UserResultTuple finalResult = new UserResultTuple(gameId, userResultTuple.getInvitingPlayerId(), userResultTuple.getInvitedPlayerId());
         finalResult.setInvitingPlayerResult(invitingUserPoints);
         finalResult.setInvitedPlayerResult(invitedUserPoints);
+
+        this.removeGame(gameId);
 
         return finalResult;
     }
 
     public UserResultTuple intermediateResults(long gameId) {
-        Game currentGame = gameMap.get(gameId);
+        Game currentGame = this.getGame(gameId);
         this.checkGame(currentGame.getId());
         return currentGame.getResults();
     }
