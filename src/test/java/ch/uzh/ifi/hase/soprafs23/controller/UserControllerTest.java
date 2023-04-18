@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.UserPutDTO;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +46,11 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-// Tests of PostMappings
-    @Test
-    public void createUser_nonexistentUser_thenUserCreated_201() throws Exception {
-        // given
-        User user = new User();
+    private User user;
+
+    @BeforeEach
+    public void setup() {
+        user = new User();
         user.setId(1L);
         user.setUsername("testUsername");
         user.setPassword("testPassword");
@@ -58,7 +59,12 @@ class UserControllerTest {
         user.setProfilePicture("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
+    }
 
+// Tests of PostMappings
+    @Test
+    public void createUser_nonexistentUser_thenUserCreated_201() throws Exception {
+        // given
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
@@ -88,16 +94,6 @@ class UserControllerTest {
     @Test
     void createUser_whenUserExists_thenThrowsConflict_409() throws Exception {
         // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
@@ -119,16 +115,6 @@ class UserControllerTest {
     @Test
     void createUser_whenEmptyUsername_thenThrowsForbidden_403() throws Exception {
         // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("");
         userPostDTO.setPassword("testPassword");
@@ -149,16 +135,6 @@ class UserControllerTest {
     @Test
     void createUser_whenNullUsername_thenThrowsForbidden_403() throws Exception {
         // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername(null);
         userPostDTO.setPassword("testPassword");
@@ -179,16 +155,6 @@ class UserControllerTest {
     @Test
     void createUser_whenEmptyPassword_thenThrowsForbidden_403() throws Exception {
         // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("");
@@ -209,16 +175,6 @@ class UserControllerTest {
     @Test
     void createUser_whenNullPassword_thenThrowsForbidden_403() throws Exception {
         // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword(null);
@@ -239,16 +195,6 @@ class UserControllerTest {
     @Test
     void createUser_whenEmptyEmail_thenThrowsForbidden_403() throws Exception {
         // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
@@ -269,16 +215,6 @@ class UserControllerTest {
     @Test
     void createUser_whenNullEmail_thenThrowsForbidden_403() throws Exception {
         // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
         userPostDTO.setPassword("testPassword");
@@ -301,16 +237,6 @@ class UserControllerTest {
     @Test
     void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setStatus(UserStatus.OFFLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         List<User> allUsers = Collections.singletonList(user);
 
         // this mocks the UserService -> we define above what the userService should
@@ -337,17 +263,6 @@ class UserControllerTest {
 
     @Test
     void givenUser_whenGetUser_thenReturnUser_200() throws Exception {
-        // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyToken(user.getToken())).willReturn(user);
@@ -372,16 +287,6 @@ class UserControllerTest {
     @Test
     void givenNonexistentUser_whenGetUser_thenThrowsNotFound_404() throws Exception {
     // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
         given(userService.verifyToken(user.getToken())).willReturn(user);
         when(userService.searchUserById(user.getId())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
@@ -396,16 +301,6 @@ class UserControllerTest {
     @Test
     void givenUser_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         String invalidToken = "someInvalidToken";
 
         // this mocks the UserService -> we define above what the userService should
@@ -424,16 +319,6 @@ class UserControllerTest {
     @Test
     void givenUser_whenMissingToken_thenThrowBadRequest_400() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyToken(Mockito.any())).willReturn(user);
@@ -450,16 +335,6 @@ class UserControllerTest {
     @Test
     void givenPutUser_whenUserExists_thenThrowsNoContent_204() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
 
@@ -489,16 +364,6 @@ class UserControllerTest {
     @Test
     void givenPutUser_whenWrongUserId_thenThrowsNotFound_404() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
 
@@ -522,16 +387,6 @@ class UserControllerTest {
     @Test
     void givenPutUser_whenNoToken_thenThrowsBadRequest_400() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
 
@@ -552,16 +407,6 @@ class UserControllerTest {
     @Test
     void givenPutUser_whenInvalidToken_thenThrowsUnauthorized_401() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
 
@@ -585,16 +430,6 @@ class UserControllerTest {
     @Test
     void givenPutUser_whenNotMatchingID_thenThrowsUnauthorized_401() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
 
@@ -618,16 +453,6 @@ class UserControllerTest {
     @Test
     void givenPutUser_whenNullUsername_thenThrowsBadRequest_400() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername(null);
 
@@ -649,16 +474,6 @@ class UserControllerTest {
     @Test
     void givenPutUser_whenEmptyUsername_thenThrowsBadRequest_400() throws Exception {
         // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("");
 
@@ -679,13 +494,6 @@ class UserControllerTest {
 
     @Test
     void givenUser_whenLogout_thenReturnUser_200() throws Exception {
-        // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
@@ -701,23 +509,28 @@ class UserControllerTest {
     }
 
     @Test
-    void givenUser_whenLogout_thenReturnUser_401() throws Exception {
-        // given
-        User user = new User();
-        user.setUsername("firstname@lastname");
-        user.setStatus(UserStatus.ONLINE);
-        user.setId(1L);
-        user.setToken("token");
-
+    void logout_whenNotLoggedIn_thenThrowUnauthorized_401() throws Exception {
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.verifyToken(user.getToken())).willReturn(user);
+        given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
         Mockito.doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized."))
-                .when(userService).setOffline(Mockito.any(), Mockito.any());
+                .when(userService).setOffline(user, user.getId());
         // when
-        MockHttpServletRequestBuilder postRequest = post("/logout/2")
+        MockHttpServletRequestBuilder postRequest = post("/logout/" + user.getId())
                 .header("token", user.getToken());
 
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void logout_whenNoValidToken_thenThrowUnauthorized_401() throws Exception {
+        // this mocks the UserService -> we define above what the userService should
+        // return when getUsers() is called
+        given(userService.verifyTokenWithId(user.getToken(), user.getId())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized."));
+        // when
+        MockHttpServletRequestBuilder postRequest = post("/logout/" + user.getId())
+                .header("token", user.getToken());
         // then
         mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
     }
