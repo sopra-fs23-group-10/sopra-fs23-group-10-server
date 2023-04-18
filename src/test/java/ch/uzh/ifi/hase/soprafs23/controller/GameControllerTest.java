@@ -8,8 +8,6 @@ import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserAnswerDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
@@ -75,7 +73,6 @@ class GameControllerTest {
 
     @BeforeEach
     void setup() {
-
         invitingUser = new User();
         invitingUser.setId(1L);
         invitingUser.setUsername("testUsername");
@@ -104,14 +101,14 @@ class GameControllerTest {
     void createGame_thenGameReturned_201() throws Exception {
         User invitedUser = new User();
         invitedUser.setId(game.getInvitedUserId());
-        invitingUser.setUsername("invitedUser");
-        invitingUser.setPassword("testPassword");
-        invitingUser.setPoints(2L);
-        invitingUser.setEmail("invitedUser@email.com");
-        invitingUser.setProfilePicture("invitedUser");
-        invitingUser.setBackgroundMusic(false);
-        invitingUser.setToken("invited");
-        invitingUser.setStatus(UserStatus.ONLINE);
+        invitedUser.setUsername("invitedUser");
+        invitedUser.setPassword("testPassword");
+        invitedUser.setPoints(2L);
+        invitedUser.setEmail("invitedUser@email.com");
+        invitedUser.setProfilePicture("invitedUser");
+        invitedUser.setBackgroundMusic(false);
+        invitedUser.setToken("invited");
+        invitedUser.setStatus(UserStatus.ONLINE);
 
         GameDTO gameDTO = new GameDTO();
         gameDTO.setInvitingUserId(game.getInvitingUserId());
@@ -172,7 +169,6 @@ class GameControllerTest {
 
     @Test
     void createQuestion_thenQuestionCreated_201() throws Exception {
-
         QuestionDTO questionDTO = new QuestionDTO();
         questionDTO.setCategory(question.getCategory());
         questionDTO.setGameId(game.getId());
@@ -199,7 +195,6 @@ class GameControllerTest {
 
     @Test
     void createQuestion_invalidToken_throwsUnauthorized_401() throws Exception {
-
         QuestionDTO questionDTO = new QuestionDTO();
         questionDTO.setCategory(question.getCategory());
         questionDTO.setGameId(game.getId());
@@ -218,7 +213,6 @@ class GameControllerTest {
 
     @Test
     public void getTopicSelection_whenValid_thenReturnTopics_200() throws Exception {
-
         List<Category> categories = new ArrayList<>();
         categories.add(Category.MUSIC);
         categories.add(Category.FILM_TV);
@@ -239,7 +233,6 @@ class GameControllerTest {
 
     @Test
     public void getTopicSelection_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
-
         List<Category> categories = new ArrayList<>();
         categories.add(Category.MUSIC);
         categories.add(Category.FILM_TV);
@@ -258,7 +251,6 @@ class GameControllerTest {
 
     @Test
     public void answerQuestion_whenQuestionNotAnswered_thenReturnTuple_200() throws Exception {
-
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
         userAnswerDTO.setUserId(invitingUser.getId());
         userAnswerDTO.setQuestionId(question.getId());
