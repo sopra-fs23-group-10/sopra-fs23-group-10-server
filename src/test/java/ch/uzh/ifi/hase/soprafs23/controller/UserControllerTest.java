@@ -78,9 +78,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.points", is(user.getPoints().intValue())))
+                .andExpect(jsonPath("$.points", is((int) user.getPoints())))
                 .andExpect(jsonPath("$.token", is(user.getToken())))
-                .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.id", is((int) user.getId())))
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
     }
@@ -328,9 +328,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
                 .andExpect(jsonPath("$[0].profilePicture", is(user.getProfilePicture())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$[0].points", is(user.getPoints().intValue())))
+                .andExpect(jsonPath("$[0].points", is((int) user.getPoints())))
                 .andExpect(jsonPath("$[0].token").isEmpty())
-                .andExpect(jsonPath("$[0].id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$[0].id", is((int) user.getId())))
                 .andExpect(jsonPath("$[0].password").doesNotExist())
                 .andExpect(jsonPath("$[0].email").doesNotExist());
     }
@@ -361,9 +361,9 @@ class UserControllerTest {
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
-                .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.id", is((int) user.getId())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.points", is(user.getPoints().intValue())))
+                .andExpect(jsonPath("$.points", is((int) user.getPoints())))
                 .andExpect(jsonPath("$.token").isEmpty())
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
@@ -478,9 +478,9 @@ class UserControllerTest {
         mockMvc.perform(putRequest).andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
-                .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.id", is((int) user.getId())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.points", is(user.getPoints().intValue())))
+                .andExpect(jsonPath("$.points", is((int) user.getPoints())))
                 .andExpect(jsonPath("$.token").isEmpty())
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());

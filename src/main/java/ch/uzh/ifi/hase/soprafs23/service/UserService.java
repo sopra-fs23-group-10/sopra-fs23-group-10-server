@@ -72,7 +72,7 @@ public class UserService {
 
         User userById = searchUserById(userId);
 
-        if (!userByToken.getId().equals(userById.getId()) || !userByToken.getToken().equals(userById.getToken())) {
+        if (userByToken.getId() != userById.getId() || !userByToken.getToken().equals(userById.getToken())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized.");
         }
         return userByToken;
@@ -229,7 +229,7 @@ public class UserService {
         if (user == null || userId == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be logged out was not found.");
         }
-        if (!user.getId().equals(userId)) {
+        if (user.getId() != userId) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized.");
         }
         user.setStatus(UserStatus.OFFLINE);

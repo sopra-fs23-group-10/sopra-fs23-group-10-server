@@ -24,7 +24,7 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false, unique = true)
@@ -32,7 +32,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)//, columnDefinition = "long default 0L")
-    private Long points;
+    private long points;
     @Column(nullable = false)
     private UserStatus status;
     @Column(nullable = false, unique = true)
@@ -42,10 +42,10 @@ public class User implements Serializable {
     @Column(nullable = false)//, columnDefinition = "boolean default true")
     private boolean backgroundMusic;
 
-    public Long getId() {
+    public long getId() {
         return this.id;
     }
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -70,10 +70,10 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Long getPoints() {
+    public long getPoints() {
         return points;
     }
-    public void setPoints(Long points) {
+    public void setPoints(long points) {
         this.points = points;
     }
 

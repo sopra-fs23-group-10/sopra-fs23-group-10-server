@@ -15,6 +15,7 @@ import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -68,22 +69,27 @@ class GameControllerTest {
     @Autowired
     private GameController gameController;
 
+    private User invitingUser;
+    private Question question;
+    private Game game;
 
-    @Test
-    void createQuestion_thenQuestionCreated_201() throws Exception {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
+    @BeforeEach
+    void setup() {
 
-        Game game = new Game(0, 0, 1, QuizType.TEXT, ModeType.DUEL);
+        invitingUser = new User();
+        invitingUser.setId(1L);
+        invitingUser.setUsername("testUsername");
+        invitingUser.setPassword("testPassword");
+        invitingUser.setPoints(2L);
+        invitingUser.setEmail("email@email.com");
+        invitingUser.setProfilePicture("testUsername");
+        invitingUser.setBackgroundMusic(false);
+        invitingUser.setToken("inviting");
+        invitingUser.setStatus(UserStatus.ONLINE);
 
-        Question question = new Question();
+        game = new Game(0L, invitingUser.getId(), 2L, QuizType.TEXT, ModeType.DUEL);
+
+        question = new Question();
         question.setId("62433573cfaae40c129614a9");
         question.setQuestion("Who wrote this test?");
         question.setCategory(Category.GENERAL_KNOWLEDGE);
@@ -92,19 +98,86 @@ class GameControllerTest {
         String[] incorrectAnswers = {"you", "allOfUs", "WhoKnows?"};
         question.setIncorrectAnswers(incorrectAnswers);
         question.setCorrectAnswer("me");
+    }
+
+    @Test
+    void createGame_thenGameReturned_201() throws Exception {
+        User invitedUser = new User();
+        invitedUser.setId(game.getInvitedUserId());
+        invitingUser.setUsername("invitedUser");
+        invitingUser.setPassword("testPassword");
+        invitingUser.setPoints(2L);
+        invitingUser.setEmail("invitedUser@email.com");
+        invitingUser.setProfilePicture("invitedUser");
+        invitingUser.setBackgroundMusic(false);
+        invitingUser.setToken("invited");
+        invitingUser.setStatus(UserStatus.ONLINE);
 
         GameDTO gameDTO = new GameDTO();
-        gameDTO.setId(game.getId());
-        gameDTO.setInvitedUserId(game.getInvitedUserId());
         gameDTO.setInvitingUserId(game.getInvitingUserId());
-        gameDTO.setModeType(game.getModeType());
-        gameDTO.setQuizType(game.getQuizType());
+        gameDTO.setInvitedUserId(game.getInvitedUserId());
+        gameDTO.setQuizType(QuizType.TEXT);
+        gameDTO.setModeType(ModeType.DUEL);
+
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(userService.searchUserById(gameDTO.getInvitedUserId())).willReturn(invitedUser);
+        given(userService.searchUserById(gameDTO.getInvitingUserId())).willReturn(invitingUser);
+        given(gameService.createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType())).willReturn(game);
+
+        MockHttpServletRequestBuilder postRequest = post("/game/creation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gameDTO))
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(postRequest)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is((int) game.getId())))
+                .andExpect(jsonPath("$.invitedUserId", is((int) game.getInvitedUserId())))
+                .andExpect(jsonPath("$.invitingUserId", is((int) game.getInvitingUserId())))
+                .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
+                .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
+    }
+
+    @Test
+    void createGame_invalidToken_throwsUnauthorized_401() throws Exception {
+        User invitedUser = new User();
+        invitedUser.setId(game.getInvitedUserId());
+        invitedUser.setUsername("invitedUser");
+        invitedUser.setPassword("testPassword");
+        invitedUser.setPoints(2L);
+        invitedUser.setEmail("invitedUser@email.com");
+        invitedUser.setProfilePicture("invitedUser");
+        invitedUser.setBackgroundMusic(false);
+        invitedUser.setToken("invited");
+        invitedUser.setStatus(UserStatus.ONLINE);
+
+        GameDTO gameDTO = new GameDTO();
+        gameDTO.setInvitingUserId(game.getInvitingUserId());
+        gameDTO.setInvitedUserId(game.getInvitedUserId());
+        gameDTO.setQuizType(QuizType.TEXT);
+        gameDTO.setModeType(ModeType.DUEL);
+
+        given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(userService.searchUserById(gameDTO.getInvitedUserId())).willReturn(invitedUser);
+        given(userService.searchUserById(gameDTO.getInvitingUserId())).willReturn(invitingUser);
+        given(gameService.createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType())).willReturn(game);
+
+        MockHttpServletRequestBuilder postRequest = post("/game/creation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gameDTO))
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createQuestion_thenQuestionCreated_201() throws Exception {
 
         QuestionDTO questionDTO = new QuestionDTO();
-        questionDTO.setCategory(Category.GENERAL_KNOWLEDGE);
-        questionDTO.setGameId(0);
+        questionDTO.setCategory(question.getCategory());
+        questionDTO.setGameId(game.getId());
 
-        given(userService.verifyToken(Mockito.any())).willReturn(user);
+        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
         given(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId())).willReturn(question);
 
 
@@ -115,8 +188,8 @@ class GameControllerTest {
 
         mockMvc.perform(postRequest)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.gameId", is((int) gameDTO.getId())))
-                .andExpect(jsonPath("$.category", is(questionDTO.getCategory().toString())))
+                .andExpect(jsonPath("$.gameId", is((int) game.getId())))
+                .andExpect(jsonPath("$.category", is(question.getCategory().toString())))
                 .andExpect(jsonPath("$.id", is(question.getId())))
                 .andExpect(jsonPath("$.correctAnswer").value(nullValue()))
                 .andExpect(jsonPath("$.incorrectAnswers").value(nullValue()))
@@ -125,29 +198,37 @@ class GameControllerTest {
     }
 
     @Test
-    public void getTopicSelection_whenValid_thenReturnTopics_200() throws Exception {
-        User user = new User();
-        user.setId(2L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
+    void createQuestion_invalidToken_throwsUnauthorized_401() throws Exception {
 
-        Game game = new Game(0L, 1L, user.getId(), QuizType.TEXT, ModeType.DUEL);
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setCategory(question.getCategory());
+        questionDTO.setGameId(game.getId());
+
+        given(userService.verifyToken(Mockito.any())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId())).willReturn(question);
+
+
+        MockHttpServletRequestBuilder postRequest = post("/game/topics")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(questionDTO))
+                .header("token", "helloToken");
+
+        mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void getTopicSelection_whenValid_thenReturnTopics_200() throws Exception {
 
         List<Category> categories = new ArrayList<>();
         categories.add(Category.MUSIC);
         categories.add(Category.FILM_TV);
         categories.add(Category.GENERAL_KNOWLEDGE);
 
-        given(userService.verifyToken(user.getToken())).willReturn(user);
-        given(gameService.getRandomTopics(0L, user.getId())).willReturn(Collections.singletonMap("topics", categories));
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.getRandomTopics(0L, invitingUser.getId())).willReturn(Collections.singletonMap("topics", categories));
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
-                .header("token", user.getToken());
+                .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest)
                 .andExpect(status().isOk())
@@ -158,17 +239,6 @@ class GameControllerTest {
 
     @Test
     public void getTopicSelection_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
-        User user = new User();
-        user.setId(2L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
-
-        Game game = new Game(0L, 1L, user.getId(), QuizType.TEXT, ModeType.DUEL);
 
         List<Category> categories = new ArrayList<>();
         categories.add(Category.MUSIC);
@@ -178,7 +248,7 @@ class GameControllerTest {
         String invalidToken = "someInvalidToken";
 
         when(userService.verifyToken(invalidToken)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
-        given(userService.searchUserById(user.getId())).willReturn(user);
+        given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
                 .header("token", invalidToken);
@@ -186,29 +256,14 @@ class GameControllerTest {
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
 
-
     @Test
     public void answerQuestion_whenQuestionNotAnswered_thenReturnTuple_200() throws Exception {
-        // given
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("invitingUser");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("invitor@email.com");
-        user.setProfilePicture("invitingUser");
-        user.setToken("1");
-        user.setStatus(UserStatus.IN_GAME);
-        
-        Game game = new Game(1L, user.getId(), 2L, QuizType.TEXT, ModeType.DUEL);
 
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
-        userAnswerDTO.setUserId(user.getId());
-        userAnswerDTO.setQuestionId("questionID");
-        userAnswerDTO.setAnswer("someAnswer");
+        userAnswerDTO.setUserId(invitingUser.getId());
+        userAnswerDTO.setQuestionId(question.getId());
+        userAnswerDTO.setAnswer(question.getAllAnswers()[2]);
         userAnswerDTO.setAnsweredTime(112L);
-
-        UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
 
         UserResultTuple userResultTuple = new UserResultTuple();
         userResultTuple.setGameId(game.getId());
@@ -217,66 +272,92 @@ class GameControllerTest {
         userResultTuple.setInvitedPlayerId(game.getInvitedUserId());
         userResultTuple.setInvitedPlayerResult(0L);
 
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        given(gameService.answerQuestion(Mockito.any(Long.class), Mockito.any(UserAnswerTuple.class), Mockito.any(WebSocketController.class))).willReturn(userResultTuple);
 
-        // set up userService to throw the exception
-        given(userService.verifyToken(Mockito.any())).willReturn(user);
-        given(gameService.answerQuestion(game.getId(), userAnswerTuple, webSocketController)).willReturn(userResultTuple);
-        // when/then -> build the post request
-        MockHttpServletRequestBuilder putRequest = put("/game/question/1")
+        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(userAnswerDTO))
-                .header("token", user.getToken());
-        // then
+                .header("token", invitingUser.getToken());
+
         mockMvc.perform(putRequest).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.gameId").doesNotExist())
-                .andExpect(jsonPath("$.invitingPlayerId").doesNotExist())
-                .andExpect(jsonPath("$.invitingPlayerResult").doesNotExist())
-                .andExpect(jsonPath("$.invitedPlayerId").doesNotExist())
-                .andExpect(jsonPath("$.invitedPlayerResult").doesNotExist());
-        //TODO: Check if assertions are correct
+                .andExpect(jsonPath("$.gameId", is((int) game.getId())))
+                .andExpect(jsonPath("$.invitingPlayerId", is((int) userResultTuple.getInvitingPlayerId())))
+                .andExpect(jsonPath("$.invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
+                .andExpect(jsonPath("$.invitedPlayerId", is((int) userResultTuple.getInvitedPlayerId())))
+                .andExpect(jsonPath("$.invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
     }
-/*
+
+    @Test
+    public void answerQuestion_whenNullAnswer_thenNotAcceptable_406() throws Exception {
+        UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
+        userAnswerDTO.setUserId(invitingUser.getId());
+        userAnswerDTO.setQuestionId(question.getId());
+        userAnswerDTO.setAnswer(question.getAllAnswers()[2]);
+        userAnswerDTO.setAnsweredTime(112L);
+
+        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        given(gameService.answerQuestion(Mockito.any(Long.class), Mockito.any(UserAnswerTuple.class), Mockito.any(WebSocketController.class))).willThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null."));
+
+        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userAnswerDTO))
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(putRequest).andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    public void answerQuestion_alreadyAnswered_thenConflict_409() throws Exception {
+        UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
+        userAnswerDTO.setUserId(invitingUser.getId());
+        userAnswerDTO.setQuestionId(question.getId());
+        userAnswerDTO.setAnswer(question.getAllAnswers()[2]);
+        userAnswerDTO.setAnsweredTime(112L);
+
+        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        given(gameService.answerQuestion(Mockito.any(Long.class), Mockito.any(UserAnswerTuple.class), Mockito.any(WebSocketController.class))).willThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question."));
+
+        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userAnswerDTO))
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(putRequest).andExpect(status().isConflict());
+    }
+
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
-        Game game = new Game(1L, 1L, 2L, QuizType.TEXT, ModeType.DUEL);
-        games.put(game.getId(), game);
-        //inviting User
-        User user1 = new User();
-        user1.setId(1L);
-        user1.setUsername("testUsername");
-        user1.setPassword("testPassword");
-        user1.setPoints(3L);
-        user1.setEmail("email@email.com");
-        user1.setProfilePicture("testUsername");
-        user1.setToken("1");
-        user1.setStatus(UserStatus.IN_GAME);
-        //invited User
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setUsername("test");
-        user2.setPassword("testPW");
-        user2.setPoints(3L);
-        user2.setEmail("test@test.com");
-        user2.setProfilePicture("test");
-        user2.setToken("2");
-        user2.setStatus(UserStatus.IN_GAME);
-        UserResultTuple userResultTuple = new UserResultTuple(1L,1L,2L);
-        userResultTuple.setInvitingPlayerResult(1L);
-        userResultTuple.setInvitedPlayerResult(1L);
-        given(userService.verifyToken(user1.getToken())).willReturn(user1);
-        given(userService.verifyToken(user2.getToken())).willReturn(user2);
-        given(userService.getPoints(Mockito.any())).willReturn(3L);
-        // when/then -> build the post request
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"+game.getId());
-        // then
+        invitingUser.setStatus(UserStatus.IN_GAME);
+
+        User invitedUser = new User();
+        invitedUser.setId(game.getInvitedUserId());
+        invitedUser.setUsername("invitedUser");
+        invitedUser.setPassword("testPassword");
+        invitedUser.setPoints(2L);
+        invitedUser.setEmail("invitedUser@email.com");
+        invitedUser.setProfilePicture("invitedUser");
+        invitedUser.setBackgroundMusic(false);
+        invitedUser.setToken("invited");
+        invitedUser.setStatus(UserStatus.IN_GAME);
+
+        UserResultTuple userResultTuple = new UserResultTuple(game.getId(), invitingUser.getId(), invitedUser.getId());
+        userResultTuple.setInvitingPlayerResult(100L);
+        userResultTuple.setInvitedPlayerResult(200L);
+
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.finishGame(game.getId())).willReturn(userResultTuple);
+
+        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"+game.getId())
+                .header("token", invitingUser.getToken());
+
         mockMvc.perform(deleteRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.gameId", is(game.getId())))
-                .andExpect(jsonPath("$.invitingPlayerId", is(user1.getId())))
-                .andExpect(jsonPath("$.invitingPlayerResult", is(4L)))
-                .andExpect(jsonPath("$.invitedPlayerId", is(user2.getId())))
-                .andExpect(jsonPath("$.invitedPlayerResult", is(4L)));
-    }*/
+                .andExpect(jsonPath("$.gameId", is((int) game.getId())))
+                .andExpect(jsonPath("$.invitingPlayerId", is((int) invitingUser.getId())))
+                .andExpect(jsonPath("$.invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
+                .andExpect(jsonPath("$.invitedPlayerId", is((int) invitedUser.getId())))
+                .andExpect(jsonPath("$.invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
+    }
 /*
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
@@ -342,14 +423,6 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.invitingPlayerResult", is(user1.getPoints()+ userResultTuple.getInvitingPlayerResult())))
                 .andExpect(jsonPath("$.invitedPlayerId", is(user2.getId())))
                 .andExpect(jsonPath("$.invitedPlayerResult", is(user2.getPoints()+ userResultTuple.getInvitedPlayerResult())));
-    }
-    private String asJsonString(final Object object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    format("The request body could not be created.%s", e.toString()));
-        }
     }*/
 
 
