@@ -16,10 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -289,21 +286,12 @@ class GameServiceTest {
         UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 200L);
         UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 300L);
 
-        UserResultTuple invitingUserResultTuple = gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple, webSocketController);
-        UserResultTuple invitedUserResultTuple = gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple, webSocketController);
+        Map<String, Boolean> invitingBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple, webSocketController);
+        Map<String, Boolean> invitedBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple, webSocketController);
 
 
-        assertEquals(prepTextDuelGame.getId(), invitingUserResultTuple.getGameId());
-        assertEquals(prepTextDuelGame.getInvitingUserId(), invitingUserResultTuple.getInvitingPlayerId());
-        assertEquals((500L - (0.5 * invitingUserAnswerTuple.getAnsweredTime())), invitingUserResultTuple.getInvitingPlayerResult());
-        assertEquals(prepTextDuelGame.getInvitedUserId(), invitingUserResultTuple.getInvitedPlayerId());
-        assertEquals(0L , invitingUserResultTuple.getInvitedPlayerResult());
-
-        assertEquals(prepTextDuelGame.getId(), invitedUserResultTuple.getGameId());
-        assertEquals(prepTextDuelGame.getInvitingUserId(), invitedUserResultTuple.getInvitingPlayerId());
-        assertEquals((500L - (0.5 * invitingUserAnswerTuple.getAnsweredTime())), invitedUserResultTuple.getInvitingPlayerResult());
-        assertEquals(prepTextDuelGame.getInvitedUserId(), invitedUserResultTuple.getInvitedPlayerId());
-        assertEquals((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())), invitedUserResultTuple.getInvitedPlayerResult());
+        assertEquals(invitingUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitingBoolMap.get("boolean"));
+        assertEquals(invitedUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitedBoolMap.get("boolean"));
     }
 
     @Test
@@ -348,21 +336,12 @@ class GameServiceTest {
         UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), createdQuestion.getId(), createdQuestion.getIncorrectAnswers()[1], 200L);
         UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 300L);
 
-        UserResultTuple invitingUserResultTuple = gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple, webSocketController);
-        UserResultTuple invitedUserResultTuple = gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple, webSocketController);
+        Map<String, Boolean> invitingBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple, webSocketController);
+        Map<String, Boolean> invitedBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple, webSocketController);
 
 
-        assertEquals(prepTextDuelGame.getId(), invitingUserResultTuple.getGameId());
-        assertEquals(prepTextDuelGame.getInvitingUserId(), invitingUserResultTuple.getInvitingPlayerId());
-        assertEquals(0L, invitingUserResultTuple.getInvitingPlayerResult());
-        assertEquals(prepTextDuelGame.getInvitedUserId(), invitingUserResultTuple.getInvitedPlayerId());
-        assertEquals(0L , invitingUserResultTuple.getInvitedPlayerResult());
-
-        assertEquals(prepTextDuelGame.getId(), invitedUserResultTuple.getGameId());
-        assertEquals(prepTextDuelGame.getInvitingUserId(), invitedUserResultTuple.getInvitingPlayerId());
-        assertEquals(0L, invitedUserResultTuple.getInvitingPlayerResult());
-        assertEquals(prepTextDuelGame.getInvitedUserId(), invitedUserResultTuple.getInvitedPlayerId());
-        assertEquals((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())), invitedUserResultTuple.getInvitedPlayerResult());
+        assertEquals(invitingUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitingBoolMap.get("boolean"));
+        assertEquals(invitedUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitedBoolMap.get("boolean"));
     }
 
     @Test

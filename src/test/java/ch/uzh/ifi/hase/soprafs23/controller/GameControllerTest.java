@@ -31,6 +31,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
@@ -250,22 +251,17 @@ class GameControllerTest {
     }
 
     @Test
-    public void answerQuestion_whenQuestionNotAnswered_thenReturnTuple_201() throws Exception {
+    public void answerQuestion_whenQuestionNotAnswered_thenReturnBoolean_201() throws Exception {
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
         userAnswerDTO.setUserId(invitingUser.getId());
         userAnswerDTO.setQuestionId(question.getId());
-        userAnswerDTO.setAnswer(question.getAllAnswers()[2]);
+        userAnswerDTO.setAnswer(question.getCorrectAnswer());
         userAnswerDTO.setAnsweredTime(112L);
 
-        UserResultTuple userResultTuple = new UserResultTuple();
-        userResultTuple.setGameId(game.getId());
-        userResultTuple.setInvitingPlayerId(game.getInvitingUserId());
-        userResultTuple.setInvitingPlayerResult(200L);
-        userResultTuple.setInvitedPlayerId(game.getInvitedUserId());
-        userResultTuple.setInvitedPlayerResult(0L);
+        Map<String, Boolean> booleanMap = Collections.singletonMap("boolean", userAnswerDTO.getAnswer().equals(question.getCorrectAnswer()));
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
-        given(gameService.answerQuestion(Mockito.any(Long.class), Mockito.any(UserAnswerTuple.class), Mockito.any(WebSocketController.class))).willReturn(userResultTuple);
+        given(gameService.answerQuestion(Mockito.any(Long.class), Mockito.any(UserAnswerTuple.class), Mockito.any(WebSocketController.class))).willReturn(booleanMap);
 
         MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -273,11 +269,7 @@ class GameControllerTest {
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(putRequest).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.gameId", is((int) game.getId())))
-                .andExpect(jsonPath("$.invitingPlayerId", is((int) userResultTuple.getInvitingPlayerId())))
-                .andExpect(jsonPath("$.invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
-                .andExpect(jsonPath("$.invitedPlayerId", is((int) userResultTuple.getInvitedPlayerId())))
-                .andExpect(jsonPath("$.invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
+                .andExpect(jsonPath("$.boolean", is((boolean) booleanMap.get("boolean"))));
     }
 
     @Test

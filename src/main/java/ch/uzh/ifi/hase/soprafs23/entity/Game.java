@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -119,8 +121,16 @@ public class Game {
 
     }
 
+    public Map<String, Boolean> lastCorrect(long userId) {
+        Question question = questions.peekFirst();
+        if (question == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No question has been added to game.");
+        }
+        return question.lastCorrect(userId);
+    }
+
     public Boolean completelyAnswered() {
-        return questions.peek().completelyAnswered();
+        return questions.peekFirst().completelyAnswered();
     }
 
     public void changeCurrentPlayer() {

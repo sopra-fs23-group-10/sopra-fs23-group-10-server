@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs23.controller;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
-import ch.uzh.ifi.hase.soprafs23.handler.GameMap;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserAnswerDTO;
@@ -98,14 +97,12 @@ public class GameController {
 
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResultTupleDTO answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
+    public Map<String, Boolean> answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
 
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
 
-        UserResultTuple userResultTuple = gameService.answerQuestion(gameId, userAnswerTuple, webSocketController);
-
-        return DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+        return gameService.answerQuestion(gameId, userAnswerTuple, webSocketController);
     }
 
     @GetMapping("game/online/{gameId}")

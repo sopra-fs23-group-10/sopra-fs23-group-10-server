@@ -4,9 +4,11 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.handler.GameMap;
 import ch.uzh.ifi.hase.soprafs23.service.GameService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -73,6 +75,36 @@ class QuestionTest {
 
         assertEquals(invitingUserAnswerTuple, testResults.get(invitingUser.getId()));
         assertEquals(invitedUserAnswerTuple, testResults.get(invitedUser.getId()));
+    }
+
+    @Test
+    void lastCorrect_singleAnswer() {
+        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
+
+        assertThrows(ResponseStatusException.class, () -> {
+            question.lastCorrect(invitingUser.getId());
+        });
+
+        question.addAnswer(invitingUserAnswerTuple);
+
+        assertEquals(invitingUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitingUser.getId()).get("boolean"));
+    }
+
+    @Test
+    void lastCorrect_multipleAnswers() {
+        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
+        UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
+
+        question.addAnswer(invitingUserAnswerTuple);
+
+        assertEquals(invitingUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitingUser.getId()).get("boolean"));
+        assertThrows(ResponseStatusException.class, () -> {
+            question.lastCorrect(invitedUser.getId());
+        });
+        question.addAnswer(invitedUserAnswerTuple);
+
+        assertEquals(invitingUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitingUser.getId()).get("boolean"));
+        assertEquals(invitedUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitedUser.getId()).get("boolean"));
     }
 
     @Test

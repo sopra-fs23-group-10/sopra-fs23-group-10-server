@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,6 +97,15 @@ public class Question {
 
         return userAnswerTuple.getAnswer().equals(this.correctAnswer) ?
                 (long) (500L - (0.5 * userAnswerTuple.getAnsweredTime())) : 0L;
+    }
+
+    public Map<String, Boolean> lastCorrect(long userId) {
+        UserAnswerTuple userAnswerTuple = results.get(userId);
+        if (userAnswerTuple != null) {
+            return Collections.singletonMap("boolean", userAnswerTuple.getAnswer().equals(this.correctAnswer));
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not answered this question yet.");
+        }
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
