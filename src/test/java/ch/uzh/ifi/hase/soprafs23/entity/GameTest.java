@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Deque;
 import java.util.Map;
@@ -139,13 +140,9 @@ class GameTest {
 
         game.addAnswer(invitedUserAnswerTuple);
 
-        boolean tester = false;
-        try {
+        assertThrows(ResponseStatusException.class, () -> {
             game.addAnswer(invitedUserAnswerTuple);
-        } catch (Exception e) {
-            tester = true;
-        }
-        assertTrue(tester);
+        });
     }
 
     @Test

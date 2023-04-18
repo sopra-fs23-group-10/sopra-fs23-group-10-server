@@ -148,19 +148,13 @@ class GameServiceTest {
 
     @Test
     public void getRandomTopics_requestedTwice_throwsException() {
-        boolean tester = false;
-
         Map<String, List<Category>> topicsMap = gameService.getRandomTopics(prepTextDuelGame.getId(), prepTextDuelGame.getInvitedUserId());
         List<Category> topicsList = topicsMap.get("topics");
+
         assertEquals(3, topicsList.size());
-
-        try {
+        assertThrows(ResponseStatusException.class, () -> {
             gameService.getRandomTopics(prepTextDuelGame.getId(), prepTextDuelGame.getInvitedUserId());
-        } catch (Exception e) {
-            tester = true;
-        }
-
-        assertTrue(tester);
+        });
     }
 
     @Test
@@ -170,13 +164,9 @@ class GameServiceTest {
 
     @Test
     public void checkGame_gameNotExists_exceptionRaised() {
-        boolean tester = false;
-        try {
+        assertThrows(ResponseStatusException.class, () -> {
             gameService.checkGame(workingTextDuelGame.getId());
-        } catch (Exception e) {
-            tester = true;
-        }
-        assertTrue(tester);
+        });
     }
 
     @Test
@@ -235,13 +225,9 @@ class GameServiceTest {
 
         when(userService.searchUserById(Mockito.any())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
-        boolean tester = false;
-        try {
+        assertThrows(ResponseStatusException.class, () -> {
             gameService.getQuestion(Category.MUSIC, prepTextDuelGame.getId());
-        } catch (Exception e) {
-            tester = true;
-        }
-        assertTrue(tester);
+        });
     }
 
     @Test
@@ -402,12 +388,8 @@ class GameServiceTest {
 
     @Test
     public void answerQuestion_nullAnswer_throwsException() {
-        boolean tester = false;
-        try {
+        assertThrows(ResponseStatusException.class, () -> {
             gameService.answerQuestion(prepTextDuelGame.getId(), null, webSocketController);
-        } catch (Exception e) {
-            tester = true;
-        }
-        assertTrue(tester);
+        });
     }
 }
