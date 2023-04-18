@@ -291,10 +291,10 @@ class GameControllerTest {
     @Test
     public void answerQuestion_whenNullAnswer_thenNotAcceptable_406() throws Exception {
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
-        userAnswerDTO.setUserId(invitingUser.getId());
-        userAnswerDTO.setQuestionId(question.getId());
-        userAnswerDTO.setAnswer(question.getAllAnswers()[2]);
-        userAnswerDTO.setAnsweredTime(112L);
+        userAnswerDTO.setUserId(null);
+        userAnswerDTO.setQuestionId(null);
+        userAnswerDTO.setAnswer(null);
+        userAnswerDTO.setAnsweredTime(null);
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
         given(gameService.answerQuestion(Mockito.any(Long.class), Mockito.any(UserAnswerTuple.class), Mockito.any(WebSocketController.class))).willThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null."));
@@ -357,6 +357,34 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
                 .andExpect(jsonPath("$.invitedPlayerId", is((int) invitedUser.getId())))
                 .andExpect(jsonPath("$.invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
+    }
+
+    @Test
+    public void finishGame_whenInvalidToken_thenThrowUnautorized_401() throws Exception {
+        invitingUser.setStatus(UserStatus.IN_GAME);
+
+        User invitedUser = new User();
+        invitedUser.setId(game.getInvitedUserId());
+        invitedUser.setUsername("invitedUser");
+        invitedUser.setPassword("testPassword");
+        invitedUser.setPoints(2L);
+        invitedUser.setEmail("invitedUser@email.com");
+        invitedUser.setProfilePicture("invitedUser");
+        invitedUser.setBackgroundMusic(false);
+        invitedUser.setToken("invited");
+        invitedUser.setStatus(UserStatus.IN_GAME);
+
+        UserResultTuple userResultTuple = new UserResultTuple(game.getId(), invitingUser.getId(), invitedUser.getId());
+        userResultTuple.setInvitingPlayerResult(100L);
+        userResultTuple.setInvitedPlayerResult(200L);
+
+        given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(gameService.finishGame(game.getId())).willReturn(userResultTuple);
+
+        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"+game.getId())
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
     }
 /*
     @Test
