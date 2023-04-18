@@ -140,7 +140,6 @@ public class GameService {
         if (currentGame.completelyAnswered()) {
             webSocketController.resultToUser(gameId, DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple));
         }
-
         return userResultTuple;
     }
 

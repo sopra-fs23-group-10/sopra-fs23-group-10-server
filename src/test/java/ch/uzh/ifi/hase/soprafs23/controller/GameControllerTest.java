@@ -250,7 +250,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void answerQuestion_whenQuestionNotAnswered_thenReturnTuple_200() throws Exception {
+    public void answerQuestion_whenQuestionNotAnswered_thenReturnTuple_201() throws Exception {
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
         userAnswerDTO.setUserId(invitingUser.getId());
         userAnswerDTO.setQuestionId(question.getId());

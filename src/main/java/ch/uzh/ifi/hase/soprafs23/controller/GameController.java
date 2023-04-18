@@ -98,7 +98,6 @@ public class GameController {
 
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
     public UserResultTupleDTO answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
 
