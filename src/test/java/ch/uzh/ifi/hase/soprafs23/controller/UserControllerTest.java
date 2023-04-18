@@ -26,6 +26,7 @@ import static java.lang.String.format;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -493,6 +494,109 @@ class UserControllerTest {
     }
 
     @Test
+    void login_whenValid_thenReturnUserWithToken_200() throws Exception {
+        user.setStatus(UserStatus.OFFLINE);
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername(user.getUsername());
+        userPostDTO.setPassword(user.getPassword());
+
+        given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
+        doCallRealMethod().when(userService).setOnline(user);
+
+
+        MockHttpServletRequestBuilder postRequest = post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is(user.getUsername())))
+                .andExpect(jsonPath("$.profilePicture", is(user.getProfilePicture())))
+                .andExpect(jsonPath("$.id", is((int) user.getId())))
+                .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$.points", is((int) user.getPoints())))
+                .andExpect(jsonPath("$.token", is(user.getToken())))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.email").doesNotExist());
+    }
+
+    @Test
+    void login_whenEmptyUsername_thenThrowForbidden_403() throws Exception {
+        user.setStatus(UserStatus.OFFLINE);
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername("");
+        userPostDTO.setPassword(user.getPassword());
+
+        given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
+        doCallRealMethod().when(userService).setOnline(user);
+
+
+        MockHttpServletRequestBuilder postRequest = post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void login_whenNullUsername_thenThrowForbidden_403() throws Exception {
+        user.setStatus(UserStatus.OFFLINE);
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername(null);
+        userPostDTO.setPassword(user.getPassword());
+
+        given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
+        doCallRealMethod().when(userService).setOnline(user);
+
+
+        MockHttpServletRequestBuilder postRequest = post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void login_whenEmptyPassword_thenThrowForbidden_403() throws Exception {
+        user.setStatus(UserStatus.OFFLINE);
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername(user.getUsername());
+        userPostDTO.setPassword("");
+
+        given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
+        doCallRealMethod().when(userService).setOnline(user);
+
+
+        MockHttpServletRequestBuilder postRequest = post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void login_whenNullPassword_thenThrowForbidden_403() throws Exception {
+        user.setStatus(UserStatus.OFFLINE);
+
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername(user.getUsername());
+        userPostDTO.setPassword(null);
+
+        given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
+        doCallRealMethod().when(userService).setOnline(user);
+
+
+        MockHttpServletRequestBuilder postRequest = post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userPostDTO));
+
+        mockMvc.perform(postRequest).andExpect(status().isForbidden());
+    }
+
+    @Test
     void givenUser_whenLogout_thenReturnUser_200() throws Exception {
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
@@ -535,14 +639,6 @@ class UserControllerTest {
         mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
     }
 
-  /**
-   * Helper Method to convert userPostDTO into a JSON string such that the input
-   * can be processed
-   * Input will look like this: {"name": "Test User", "username": "testUsername"}
-   * 
-   * @param object
-   * @return string
-   */
   private String asJsonString(final Object object) {
     try {
       return new ObjectMapper().writeValueAsString(object);
