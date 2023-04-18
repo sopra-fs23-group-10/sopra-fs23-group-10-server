@@ -386,6 +386,67 @@ class GameControllerTest {
 
         mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
     }
+
+    @Test
+    public void intermediateGame_whenValid_returnResults_200() throws Exception {
+        invitingUser.setStatus(UserStatus.IN_GAME);
+
+        User invitedUser = new User();
+        invitedUser.setId(game.getInvitedUserId());
+        invitedUser.setUsername("invitedUser");
+        invitedUser.setPassword("testPassword");
+        invitedUser.setPoints(2L);
+        invitedUser.setEmail("invitedUser@email.com");
+        invitedUser.setProfilePicture("invitedUser");
+        invitedUser.setBackgroundMusic(false);
+        invitedUser.setToken("invited");
+        invitedUser.setStatus(UserStatus.IN_GAME);
+
+        UserResultTuple userResultTuple = new UserResultTuple(game.getId(), invitingUser.getId(), invitedUser.getId());
+        userResultTuple.setInvitingPlayerResult(100L);
+        userResultTuple.setInvitedPlayerResult(200L);
+
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.intermediateResults(game.getId())).willReturn(userResultTuple);
+
+        MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getId())
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId", is((int) game.getId())))
+                .andExpect(jsonPath("$.invitingPlayerId", is((int) invitingUser.getId())))
+                .andExpect(jsonPath("$.invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
+                .andExpect(jsonPath("$.invitedPlayerId", is((int) invitedUser.getId())))
+                .andExpect(jsonPath("$.invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
+    }
+
+    @Test
+    public void intermediateGame_whenInvalidToken_throwsUnauthorized_401() throws Exception {
+        invitingUser.setStatus(UserStatus.IN_GAME);
+
+        User invitedUser = new User();
+        invitedUser.setId(game.getInvitedUserId());
+        invitedUser.setUsername("invitedUser");
+        invitedUser.setPassword("testPassword");
+        invitedUser.setPoints(2L);
+        invitedUser.setEmail("invitedUser@email.com");
+        invitedUser.setProfilePicture("invitedUser");
+        invitedUser.setBackgroundMusic(false);
+        invitedUser.setToken("invited");
+        invitedUser.setStatus(UserStatus.IN_GAME);
+
+        UserResultTuple userResultTuple = new UserResultTuple(game.getId(), invitingUser.getId(), invitedUser.getId());
+        userResultTuple.setInvitingPlayerResult(100L);
+        userResultTuple.setInvitedPlayerResult(200L);
+
+        given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(gameService.intermediateResults(game.getId())).willReturn(userResultTuple);
+
+        MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getId())
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
+    }
 /*
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
