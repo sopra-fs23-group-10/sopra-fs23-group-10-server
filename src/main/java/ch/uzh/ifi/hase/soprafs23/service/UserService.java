@@ -249,11 +249,6 @@ public class UserService {
 
         invitingUser.setPoints(invitingUser.getPoints() + invitingUserPoints);
         invitedUser.setPoints(invitedUser.getPoints() + invitedUserPoints);
-
-        /*
-        userRepository.updatePoints(invitedUserPoints, invitedUser.getId());
-        userRepository.updatePoints(invitingUserPoints, invitingUser.getId());
-         */
     }
 
     public long getPoints(long userId) {

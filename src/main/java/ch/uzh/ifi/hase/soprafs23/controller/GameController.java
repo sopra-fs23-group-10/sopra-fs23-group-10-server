@@ -107,6 +107,7 @@ public class GameController {
 
     @GetMapping("game/online/{gameId}")
     @ResponseStatus
+    @ResponseBody
     public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
         Game game = gameService.getGame(gameId);
         return Collections.singletonMap(
