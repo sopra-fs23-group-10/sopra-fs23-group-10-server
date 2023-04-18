@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -330,6 +331,45 @@ class UserControllerTest {
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getOnlineUsers_allValid_thenReturnsOnlineUsers_200() throws Exception {
+        user.setStatus(UserStatus.ONLINE);
+        List<User> onlineList = new ArrayList<>();
+        onlineList.add(user);
+
+        given(userService.verifyToken(user.getToken())).willReturn(user);
+        given(userService.getOnlineUsers()).willReturn(onlineList);
+
+        MockHttpServletRequestBuilder getRequest = get("/users/online")
+                .header("token", user.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].username", is(user.getUsername())))
+                .andExpect(jsonPath("$[0].profilePicture", is(user.getProfilePicture())))
+                .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$[0].points", is((int) user.getPoints())))
+                .andExpect(jsonPath("$[0].token").isEmpty())
+                .andExpect(jsonPath("$[0].id", is((int) user.getId())))
+                .andExpect(jsonPath("$[0].password").doesNotExist())
+                .andExpect(jsonPath("$[0].email").doesNotExist());
+    }
+
+    @Test
+    void getOnlineUsers_invalidToken_thenThrowsUnauthorized_401() throws Exception {
+        user.setStatus(UserStatus.ONLINE);
+        List<User> onlineList = new ArrayList<>();
+        onlineList.add(user);
+
+        given(userService.verifyToken(user.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(userService.getOnlineUsers()).willReturn(onlineList);
+
+        MockHttpServletRequestBuilder getRequest = get("/users/online")
+                .header("token", user.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
 
 // Tests of PutMappings
