@@ -18,8 +18,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/questions", "/invitations", "/topics", "/game/result")
-                .setHeartbeatValue(new long[] {10000, 10000})
+        registry.enableSimpleBroker("/questions", "/invitations", "/topics", "/game/result", "/games")
+                .setHeartbeatValue(new long[] {600000, 600000})
                 .setTaskScheduler(heartBeatScheduler());
     }
 
