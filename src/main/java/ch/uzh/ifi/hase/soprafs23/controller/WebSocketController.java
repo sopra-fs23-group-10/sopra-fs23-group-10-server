@@ -15,6 +15,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -43,21 +44,18 @@ public class WebSocketController {
     @MessageMapping("/game/intermediateResult/{gameId}")
     public void resultToUser(@DestinationVariable long gameId, GameDTO gameDTO) {
         Game currentGame = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gameDTO);
-
-        UserResultTuple gameResults = currentGame.getResults();
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(gameResults);
-
-        this.webSocketService.sendMessageToClients("/game/result/" + gameId, userResultTupleDTO);
+        List<UserResultTupleDTO> gameResults = currentGame.getResults();
+        this.webSocketService.sendMessageToClients("/game/result/" + gameId, gameResults);
     }
 
     @MessageMapping("/game/finalResult/{gameId}")
-    public void resultToUser(@DestinationVariable long gameId, UserResultTupleDTO userResultTupleDTO) {
-        this.webSocketService.sendMessageToClients("/game/result/" + gameId, userResultTupleDTO);
+    public void resultToUser(@DestinationVariable long gameId, List<UserResultTupleDTO> userResultTupleDTOList) {
+        this.webSocketService.sendMessageToClients("/game/result/" + gameId, userResultTupleDTOList);
     }
 
     @MessageMapping("/games/{gameId}/question")
     public void questionToUsers(@DestinationVariable long gameId, QuestionDTO questionDTO) {
-        this.webSocketService.sendMessageToClients("/game/{gameId}/question/" + gameId, questionDTO);
+        this.webSocketService.sendMessageToClients("/games/"+gameId+"/questions", questionDTO);
     }
 
     @MessageMapping("/register")

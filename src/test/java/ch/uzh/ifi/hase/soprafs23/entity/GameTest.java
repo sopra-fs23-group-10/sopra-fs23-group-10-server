@@ -51,7 +51,7 @@ class GameTest {
         game.addAnswer(invitingUserAnswerTuple);
         game.addAnswer(invitedUserAnswerTuple);
 
-        UserResultTuple userResultTuple = game.getResults();
+        UserResultTuple userResultTuple = game.getPointsOfBoth();
 
         assertEquals(game.getId(), userResultTuple.getGameId());
         assertEquals(invitingUserAnswerTuple.getUserId(), userResultTuple.getInvitingPlayerId());
@@ -69,7 +69,7 @@ class GameTest {
         game.addAnswer(invitingUserAnswerTuple);
         game.addAnswer(invitedUserAnswerTuple);
 
-        UserResultTuple userResultTuple = game.getResults();
+        UserResultTuple userResultTuple = game.getPointsOfBoth();
 
         assertEquals(game.getId(), userResultTuple.getGameId());
         assertEquals(invitingUserAnswerTuple.getUserId(), userResultTuple.getInvitingPlayerId());
@@ -100,7 +100,7 @@ class GameTest {
         game.addAnswer(invitingSecondAnswer);
         game.addAnswer(invitedSecondAnswer);
 
-        userResultTuple = game.getResults();
+        userResultTuple = game.getPointsOfBoth();
 
         assertEquals(game.getId(), userResultTuple.getGameId());
         assertEquals(invitingUserAnswerTuple.getUserId(), userResultTuple.getInvitingPlayerId());

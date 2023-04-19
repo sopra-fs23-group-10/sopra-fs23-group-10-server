@@ -234,6 +234,13 @@ public class UserService {
         }
         user.setStatus(UserStatus.OFFLINE);
     }
+
+    public void setInGame(User user) {
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be in game was not found.");
+        }
+        user.setStatus(UserStatus.IN_GAME);
+    }
     /**
      * This method updates a user's points at the end of a game.
      *

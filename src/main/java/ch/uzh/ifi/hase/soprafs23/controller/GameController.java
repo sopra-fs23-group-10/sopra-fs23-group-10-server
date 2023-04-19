@@ -38,6 +38,13 @@ public class GameController {
         User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
         User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
 
+        if(invitingUser.getStatus() != UserStatus.ONLINE ||invitedUser.getStatus() != UserStatus.ONLINE){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
+        }
+
+        userService.setInGame(invitedUser);
+        userService.setInGame(invitingUser);
+
         Game game = gameService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
@@ -60,6 +67,8 @@ public class GameController {
         }
 
         if(!response){
+            userService.setOnline(userService.searchUserById(game.getInvitedUserId()));
+            userService.setOnline(userService.searchUserById(game.getInvitingUserId()));
             gameService.removeGame(gameId);
         }
 
@@ -85,7 +94,6 @@ public class GameController {
         return gameService.getAllTopics();
     }
 
-
     @PostMapping("/game/topics")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -96,15 +104,12 @@ public class GameController {
         return questionDTOReturn;
     }
 
-
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, Boolean> answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
+    public void answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-
-        return gameService.answerQuestion(gameId, userAnswerTuple, webSocketController);
+        gameService.answerQuestion(gameId,userAnswerTuple);
     }
 
     @GetMapping("game/online/{gameId}")
@@ -122,24 +127,23 @@ public class GameController {
     @DeleteMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserResultTupleDTO finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+    public List<UserResultTupleDTO> finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
+        List<UserResultTupleDTO> userResultTupleDTOList = gameService.finishGame(gameId);
 
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(gameService.finishGame(gameId));
-
-        webSocketController.resultToUser(gameId, userResultTupleDTO);
-        return userResultTupleDTO;
+        webSocketController.resultToUser(gameId, userResultTupleDTOList);
+        return userResultTupleDTOList;
     }
 
     @GetMapping("/game/intermediate/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserResultTupleDTO intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+    public List<UserResultTupleDTO> intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
 
-        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(gameService.intermediateResults(gameId));
+        List<UserResultTupleDTO> userResultTupleDTOList = gameService.intermediateResults(gameId);
 
-        webSocketController.resultToUser(gameId, userResultTupleDTO);
-        return userResultTupleDTO;
+        webSocketController.resultToUser(gameId, userResultTupleDTOList);
+        return userResultTupleDTOList;
     }
 }

@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -86,13 +88,18 @@ public class Game {
         return "Game(gameId=" + this.getId() + ", invitingUser=" + this.getInvitingUserId() + ", invitedUser=" + this.getInvitedUserId() + ", questions=" + this.getQuestions() + ", quizType=" + this.getQuizType() + ", modeType=" + this.getModeType() + ")";
     }
 
-    public UserResultTuple getResults() {
-        UserResultTuple userResultTuple = new UserResultTuple(this.id, invitingUserId, invitedUserId);
+    public List<UserResultTupleDTO> getResults() {
+        List<UserResultTupleDTO> userResultTupleDTOList= new ArrayList<>();
+
         for (Question question : questions) {
-            userResultTuple.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult() + question.getPoints(this.invitedUserId));
-            userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + question.getPoints(this.invitingUserId));
+            UserResultTuple userResultTuple = new UserResultTuple(this.id, invitingUserId, invitedUserId);
+            userResultTuple.setInvitedPlayerResult(question.getPoints(this.invitedUserId));
+            userResultTuple.setInvitingPlayerResult(question.getPoints(this.invitingUserId));
+
+            UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+            userResultTupleDTOList.add(userResultTupleDTO);
         }
-        return userResultTuple;
+        return userResultTupleDTOList;
     }
 
     public long getPoints(long userId) {
@@ -101,6 +108,15 @@ public class Game {
             points += question.getPoints(userId);
         }
         return points;
+    }
+
+    public UserResultTuple getPointsOfBoth() {
+        UserResultTuple userResultTuple = new UserResultTuple(this.id, invitingUserId, invitedUserId);
+        for (Question question : questions) {
+            userResultTuple.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult() + question.getPoints(this.invitedUserId));
+            userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + question.getPoints(this.invitingUserId));
+        }
+        return userResultTuple;
     }
 
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
@@ -119,14 +135,6 @@ public class Game {
             question.addAnswer(userAnswerTuple);
         }
 
-    }
-
-    public Map<String, Boolean> lastCorrect(long userId) {
-        Question question = questions.peekFirst();
-        if (question == null) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No question has been added to game.");
-        }
-        return question.lastCorrect(userId);
     }
 
     public Boolean completelyAnswered() {

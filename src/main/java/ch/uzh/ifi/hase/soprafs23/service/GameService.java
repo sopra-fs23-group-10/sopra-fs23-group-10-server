@@ -9,6 +9,7 @@ import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.UserAnswerTuple;
 import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.handler.GameMap;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -121,45 +122,32 @@ public class GameService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public Map<String, Boolean> answerQuestion(long gameId, UserAnswerTuple userAnswerTuple, WebSocketController webSocketController) {
-
+    public void answerQuestion(long gameId, UserAnswerTuple userAnswerTuple) {
         if (userAnswerTuple == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
         }
-
-        Game currentGame = gameMap.get(gameId);
-        this.checkGame(currentGame.getId());
-
-        currentGame.addAnswer(userAnswerTuple);
-
-        UserResultTuple userResultTuple = currentGame.getResults();
-
-        if (currentGame.completelyAnswered()) {
-            webSocketController.resultToUser(gameId, DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple));
+        if(userAnswerTuple.getUserId() == null){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
         }
-
-        return currentGame.lastCorrect(userAnswerTuple.getUserId());
-    }
-
-    public UserResultTuple finishGame(long gameId) {
         Game currentGame = gameMap.get(gameId);
         this.checkGame(currentGame.getId());
-
-        UserResultTuple userResultTuple = currentGame.getResults();
-        userService.updatePoints(userResultTuple);
-        long invitingUserPoints = currentGame.getPoints(userResultTuple.getInvitingPlayerId());
-        long invitedUserPoints = currentGame.getPoints(userResultTuple.getInvitedPlayerId());
-
-        UserResultTuple finalResult = new UserResultTuple(gameId, userResultTuple.getInvitingPlayerId(), userResultTuple.getInvitedPlayerId());
-        finalResult.setInvitingPlayerResult(invitingUserPoints);
-        finalResult.setInvitedPlayerResult(invitedUserPoints);
-
-        this.removeGame(gameId);
-
-        return finalResult;
+        currentGame.addAnswer(userAnswerTuple);
     }
 
-    public UserResultTuple intermediateResults(long gameId) {
+    public List<UserResultTupleDTO> finishGame(long gameId) {
+        List<UserResultTupleDTO> userResultTupleDTOList = this.intermediateResults(gameId);
+
+        Game currentGame = this.getGame(gameId);
+        UserResultTuple userResultTuple = currentGame.getPointsOfBoth();
+        userService.updatePoints(userResultTuple);
+
+        UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+        userResultTupleDTOList.add(userResultTupleDTO);
+        this.removeGame(gameId);
+        return userResultTupleDTOList;
+    }
+
+    public List<UserResultTupleDTO> intermediateResults(long gameId) {
         Game currentGame = this.getGame(gameId);
         this.checkGame(currentGame.getId());
         return currentGame.getResults();

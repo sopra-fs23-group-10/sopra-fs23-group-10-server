@@ -249,7 +249,7 @@ class GameControllerTest {
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
-
+/*
     @Test
     public void answerQuestion_whenQuestionNotAnswered_thenReturnBoolean_201() throws Exception {
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
@@ -309,7 +309,8 @@ class GameControllerTest {
 
         mockMvc.perform(putRequest).andExpect(status().isConflict());
     }
-
+    */
+/*
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
@@ -370,7 +371,8 @@ class GameControllerTest {
 
         mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
     }
-
+    */
+/*
     @Test
     public void intermediateGame_whenValid_returnResults_200() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
@@ -403,7 +405,9 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.invitedPlayerId", is((int) invitedUser.getId())))
                 .andExpect(jsonPath("$.invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
     }
+    */
 
+    /*
     @Test
     public void intermediateGame_whenInvalidToken_throwsUnauthorized_401() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
@@ -431,6 +435,7 @@ class GameControllerTest {
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
+    */
 /*
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {

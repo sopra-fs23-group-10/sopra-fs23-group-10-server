@@ -1,7 +1,7 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
 public class UserAnswerTuple {
-    private long userId;
+    private Long userId;
     private String questionId;
     private String answer;
     private Long answeredTime;
@@ -20,7 +20,7 @@ public class UserAnswerTuple {
         return "ResultTuple(userId=" + this.getUserId() + ", answeredTime=" + this.getAnsweredTime() + ")";
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 
