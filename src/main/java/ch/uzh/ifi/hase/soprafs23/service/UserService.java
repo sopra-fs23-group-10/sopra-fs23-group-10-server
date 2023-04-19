@@ -52,10 +52,6 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid.");
         }
 
-        if (userByToken.getStatus() != UserStatus.ONLINE) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User with provided token is currently in game or not logged in.");
-        }
-
         return userByToken;
     }
 
