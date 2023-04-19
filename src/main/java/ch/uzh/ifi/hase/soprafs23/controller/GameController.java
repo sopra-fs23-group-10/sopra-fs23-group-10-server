@@ -85,7 +85,6 @@ public class GameController {
         return gameService.getAllTopics();
     }
 
-
     @PostMapping("/game/topics")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -95,7 +94,6 @@ public class GameController {
         webSocketController.questionToUsers(questionDTOReturn.getGameId(),questionDTOReturn);
         return questionDTOReturn;
     }
-
 
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)

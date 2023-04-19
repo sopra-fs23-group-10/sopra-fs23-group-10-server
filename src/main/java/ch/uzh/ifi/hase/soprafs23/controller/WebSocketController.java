@@ -57,7 +57,7 @@ public class WebSocketController {
 
     @MessageMapping("/games/{gameId}/question")
     public void questionToUsers(@DestinationVariable long gameId, QuestionDTO questionDTO) {
-        this.webSocketService.sendMessageToClients("/game/{gameId}/question/" + gameId, questionDTO);
+        this.webSocketService.sendMessageToClients("/games/"+gameId+"/questions", questionDTO);
     }
 
     @MessageMapping("/register")
