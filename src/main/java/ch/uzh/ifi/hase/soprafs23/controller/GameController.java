@@ -38,6 +38,13 @@ public class GameController {
         User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
         User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
 
+        if(invitingUser.getStatus() != UserStatus.ONLINE ||invitedUser.getStatus() != UserStatus.ONLINE){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
+        }
+
+        userService.setInGame(invitedUser);
+        userService.setInGame(invitingUser);
+
         Game game = gameService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
@@ -60,6 +67,8 @@ public class GameController {
         }
 
         if(!response){
+            userService.setOnline(userService.searchUserById(game.getInvitedUserId()));
+            userService.setOnline(userService.searchUserById(game.getInvitingUserId()));
             gameService.removeGame(gameId);
         }
 
@@ -99,7 +108,6 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     public void answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
         gameService.answerQuestion(gameId,userAnswerTuple);
     }
