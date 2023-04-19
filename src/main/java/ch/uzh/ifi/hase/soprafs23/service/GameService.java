@@ -56,11 +56,8 @@ public class GameService {
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (InterruptedException e){
-            System.err.println("Error sending HTTP request: " + e.getMessage());
-            return null;
-        } catch (IOException i){
-            System.err.println("Error sending HTTP request: " + i.getMessage());
+        } catch (InterruptedException | IOException e){
+            System.err.println("Error during request of external API: " + e.getMessage());
             return null;
         }
         if (response.statusCode() == 200) {
@@ -75,11 +72,11 @@ public class GameService {
                 gameMap.get(gameId).addQuestion(createdQuestion);
                 return createdQuestion;
             } catch (JSONException e) {
-                System.err.println("Error parsing JSON response: " + e.getMessage());
+                System.err.println("Error parsing JSON response of external API: " + e.getMessage());
                 return null;
             }
         } else {
-            System.err.println("HTTP request failed with status code " + response.statusCode());
+            System.err.println("Request to external API failed with code: " + response.statusCode());
             return null;
         }
     }
