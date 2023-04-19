@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.WebSockets.WebSocketSessionRegistry;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
@@ -52,6 +53,11 @@ public class WebSocketController {
     @MessageMapping("/game/finalResult/{gameId}")
     public void resultToUser(@DestinationVariable long gameId, UserResultTupleDTO userResultTupleDTO) {
         this.webSocketService.sendMessageToClients("/game/result/" + gameId, userResultTupleDTO);
+    }
+
+    @MessageMapping("/games/{gameId}/question")
+    public void questionToUsers(@DestinationVariable long gameId, QuestionDTO questionDTO) {
+        this.webSocketService.sendMessageToClients("/game/question/" + gameId, questionDTO);
     }
 
     @MessageMapping("/register")
