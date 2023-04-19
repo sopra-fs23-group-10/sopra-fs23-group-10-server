@@ -42,8 +42,8 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
         }
 
-        userService.setInGame(invitedUser);
-        userService.setInGame(invitingUser);
+        //userService.setInGame(invitedUser);
+        //userService.setInGame(invitingUser);
 
         Game game = gameService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
@@ -99,8 +99,9 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         userService.verifyToken(token);
+        //TODO: questionDTOReturn sets gameId to 0
         QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
-        webSocketController.questionToUsers(questionDTOReturn.getGameId(),questionDTOReturn);
+        webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
         return questionDTOReturn;
     }
 
