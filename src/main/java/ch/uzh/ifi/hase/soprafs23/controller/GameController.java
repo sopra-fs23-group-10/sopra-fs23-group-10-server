@@ -109,7 +109,6 @@ public class GameController {
     public void answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-        gameService.answerQuestion(gameId,userAnswerTuple);
     }
 
     @GetMapping("game/online/{gameId}")
@@ -145,5 +144,13 @@ public class GameController {
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
         return userResultTupleDTOList;
+    }
+
+    @GetMapping("/games/{gameId}/users")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserResultTupleDTO getAllUsers(@PathVariable long gameId,@RequestHeader("token") String token) {
+        userService.verifyToken(token);
+        return gameService.getAllUsers(gameId);
     }
 }
