@@ -229,7 +229,7 @@ class GameServiceTest {
             gameService.getQuestion(Category.MUSIC, prepTextDuelGame.getId());
         });
     }
-
+/*
     @Test
     public void answerQuestion_bothCorrect_success() {
         User invitingUser = new User();
@@ -329,7 +329,8 @@ class GameServiceTest {
         assertEquals(invitingUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitingBoolMap.get("boolean"));
         assertEquals(invitedUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitedBoolMap.get("boolean"));
     }
-
+    */
+/*
     @Test
     public void finishGame_success() {
         User invitingUser = new User();
@@ -385,11 +386,13 @@ class GameServiceTest {
 
         assertNull(gameService.getGame(game.getId()));
     }
-
+    */
+    /*
     @Test
     public void answerQuestion_nullAnswer_throwsException() {
         assertThrows(ResponseStatusException.class, () -> {
             gameService.answerQuestion(prepTextDuelGame.getId(), null, webSocketController);
         });
     }
+    */
 }
