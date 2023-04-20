@@ -34,8 +34,8 @@ public class Game {
 
     private boolean timeRunUp(){
         long seconds = (new Date().getTime()-this.lastChange.getTime())/1000;
-        this.lastChange = seconds > 20 ? this.lastChange : new Date();
-        return seconds > 20;
+        this.lastChange = seconds > 20000 ? this.lastChange : new Date();
+        return seconds > 20000;
     }
 
     public void addQuestion(Question question){
