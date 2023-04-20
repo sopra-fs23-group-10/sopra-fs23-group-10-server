@@ -42,7 +42,7 @@ public class GameService {
 
     public Question getQuestion(Category category, Long gameId) {
 
-        Game game = gameMap.get(gameId);
+        Game game = this.getGame(gameId);
         userService.searchUserById(game.getInvitedUserId());
         userService.searchUserById(game.getInvitingUserId());
 
@@ -70,7 +70,7 @@ public class GameService {
                 String[] incorrectAnswers = jsonObj.getJSONArray("incorrectAnswers").toList().toArray(new String[0]);
                 String question = jsonObj.getString("question");
                 Question createdQuestion = new Question(id, category, correctAnswer, question, incorrectAnswers);
-                gameMap.get(gameId).addQuestion(createdQuestion);
+                game.addQuestion(createdQuestion);
                 return createdQuestion;
             } catch (JSONException e) {
                 System.err.println("Error parsing JSON response of external API: " + e.getMessage());
@@ -90,7 +90,11 @@ public class GameService {
     }
 
     public Game getGame(Long gameId) {
-        return gameMap.get(gameId);
+        Game game = gameMap.get(gameId);
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with specified ID cannot be found.");
+        }
+        return game;
     }
 
     public void removeGame(Long gameId) {
@@ -98,11 +102,7 @@ public class GameService {
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
-        Game game = gameMap.get(gameId);
-        if (game == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
-        }
-
+        Game game = this.getGame(gameId);
         Long currentPlayerId = game.getCurrentPlayer();
         if (!requestingUserId.equals(currentPlayerId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
@@ -129,9 +129,7 @@ public class GameService {
         if(userAnswerTuple.getUserId() == null){
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "UserID is not in sent answer.");
         }
-        Game currentGame = gameMap.get(gameId);
-        this.checkGame(currentGame.getId());
-        currentGame.addAnswer(userAnswerTuple);
+        this.getGame(gameId).addAnswer(userAnswerTuple);
     }
 
     public List<UserResultTupleDTO> finishGame(long gameId) {
@@ -148,9 +146,7 @@ public class GameService {
     }
 
     public List<UserResultTupleDTO> intermediateResults(long gameId) {
-        Game currentGame = this.getGame(gameId);
-        this.checkGame(currentGame.getId());
-        return currentGame.getResults();
+        return this.getGame(gameId).getResults();
     }
 
     public void checkGame(Long gameId){
@@ -159,7 +155,7 @@ public class GameService {
         }
     }
     public UserResultTupleDTO getAllUsers(Long gameId){
-        Game game = gameMap.get(gameId);
+        Game game = this.getGame(gameId);
         UserResultTuple userResultTuple = new UserResultTuple(gameId,game.getInvitingUserId(),game.getInvitedUserId());
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         return userResultTupleDTO;

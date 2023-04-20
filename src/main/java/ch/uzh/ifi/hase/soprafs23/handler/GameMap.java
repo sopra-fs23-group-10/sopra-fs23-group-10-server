@@ -1,6 +1,9 @@
 package ch.uzh.ifi.hase.soprafs23.handler;
 
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.HashMap;
 
 
