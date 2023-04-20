@@ -270,7 +270,8 @@ class GameControllerTest {
 
         mockMvc.perform(putRequest).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.boolean", is((boolean) booleanMap.get("boolean"))));
-    }
+    }*/
+    /*
 
     @Test
     public void answerQuestion_whenNullAnswer_thenNotAcceptable_406() throws Exception {

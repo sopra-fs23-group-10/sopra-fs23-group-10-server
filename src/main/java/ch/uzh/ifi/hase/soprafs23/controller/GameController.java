@@ -42,8 +42,8 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
         }
 
-        userService.setInGame(invitedUser);
-        userService.setInGame(invitingUser);
+        //userService.setInGame(invitedUser);
+        //userService.setInGame(invitingUser);
 
         Game game = gameService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
@@ -99,8 +99,9 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         userService.verifyToken(token);
+        //TODO: questionDTOReturn sets gameId to 0
         QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
-        webSocketController.questionToUsers(questionDTOReturn.getGameId(),questionDTOReturn);
+        webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
         return questionDTOReturn;
     }
 
@@ -109,7 +110,6 @@ public class GameController {
     public void answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-        gameService.answerQuestion(gameId,userAnswerTuple);
     }
 
     @GetMapping("game/online/{gameId}")
@@ -145,5 +145,13 @@ public class GameController {
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
         return userResultTupleDTOList;
+    }
+
+    @GetMapping("/games/{gameId}/users")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserResultTupleDTO getAllUsers(@PathVariable long gameId,@RequestHeader("token") String token) {
+        userService.verifyToken(token);
+        return gameService.getAllUsers(gameId);
     }
 }
