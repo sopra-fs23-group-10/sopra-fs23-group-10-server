@@ -109,7 +109,7 @@ public class GameController {
     public void answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-        gameService.getGame(gameId).addAnswer(userAnswerTuple);
+        gameService.answerQuestion(gameId, userAnswerTuple);
     }
 
     @GetMapping("game/online/{gameId}")
