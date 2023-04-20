@@ -149,7 +149,7 @@ public class GameController {
     @GetMapping("/games/{gameId}/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserResultTupleDTO getAllUsers(@PathVariable long gameId,@RequestHeader("token") String token) {
+    public UserResultTupleDTO getAllUsers(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         return gameService.getAllUsers(gameId);
     }

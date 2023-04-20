@@ -4,10 +4,10 @@ package ch.uzh.ifi.hase.soprafs23.service;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
-import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.controller.WebSocketController;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.handler.GameMap;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,6 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,12 +31,19 @@ class GameServiceTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private WebSocketController webSocketController;
-
     private Game prepTextDuelGame;
 
     private Game workingTextDuelGame;
+
+    private User invitingUser;
+
+    private User invitedUser;
+
+    private Question createdQuestion;
+
+    private final String[] incorrectAnswers = {"Neil Young", "Eric Clapton", "Elton John"};
+    private final String[] allAnswers = {"Neil Young", "Bob Dylan", "Eric Clapton", "Elton John"};
+
 
     @BeforeEach
     public void setup() {
@@ -47,7 +53,20 @@ class GameServiceTest {
         MockitoAnnotations.openMocks(this);
         GameMap gameMap = mock(GameMap.class);
         setMock(gameMap);
-        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
+        invitingUser = new User();
+        invitingUser.setId(1L);
+
+        invitedUser = new User();
+        invitedUser.setId(2L);
+
+        createdQuestion = new Question();
+        createdQuestion.setCategory(Category.MUSIC);
+        createdQuestion.setId("622a1c357cc59eab6f94ff56");
+        createdQuestion.setCorrectAnswer("Bob Dylan");
+        createdQuestion.setIncorrectAnswers(incorrectAnswers);
+        createdQuestion.setAllAnswers(allAnswers);
+        createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
     }
 
     private void setMock(GameMap mock) {
@@ -69,8 +88,11 @@ class GameServiceTest {
 
     @Test
     public void getGame_validInput_success() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
         Game foundGame = gameService.getGame(prepTextDuelGame.getId());
 
+        assertNotNull(foundGame);
         assertEquals(prepTextDuelGame.getId(), foundGame.getId());
         assertEquals(prepTextDuelGame.getInvitedUserId(), foundGame.getInvitedUserId());
         assertEquals(prepTextDuelGame.getInvitingUserId(), foundGame.getInvitingUserId());
@@ -92,12 +114,17 @@ class GameServiceTest {
 
     @Test
     public void removeGame_validInput_success() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
+        assertNotNull(gameService.getGame(prepTextDuelGame.getId()));
         gameService.removeGame(prepTextDuelGame.getId());
         assertNull(gameService.getGame(prepTextDuelGame.getId()));
     }
 
     @Test
     public void removeGame_nonValidInput_noChange() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
         assertNotNull(gameService.getGame(prepTextDuelGame.getId()));
         gameService.removeGame(workingTextDuelGame.getId());
         assertNotNull(gameService.getGame(prepTextDuelGame.getId()));
@@ -121,6 +148,8 @@ class GameServiceTest {
 
     @Test
     public void getRandomTopics_once_success() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
         Map<String, List<Category>> topicsMap = gameService.getRandomTopics(prepTextDuelGame.getId(), prepTextDuelGame.getInvitedUserId());
         List<Category> topicsList = topicsMap.get("topics");
 
@@ -129,6 +158,8 @@ class GameServiceTest {
 
     @Test
     public void getRandomTopics_rotating_success() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
         int counterInvited = 0;
         int counterInviting = 0;
 
@@ -148,6 +179,8 @@ class GameServiceTest {
 
     @Test
     public void getRandomTopics_requestedTwice_throwsException() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
         Map<String, List<Category>> topicsMap = gameService.getRandomTopics(prepTextDuelGame.getId(), prepTextDuelGame.getInvitedUserId());
         List<Category> topicsList = topicsMap.get("topics");
 
@@ -159,48 +192,47 @@ class GameServiceTest {
 
     @Test
     public void checkGame_gameExists() {
-        gameService.checkGame(prepTextDuelGame.getId());
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
+        boolean tester = true;
+        try {
+            gameService.checkGame(prepTextDuelGame.getId());
+        } catch (Exception e) {
+            tester = false;
+        }
+        assertTrue(tester);
     }
 
     @Test
     public void checkGame_gameNotExists_exceptionRaised() {
         assertThrows(ResponseStatusException.class, () -> {
+            gameService.checkGame(prepTextDuelGame.getId());
             gameService.checkGame(workingTextDuelGame.getId());
         });
     }
 
     @Test
     public void getQuestion_validInput_success() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+
         User user = new User();
         user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
 
         when(userService.searchUserById(Mockito.any())).thenReturn(user);
 
-        Question receivedQuestion = gameService.getQuestion(Category.MUSIC, prepTextDuelGame.getId());
+        Category givenCategory = Category.GEOGRAPHY;
+
+        Question receivedQuestion = gameService.getQuestion(Category.GEOGRAPHY, prepTextDuelGame.getId());
         assertNotNull(receivedQuestion);
         assertEquals(receivedQuestion.getClass(), Question.class);
+        assertEquals(givenCategory, receivedQuestion.getCategory());
     }
 
     @Test
     public void getQuestion_checkTopics_success() {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.IN_GAME);
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
 
-        when(userService.searchUserById(Mockito.any())).thenReturn(user);
+        when(userService.searchUserById(Mockito.any())).thenReturn(new User());
 
         List<Category> allTopics = new ArrayList<>(Arrays.asList(Category.values()));
 
@@ -213,15 +245,7 @@ class GameServiceTest {
 
     @Test
     public void getQuestion_invalidID_throwsException() {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testUsername");
-        user.setPassword("testPassword");
-        user.setPoints(2L);
-        user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
-        user.setToken("1");
-        user.setStatus(UserStatus.ONLINE);
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
 
         when(userService.searchUserById(Mockito.any())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
@@ -229,42 +253,11 @@ class GameServiceTest {
             gameService.getQuestion(Category.MUSIC, prepTextDuelGame.getId());
         });
     }
-/*
+
     @Test
     public void answerQuestion_bothCorrect_success() {
-        User invitingUser = new User();
-        invitingUser.setId(1L);
-        invitingUser.setUsername("oneUser");
-        invitingUser.setPassword("testPassword");
-        invitingUser.setPoints(2L);
-        invitingUser.setEmail("oneUser@email.com");
-        invitingUser.setProfilePicture("oneUser");
-        invitingUser.setToken("1");
-        invitingUser.setStatus(UserStatus.IN_GAME);
-
-        User invitedUser = new User();
-        invitedUser.setId(2L);
-        invitedUser.setUsername("anotherUser");
-        invitedUser.setPassword("testPassword");
-        invitedUser.setPoints(2L);
-        invitedUser.setEmail("anotherUser@email.com");
-        invitedUser.setProfilePicture("anotherUser");
-        invitedUser.setToken("2");
-        invitedUser.setStatus(UserStatus.IN_GAME);
-
-        String[] incorrectAnswers = {"Neil Young", "Eric Clapton", "Elton John"};
-        String[] allAnswers = {"Neil Young", "Bob Dylan", "Eric Clapton", "Elton John"};
-
-        Question createdQuestion = new Question();
-        createdQuestion.setCategory(Category.MUSIC);
-        createdQuestion.setId("622a1c357cc59eab6f94ff56");
-        createdQuestion.setCorrectAnswer("Bob Dylan");
-        createdQuestion.setIncorrectAnswers(incorrectAnswers);
-        createdQuestion.setAllAnswers(allAnswers);
-        createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
-
-        Game game = gameService.getGame(prepTextDuelGame.getId());
-        game.addQuestion(createdQuestion);
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+        gameService.getGame(prepTextDuelGame.getId()).addQuestion(createdQuestion);
 
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
         given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
@@ -272,49 +265,38 @@ class GameServiceTest {
         UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 200L);
         UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 300L);
 
-        Map<String, Boolean> invitingBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple, webSocketController);
-        Map<String, Boolean> invitedBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple, webSocketController);
+        assertFalse(createdQuestion.completelyAnswered());
+        gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple);
+        assertFalse(createdQuestion.completelyAnswered());
+        gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple);
+        assertTrue(createdQuestion.completelyAnswered());
 
+        Map<Long, UserAnswerTuple> results = createdQuestion.getResults();
 
-        assertEquals(invitingUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitingBoolMap.get("boolean"));
-        assertEquals(invitedUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitedBoolMap.get("boolean"));
+        assertEquals(invitingUserAnswerTuple.getUserId(), results.get(invitingUser.getId()).getUserId());
+        assertEquals(invitingUserAnswerTuple.getQuestionId(), results.get(invitingUser.getId()).getQuestionId());
+        assertEquals(invitingUserAnswerTuple.getAnswer(), results.get(invitingUser.getId()).getAnswer());
+        assertEquals(invitingUserAnswerTuple.getAnsweredTime(), results.get(invitingUser.getId()).getAnsweredTime());
+        assertEquals(invitedUserAnswerTuple.getUserId(), results.get(invitedUser.getId()).getUserId());
+        assertEquals(invitedUserAnswerTuple.getQuestionId(), results.get(invitedUser.getId()).getQuestionId());
+        assertEquals(invitedUserAnswerTuple.getAnswer(), results.get(invitedUser.getId()).getAnswer());
+        assertEquals(invitedUserAnswerTuple.getAnsweredTime(), results.get(invitedUser.getId()).getAnsweredTime());
     }
 
     @Test
-    public void answerQuestion_firstFalse_success() {
-        User invitingUser = new User();
-        invitingUser.setId(1L);
-        invitingUser.setUsername("oneUser");
-        invitingUser.setPassword("testPassword");
-        invitingUser.setPoints(2L);
-        invitingUser.setEmail("oneUser@email.com");
-        invitingUser.setProfilePicture("oneUser");
-        invitingUser.setToken("1");
-        invitingUser.setStatus(UserStatus.IN_GAME);
+    public void answerQuestion_nullAnswer_throwsException() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
 
-        User invitedUser = new User();
-        invitedUser.setId(2L);
-        invitedUser.setUsername("anotherUser");
-        invitedUser.setPassword("testPassword");
-        invitedUser.setPoints(2L);
-        invitedUser.setEmail("anotherUser@email.com");
-        invitedUser.setProfilePicture("anotherUser");
-        invitedUser.setToken("2");
-        invitedUser.setStatus(UserStatus.IN_GAME);
+        assertThrows(ResponseStatusException.class, () -> {
+            gameService.answerQuestion(prepTextDuelGame.getId(), null);
+        });
+    }
 
-        String[] incorrectAnswers = {"Neil Young", "Eric Clapton", "Elton John"};
-        String[] allAnswers = {"Neil Young", "Bob Dylan", "Eric Clapton", "Elton John"};
+    @Test
+    public void finishGame_success() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
 
-        Question createdQuestion = new Question();
-        createdQuestion.setCategory(Category.MUSIC);
-        createdQuestion.setId("622a1c357cc59eab6f94ff56");
-        createdQuestion.setCorrectAnswer("Bob Dylan");
-        createdQuestion.setIncorrectAnswers(incorrectAnswers);
-        createdQuestion.setAllAnswers(allAnswers);
-        createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
-
-        Game game = gameService.getGame(prepTextDuelGame.getId());
-        game.addQuestion(createdQuestion);
+        gameService.getGame(prepTextDuelGame.getId()).addQuestion(createdQuestion);
 
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
         given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
@@ -322,77 +304,45 @@ class GameServiceTest {
         UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), createdQuestion.getId(), createdQuestion.getIncorrectAnswers()[1], 200L);
         UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 300L);
 
-        Map<String, Boolean> invitingBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple, webSocketController);
-        Map<String, Boolean> invitedBoolMap = gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple, webSocketController);
+        gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple);
+        gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple);
 
+        List<UserResultTupleDTO> finalResult = gameService.finishGame(prepTextDuelGame.getId());
 
-        assertEquals(invitingUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitingBoolMap.get("boolean"));
-        assertEquals(invitedUserAnswerTuple.getAnswer().equals(createdQuestion.getCorrectAnswer()), invitedBoolMap.get("boolean"));
+        for (UserResultTupleDTO userResultTupleDTO : finalResult) {
+            assertEquals(prepTextDuelGame.getId(), userResultTupleDTO.getGameId());
+            assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
+            assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
+            assertEquals(prepTextDuelGame.getInvitedUserId(), invitedUserAnswerTuple.getUserId());
+            assertEquals(350L, userResultTupleDTO.getInvitedPlayerResult());
+        }
+        assertNull(gameService.getGame(prepTextDuelGame.getId()));
     }
-    */
-/*
+
     @Test
-    public void finishGame_success() {
-        User invitingUser = new User();
-        invitingUser.setId(1L);
-        invitingUser.setUsername("oneUser");
-        invitingUser.setPassword("testPassword");
-        invitingUser.setPoints(2L);
-        invitingUser.setEmail("oneUser@email.com");
-        invitingUser.setProfilePicture("oneUser");
-        invitingUser.setToken("1");
-        invitingUser.setStatus(UserStatus.IN_GAME);
+    public void intermediateResults_success() {
+        gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
 
-        User invitedUser = new User();
-        invitedUser.setId(2L);
-        invitedUser.setUsername("anotherUser");
-        invitedUser.setPassword("testPassword");
-        invitedUser.setPoints(2L);
-        invitedUser.setEmail("anotherUser@email.com");
-        invitedUser.setProfilePicture("anotherUser");
-        invitedUser.setToken("2");
-        invitedUser.setStatus(UserStatus.IN_GAME);
-
-        String[] incorrectAnswers = {"Neil Young", "Eric Clapton", "Elton John"};
-        String[] allAnswers = {"Neil Young", "Bob Dylan", "Eric Clapton", "Elton John"};
-
-        Question createdQuestion = new Question();
-        createdQuestion.setCategory(Category.MUSIC);
-        createdQuestion.setId("622a1c357cc59eab6f94ff56");
-        createdQuestion.setCorrectAnswer("Bob Dylan");
-        createdQuestion.setIncorrectAnswers(incorrectAnswers);
-        createdQuestion.setAllAnswers(allAnswers);
-        createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
-
-        Game game = gameService.getGame(prepTextDuelGame.getId());
-
-        game.addQuestion(createdQuestion);
+        gameService.getGame(prepTextDuelGame.getId()).addQuestion(createdQuestion);
 
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
         given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
 
-        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 200L);
+        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), createdQuestion.getId(), createdQuestion.getIncorrectAnswers()[1], 200L);
         UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 300L);
-        gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple, webSocketController);
-        gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple, webSocketController);
 
-        UserResultTuple finalResult = gameService.finishGame(game.getId());
+        gameService.answerQuestion(prepTextDuelGame.getId(), invitingUserAnswerTuple);
+        gameService.answerQuestion(prepTextDuelGame.getId(), invitedUserAnswerTuple);
 
-        assertEquals(prepTextDuelGame.getId(), finalResult.getGameId());
-        assertEquals(prepTextDuelGame.getInvitingUserId(), finalResult.getInvitingPlayerId());
-        assertEquals((500L - (0.5 * invitingUserAnswerTuple.getAnsweredTime())), finalResult.getInvitingPlayerResult());
-        assertEquals(prepTextDuelGame.getInvitedUserId(), finalResult.getInvitedPlayerId());
-        assertEquals((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())) , finalResult.getInvitedPlayerResult());
+        List<UserResultTupleDTO> intermediateResult = gameService.intermediateResults(prepTextDuelGame.getId());
 
-        assertNull(gameService.getGame(game.getId()));
+        for (UserResultTupleDTO userResultTupleDTO : intermediateResult) {
+            assertEquals(prepTextDuelGame.getId(), userResultTupleDTO.getGameId());
+            assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
+            assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
+            assertEquals(prepTextDuelGame.getInvitedUserId(), invitedUserAnswerTuple.getUserId());
+            assertEquals(350L, userResultTupleDTO.getInvitedPlayerResult());
+        }
+        assertNotNull(gameService.getGame(prepTextDuelGame.getId()));
     }
-    */
-    /*
-    @Test
-    public void answerQuestion_nullAnswer_throwsException() {
-        assertThrows(ResponseStatusException.class, () -> {
-            gameService.answerQuestion(prepTextDuelGame.getId(), null, webSocketController);
-        });
-    }
-    */
 }

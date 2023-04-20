@@ -249,16 +249,15 @@ class GameControllerTest {
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
-/*
+
+    /*
     @Test
-    public void answerQuestion_whenQuestionNotAnswered_thenReturnBoolean_201() throws Exception {
+    public void answerQuestion_whenQuestionNotAnswered_thenSuccess_201() throws Exception {
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
         userAnswerDTO.setUserId(invitingUser.getId());
         userAnswerDTO.setQuestionId(question.getId());
         userAnswerDTO.setAnswer(question.getCorrectAnswer());
         userAnswerDTO.setAnsweredTime(112L);
-
-        Map<String, Boolean> booleanMap = Collections.singletonMap("boolean", userAnswerDTO.getAnswer().equals(question.getCorrectAnswer()));
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
         given(gameService.answerQuestion(Mockito.any(Long.class), Mockito.any(UserAnswerTuple.class), Mockito.any(WebSocketController.class))).willReturn(booleanMap);

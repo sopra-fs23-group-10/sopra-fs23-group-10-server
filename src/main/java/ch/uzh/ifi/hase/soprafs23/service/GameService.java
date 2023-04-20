@@ -127,12 +127,11 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
         }
         if(userAnswerTuple.getUserId() == null){
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "UserID is not in sent answer.");
         }
         Game currentGame = gameMap.get(gameId);
         this.checkGame(currentGame.getId());
         currentGame.addAnswer(userAnswerTuple);
-
     }
 
     public List<UserResultTupleDTO> finishGame(long gameId) {

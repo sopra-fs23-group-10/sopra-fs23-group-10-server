@@ -148,7 +148,7 @@ public class UserController {
     @PostMapping("/logout/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO logoutStatus(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token) {
+    public UserGetDTO logout(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token) {
         // verify token and get matching user
         User user = userService.verifyTokenWithId(token, userId);
 
