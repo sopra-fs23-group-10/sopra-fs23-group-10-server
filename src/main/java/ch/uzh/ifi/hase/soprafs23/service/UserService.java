@@ -250,8 +250,8 @@ public class UserService {
         long invitedUserPoints = invitedUser.getPoints()+userResultTuple.getInvitedPlayerResult();
         long invitingUserPoints = invitingUser.getPoints()+userResultTuple.getInvitingPlayerResult();
 
-        invitingUser.setPoints(invitingUser.getPoints() + invitingUserPoints);
-        invitedUser.setPoints(invitedUser.getPoints() + invitedUserPoints);
+        invitingUser.setPoints(invitingUserPoints);
+        invitedUser.setPoints(invitedUserPoints);
     }
 
     public long getPoints(long userId) {

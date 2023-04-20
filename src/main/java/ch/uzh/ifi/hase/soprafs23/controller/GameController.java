@@ -152,6 +152,6 @@ public class GameController {
     @ResponseBody
     public UserResultTupleDTO getAllUsers(@PathVariable long gameId,@RequestHeader("token") String token) {
         userService.verifyToken(token);
-        return gameService.getAllUsers(gameId);
+        return gameService.getAllUsersOfGame(gameId);
     }
 }
