@@ -99,15 +99,6 @@ public class Question {
                 (long) (500L - (0.5 * userAnswerTuple.getAnsweredTime())) : 0L;
     }
 
-    public Map<String, Boolean> lastCorrect(long userId) {
-        UserAnswerTuple userAnswerTuple = results.get(userId);
-        if (userAnswerTuple != null) {
-            return Collections.singletonMap("boolean", userAnswerTuple.getAnswer().equals(this.correctAnswer));
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not answered this question yet.");
-        }
-    }
-
     public void addAnswer(UserAnswerTuple userAnswerTuple) {
         if (results.get(userAnswerTuple.getUserId()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
