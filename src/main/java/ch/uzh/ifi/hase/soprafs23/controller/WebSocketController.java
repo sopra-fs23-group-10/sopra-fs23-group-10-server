@@ -60,14 +60,18 @@ public class WebSocketController {
     }
 
     @MessageMapping("/register")
+    @Payload(required = false)
     public void register(@Payload String userId) {
+        if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
         userService.setOnline(userService.searchUserById(id));
         System.out.printf("User with userID: %s has logged IN%n", userId);
     }
 
     @MessageMapping("/unregister")
+    @Payload(required = false)
     public void unregister(@Payload String userId) {
+        if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
         userService.setOffline(userService.searchUserById(id), id);
         System.out.printf("User with userID: %s has logged OUT%n", userId);

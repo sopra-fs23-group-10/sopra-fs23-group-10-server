@@ -99,7 +99,6 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         userService.verifyToken(token);
-        //TODO: questionDTOReturn sets gameId to 0
         QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
         webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
         return questionDTOReturn;
