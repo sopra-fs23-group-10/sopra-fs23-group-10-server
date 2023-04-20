@@ -51,7 +51,7 @@ public class GameService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://the-trivia-api.com/api/questions?categories="
                         + category.toString().toLowerCase()
-                        + "&limit=1&region=CH&difficulty=easy"
+                        + "&limit=1&difficulty=easy"
                 ))
                 .build();
         HttpResponse<String> response;
