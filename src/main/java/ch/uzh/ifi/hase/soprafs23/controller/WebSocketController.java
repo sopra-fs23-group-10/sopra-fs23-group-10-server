@@ -32,29 +32,30 @@ public class WebSocketController {
     }
 
     @MessageMapping("/invitation/{userId}")
-    public void inviteUser(@DestinationVariable long invitedUserId, GameDTO gameDTO) {
+    public void inviteUser(long invitedUserId, GameDTO gameDTO) {
         this.webSocketService.sendMessageToClients("/invitations/" + invitedUserId, gameDTO);
     }
 
     @MessageMapping("/invitations/answer/{userId}")
-    public void sendInviationRespond(@DestinationVariable Long userId, Map map) {
+    public void sendInviationRespond(Long userId, Map map) {
         this.webSocketService.sendMessageToClients("/invitations/answer/" + userId, map);
     }
 
     @MessageMapping("/game/intermediateResult/{gameId}")
-    public void resultToUser(@DestinationVariable long gameId, GameDTO gameDTO) {
+    public void resultToUser(long gameId, GameDTO gameDTO) {
         Game currentGame = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gameDTO);
         List<UserResultTupleDTO> gameResults = currentGame.getResults();
         this.webSocketService.sendMessageToClients("/game/result/" + gameId, gameResults);
     }
 
     @MessageMapping("/game/finalResult/{gameId}")
-    public void resultToUser(@DestinationVariable long gameId, List<UserResultTupleDTO> userResultTupleDTOList) {
+    public void resultToUser(long gameId, List<UserResultTupleDTO> userResultTupleDTOList) {
         this.webSocketService.sendMessageToClients("/game/result/" + gameId, userResultTupleDTOList);
     }
 
     @MessageMapping("/games/{gameId}/question")
-    public void questionToUsers(@DestinationVariable long gameId, QuestionDTO questionDTO) {
+    public void questionToUsers(long gameId, QuestionDTO questionDTO) {
+        System.out.println("/games/"+gameId+"/questions");
         this.webSocketService.sendMessageToClients("/games/"+gameId+"/questions", questionDTO);
     }
 
