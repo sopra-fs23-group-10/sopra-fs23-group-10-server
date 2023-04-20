@@ -128,7 +128,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<UserResultTupleDTO> finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
-        //userService.verifyToken(token);
+        userService.verifyToken(token);
         List<UserResultTupleDTO> userResultTupleDTOList = gameService.finishGame(gameId);
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
@@ -152,6 +152,6 @@ public class GameController {
     @ResponseBody
     public UserResultTupleDTO getAllUsers(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        return gameService.getAllUsers(gameId);
+        return gameService.getAllUsersOfGame(gameId);
     }
 }

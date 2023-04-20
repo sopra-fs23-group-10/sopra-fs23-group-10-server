@@ -154,8 +154,8 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
         }
     }
-    public UserResultTupleDTO getAllUsers(Long gameId){
-        Game game = this.getGame(gameId);
+    public UserResultTupleDTO getAllUsersOfGame(Long gameId){
+        Game game = gameMap.get(gameId);
         UserResultTuple userResultTuple = new UserResultTuple(gameId,game.getInvitingUserId(),game.getInvitedUserId());
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         return userResultTupleDTO;
