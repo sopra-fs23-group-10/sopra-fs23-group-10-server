@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs23.service;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
+import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.UserAnswerTuple;
@@ -148,15 +149,18 @@ public class GameService {
         return this.getGame(gameId).getResults();
     }
 
-    public void checkGame(Long gameId){
-        if (gameMap.get(gameId) == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with corresponding gameID cannot be found.");
-        }
-    }
     public UserResultTupleDTO getAllUsersOfGame(Long gameId){
         Game game = this.getGame(gameId);
         UserResultTuple userResultTuple = new UserResultTuple(gameId,game.getInvitingUserId(),game.getInvitedUserId());
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         return userResultTupleDTO;
+    }
+
+    public Map<String, Boolean> allUsersConnected(long gameId) {
+        Game game = this.getGame(gameId);
+        return Collections.singletonMap(
+                "status",
+                userService.searchUserById(game.getInvitingUserId()).getStatus().equals(UserStatus.ONLINE)
+                        && userService.searchUserById(game.getInvitedUserId()).getStatus().equals(UserStatus.ONLINE));
     }
 }

@@ -4,6 +4,7 @@ package ch.uzh.ifi.hase.soprafs23.service;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
+import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.handler.GameMap;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
@@ -56,9 +57,11 @@ class GameServiceTest {
 
         invitingUser = new User();
         invitingUser.setId(1L);
+        invitingUser.setStatus(UserStatus.ONLINE);
 
         invitedUser = new User();
         invitedUser.setId(2L);
+        invitedUser.setStatus(UserStatus.ONLINE);
 
         createdQuestion = new Question();
         createdQuestion.setCategory(Category.MUSIC);
@@ -103,10 +106,10 @@ class GameServiceTest {
     @Test
     public void getGame_gameNotExists_exceptionRaised() {
         assertThrows(ResponseStatusException.class, () -> {
-            gameService.checkGame(workingTextDuelGame.getId());
+            gameService.getGame(workingTextDuelGame.getId());
         });
         assertThrows(ResponseStatusException.class, () -> {
-            gameService.checkGame(prepTextDuelGame.getId());
+            gameService.getGame(prepTextDuelGame.getId());
         });
     }
 

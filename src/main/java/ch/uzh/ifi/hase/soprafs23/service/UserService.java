@@ -244,11 +244,11 @@ public class UserService {
      * @throws org.springframework.web.server.ResponseStatusException
      */
     public void updatePoints(UserResultTuple userResultTuple) {
-        User invitedUser = searchUserById(userResultTuple.getInvitedPlayerId());
         User invitingUser = searchUserById(userResultTuple.getInvitingPlayerId());
+        User invitedUser = searchUserById(userResultTuple.getInvitedPlayerId());
 
-        invitingUser.setPoints(invitingUser.getPoints()+userResultTuple.getInvitingPlayerResult());
-        invitedUser.setPoints(invitedUser.getPoints()+userResultTuple.getInvitedPlayerResult());
+        invitingUser.setPoints(invitingUser.getPoints() + userResultTuple.getInvitingPlayerResult());
+        invitedUser.setPoints(invitedUser.getPoints() + userResultTuple.getInvitedPlayerResult());
     }
 
     public long getPoints(long userId) {

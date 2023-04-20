@@ -202,6 +202,7 @@ class GameControllerTest {
         given(gameService.getRandomTopics(0L, invitingUser.getId())).willReturn(Collections.singletonMap("topics", categories));
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -223,6 +224,7 @@ class GameControllerTest {
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invalidToken);
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
@@ -237,6 +239,7 @@ class GameControllerTest {
         given(gameService.getAllTopics()).willReturn(topics);
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/all")
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest).andExpect(status().isOk());
@@ -300,6 +303,44 @@ class GameControllerTest {
     }
 
     @Test
+    public void allUsersConnected_bothConnected_validInput_success() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.allUsersConnected(game.getId())).willReturn(Collections.singletonMap("status", true));
+
+        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(true)));
+    }
+
+    @Test
+    public void allUsersConnected_oneNotConnected_validInput_success() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.allUsersConnected(game.getId())).willReturn(Collections.singletonMap("status", false));
+
+        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(false)));
+    }
+
+    @Test
+    public void allUsersConnected_bothConnected_invalidToken_throws_401() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(gameService.allUsersConnected(game.getId())).willReturn(Collections.singletonMap("status", true));
+
+        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
 
@@ -321,6 +362,7 @@ class GameControllerTest {
         given(gameService.finishGame(game.getId())).willReturn(userResultTupleDTOs);
 
         MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"+game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(deleteRequest).andExpect(status().isOk())
@@ -383,6 +425,7 @@ class GameControllerTest {
         given(gameService.intermediateResults(game.getId())).willReturn(userResultTupleDTOs);
 
         MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -415,6 +458,7 @@ class GameControllerTest {
         given(gameService.intermediateResults(game.getId())).willReturn(userResultTupleDTOs);
 
         MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
