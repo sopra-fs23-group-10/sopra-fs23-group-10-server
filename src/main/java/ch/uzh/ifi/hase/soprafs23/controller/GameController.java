@@ -99,7 +99,6 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         userService.verifyToken(token);
-        //TODO: questionDTOReturn sets gameId to 0
         QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
         webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
         return questionDTOReturn;
@@ -110,7 +109,7 @@ public class GameController {
     public void answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-        return;
+        gameService.getGame(gameId).addAnswer(userAnswerTuple);
     }
 
     @GetMapping("game/online/{gameId}")
