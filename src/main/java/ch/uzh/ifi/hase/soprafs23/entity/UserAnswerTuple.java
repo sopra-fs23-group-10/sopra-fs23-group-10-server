@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
-public class UserAnswerTuple {
+import java.io.Serializable;
+
+public class UserAnswerTuple implements Serializable {
     private Long userId;
     private String questionId;
     private String answer;

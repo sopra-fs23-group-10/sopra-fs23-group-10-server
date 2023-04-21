@@ -7,10 +7,11 @@ import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.Serializable;
 import java.util.*;
 
 
-public class Game {
+public class Game implements Serializable {
     private long id;
     private long invitingUserId;
     private long invitedUserId;
@@ -38,7 +39,7 @@ public class Game {
         return seconds > 20000;
     }
 
-    public void addQuestion(Question question){
+    public synchronized void addQuestion(Question question){
         questions.addFirst(question);
     }
 
@@ -119,7 +120,7 @@ public class Game {
         return userResultTuple;
     }
 
-    public void addAnswer(UserAnswerTuple userAnswerTuple) {
+    public synchronized void addAnswer(UserAnswerTuple userAnswerTuple) {
         if(timeRunUp()){
             Question question = questions.peek();
             question.addAnswer(
@@ -137,11 +138,11 @@ public class Game {
 
     }
 
-    public Boolean completelyAnswered() {
+    public synchronized Boolean completelyAnswered() {
         return questions.peekFirst().completelyAnswered();
     }
 
-    public void changeCurrentPlayer() {
+    public synchronized void changeCurrentPlayer() {
         currentPlayer = (currentPlayer == invitingUserId) ? invitedUserId : invitingUserId;
     }
 }

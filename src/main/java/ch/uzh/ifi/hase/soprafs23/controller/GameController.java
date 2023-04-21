@@ -62,10 +62,6 @@ public class GameController {
 
         Game game = gameService.getGame(gameId);
 
-        if(game==null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
-        }
-
         if(!response){
             userService.setOnline(userService.searchUserById(game.getInvitedUserId()));
             userService.setOnline(userService.searchUserById(game.getInvitingUserId()));
@@ -113,15 +109,11 @@ public class GameController {
     }
 
     @GetMapping("game/online/{gameId}")
-    @ResponseStatus
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
-        Game game = gameService.getGame(gameId);
-        return Collections.singletonMap(
-                "status",
-                userService.searchUserById(game.getInvitingUserId()).getStatus().equals(UserStatus.ONLINE)
-                && userService.searchUserById(game.getInvitedUserId()).getStatus().equals(UserStatus.ONLINE)
-        );
+        userService.verifyToken(token);
+        return gameService.allUsersConnected(gameId);
     }
 
     @DeleteMapping("/game/finish/{gameId}")

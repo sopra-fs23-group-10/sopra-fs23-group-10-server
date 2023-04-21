@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs23.controller;
 
 import ch.uzh.ifi.hase.soprafs23.WebSockets.WebSocketSessionRegistry;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
@@ -11,10 +10,10 @@ import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
+
 
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,6 @@ public class WebSocketController {
     }
 
     @MessageMapping("/register")
-    @Payload(required = false)
     public void register(@Payload String userId) {
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
@@ -77,8 +75,9 @@ public class WebSocketController {
         System.out.printf("User with userID: %s has logged IN%n", userId);
     }
 
+
+
     @MessageMapping("/unregister")
-    @Payload(required = false)
     public void unregister(@Payload String userId) {
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);

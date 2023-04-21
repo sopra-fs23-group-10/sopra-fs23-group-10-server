@@ -29,10 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
@@ -78,12 +75,6 @@ class GameControllerTest {
     void setup() {
         invitingUser = new User();
         invitingUser.setId(1L);
-        invitingUser.setUsername("testUsername");
-        invitingUser.setPassword("testPassword");
-        invitingUser.setPoints(2L);
-        invitingUser.setEmail("email@email.com");
-        invitingUser.setProfilePicture("testUsername");
-        invitingUser.setBackgroundMusic(false);
         invitingUser.setToken("inviting");
         invitingUser.setStatus(UserStatus.ONLINE);
 
@@ -104,12 +95,6 @@ class GameControllerTest {
     void createGame_thenGameReturned_201() throws Exception {
         User invitedUser = new User();
         invitedUser.setId(game.getInvitedUserId());
-        invitedUser.setUsername("invitedUser");
-        invitedUser.setPassword("testPassword");
-        invitedUser.setPoints(2L);
-        invitedUser.setEmail("invitedUser@email.com");
-        invitedUser.setProfilePicture("invitedUser");
-        invitedUser.setBackgroundMusic(false);
         invitedUser.setToken("invited");
         invitedUser.setStatus(UserStatus.ONLINE);
 
@@ -142,14 +127,6 @@ class GameControllerTest {
     void createGame_invalidToken_throwsUnauthorized_401() throws Exception {
         User invitedUser = new User();
         invitedUser.setId(game.getInvitedUserId());
-        invitedUser.setUsername("invitedUser");
-        invitedUser.setPassword("testPassword");
-        invitedUser.setPoints(2L);
-        invitedUser.setEmail("invitedUser@email.com");
-        invitedUser.setProfilePicture("invitedUser");
-        invitedUser.setBackgroundMusic(false);
-        invitedUser.setToken("invited");
-        invitedUser.setStatus(UserStatus.ONLINE);
 
         GameDTO gameDTO = new GameDTO();
         gameDTO.setInvitingUserId(game.getInvitingUserId());
@@ -225,10 +202,10 @@ class GameControllerTest {
         given(gameService.getRandomTopics(0L, invitingUser.getId())).willReturn(Collections.singletonMap("topics", categories));
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(getRequest)
-                .andExpect(status().isOk())
+        mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$.topics[0]", is(categories.get(0).toString())))
                 .andExpect(jsonPath("$.topics[1]", is(categories.get(1).toString())))
                 .andExpect(jsonPath("$.topics[2]", is(categories.get(2).toString())));
@@ -247,9 +224,25 @@ class GameControllerTest {
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invalidToken);
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
+    }
+
+    //TODO: This test does not do much yet
+    @Test
+    public void getAllTopics_whenValid_thenSuccess_200() throws Exception {
+        Map<String, List<Category>> topics = Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
+
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.getAllTopics()).willReturn(topics);
+
+        MockHttpServletRequestBuilder getRequest = get("/game/topics/all")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isOk());
     }
 
     @Test
@@ -310,6 +303,44 @@ class GameControllerTest {
     }
 
     @Test
+    public void allUsersConnected_bothConnected_validInput_success() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.allUsersConnected(game.getId())).willReturn(Collections.singletonMap("status", true));
+
+        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(true)));
+    }
+
+    @Test
+    public void allUsersConnected_oneNotConnected_validInput_success() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameService.allUsersConnected(game.getId())).willReturn(Collections.singletonMap("status", false));
+
+        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(false)));
+    }
+
+    @Test
+    public void allUsersConnected_bothConnected_invalidToken_throws_401() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+        given(gameService.allUsersConnected(game.getId())).willReturn(Collections.singletonMap("status", true));
+
+        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
 
@@ -331,6 +362,7 @@ class GameControllerTest {
         given(gameService.finishGame(game.getId())).willReturn(userResultTupleDTOs);
 
         MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"+game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(deleteRequest).andExpect(status().isOk())
@@ -371,7 +403,6 @@ class GameControllerTest {
         mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
     }*/
 
-
     @Test
     public void intermediateGame_whenValid_returnResults_200() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
@@ -394,6 +425,7 @@ class GameControllerTest {
         given(gameService.intermediateResults(game.getId())).willReturn(userResultTupleDTOs);
 
         MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -426,6 +458,7 @@ class GameControllerTest {
         given(gameService.intermediateResults(game.getId())).willReturn(userResultTupleDTOs);
 
         MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getId())
+                .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());

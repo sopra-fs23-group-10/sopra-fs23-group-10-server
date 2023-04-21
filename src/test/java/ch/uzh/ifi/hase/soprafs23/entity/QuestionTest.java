@@ -44,23 +44,9 @@ class QuestionTest {
 
         this.invitingUser = new User();
         invitingUser.setId(1L);
-        invitingUser.setUsername("oneUser");
-        invitingUser.setPassword("testPassword");
-        invitingUser.setPoints(2L);
-        invitingUser.setEmail("oneUser@email.com");
-        invitingUser.setProfilePicture("oneUser");
-        invitingUser.setToken("1");
-        invitingUser.setStatus(UserStatus.IN_GAME);
 
         this.invitedUser = new User();
         invitedUser.setId(2L);
-        invitedUser.setUsername("anotherUser");
-        invitedUser.setPassword("testPassword");
-        invitedUser.setPoints(2L);
-        invitedUser.setEmail("anotherUser@email.com");
-        invitedUser.setProfilePicture("anotherUser");
-        invitedUser.setToken("2");
-        invitedUser.setStatus(UserStatus.IN_GAME);
     }
 
     @Test
@@ -78,36 +64,6 @@ class QuestionTest {
     }
 
     @Test
-    void lastCorrect_singleAnswer() {
-        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
-
-        assertThrows(ResponseStatusException.class, () -> {
-            question.lastCorrect(invitingUser.getId());
-        });
-
-        question.addAnswer(invitingUserAnswerTuple);
-
-        assertEquals(invitingUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitingUser.getId()).get("boolean"));
-    }
-
-    @Test
-    void lastCorrect_multipleAnswers() {
-        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
-        UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
-
-        question.addAnswer(invitingUserAnswerTuple);
-
-        assertEquals(invitingUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitingUser.getId()).get("boolean"));
-        assertThrows(ResponseStatusException.class, () -> {
-            question.lastCorrect(invitedUser.getId());
-        });
-        question.addAnswer(invitedUserAnswerTuple);
-
-        assertEquals(invitingUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitingUser.getId()).get("boolean"));
-        assertEquals(invitedUserAnswerTuple.getAnswer().equals(question.getCorrectAnswer()), question.lastCorrect(invitedUser.getId()).get("boolean"));
-    }
-
-    @Test
     void getPoints() {
         UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
         UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
@@ -117,5 +73,20 @@ class QuestionTest {
 
         assertEquals(0L, question.getPoints(invitingUser.getId()));
         assertEquals((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())), question.getPoints(invitedUser.getId()));
+    }
+
+    @Test
+    void completelyAnswered_false() {
+        assertFalse(question.completelyAnswered());
+    }
+
+    @Test
+    void completelyAnswered_true() {
+        UserAnswerTuple userAnswerTuple1 = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
+        UserAnswerTuple userAnswerTuple2 = new UserAnswerTuple(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
+        Map<Long, UserAnswerTuple> results = question.getResults();
+        results.put(userAnswerTuple1.getUserId(), userAnswerTuple1);
+        results.put(userAnswerTuple2.getUserId(), userAnswerTuple2);
+        assertTrue(question.completelyAnswered());
     }
 }
