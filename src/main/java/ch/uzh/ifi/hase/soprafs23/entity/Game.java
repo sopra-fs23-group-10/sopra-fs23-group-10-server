@@ -7,10 +7,11 @@ import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.Serializable;
 import java.util.*;
 
 
-public class Game {
+public class Game implements Serializable {
     private long id;
     private long invitingUserId;
     private long invitedUserId;
