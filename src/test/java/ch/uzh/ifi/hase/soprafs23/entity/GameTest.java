@@ -3,12 +3,10 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
-import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Deque;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,8 +16,8 @@ class GameTest {
 
     private Question question;
 
-    private UserAnswerTuple invitingUserAnswerTuple;
-    private UserAnswerTuple invitedUserAnswerTuple;
+    private Answer invitingAnswer;
+    private Answer invitedAnswer;
 
     @BeforeEach
     public void setup() {
@@ -38,19 +36,19 @@ class GameTest {
 
         game.addQuestion(question);
 
-        invitingUserAnswerTuple = new UserAnswerTuple(game.getInvitingUserId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
-        invitedUserAnswerTuple = new UserAnswerTuple(game.getInvitedUserId(), question.getId(), question.getCorrectAnswer(), 300L);
+        invitingAnswer = new Answer(game.getInvitingUserId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
+        invitedAnswer = new Answer(game.getInvitedUserId(), question.getId(), question.getCorrectAnswer(), 300L);
     }
 
     @Test
     void getResultsOfBoth_singleQuestion_success() {
         assertNotNull(game.getQuestions().peekFirst());
-        Map<Long, UserAnswerTuple> results = game.getQuestions().peekFirst().getResults();
-        assertNull(results.get(invitingUserAnswerTuple.getUserId()));
-        assertNull(results.get(invitedUserAnswerTuple.getUserId()));
+        Map<Long, Answer> results = game.getQuestions().peekFirst().getResults();
+        assertNull(results.get(invitingAnswer.getUserId()));
+        assertNull(results.get(invitedAnswer.getUserId()));
 
-        results.put(invitingUserAnswerTuple.getUserId(), invitingUserAnswerTuple);
-        results.put(invitedUserAnswerTuple.getUserId(), invitedUserAnswerTuple);
+        results.put(invitingAnswer.getUserId(), invitingAnswer);
+        results.put(invitedAnswer.getUserId(), invitedAnswer);
 
         UserResultTuple userResultTuple = game.getPointsOfBoth();
 
@@ -58,25 +56,25 @@ class GameTest {
         assertEquals(game.getInvitingUserId(), userResultTuple.getInvitingPlayerId());
         assertEquals(0L, userResultTuple.getInvitingPlayerResult());
         assertEquals(game.getInvitedUserId(), userResultTuple.getInvitedPlayerId());
-        assertEquals(500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime()), userResultTuple.getInvitedPlayerResult());
+        assertEquals(500L - (0.5 * invitedAnswer.getAnsweredTime()), userResultTuple.getInvitedPlayerResult());
     }
 
     @Test
     void getResults_multipleQuestions_success() {
         assertNotNull(game.getQuestions().peekFirst());
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitingUserAnswerTuple.getUserId()));
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitedUserAnswerTuple.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitingAnswer.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitedAnswer.getUserId()));
 
-        game.addAnswer(invitingUserAnswerTuple);
-        game.addAnswer(invitedUserAnswerTuple);
+        game.addAnswer(invitingAnswer);
+        game.addAnswer(invitedAnswer);
 
         UserResultTuple userResultTuple = game.getPointsOfBoth();
 
         assertEquals(game.getId(), userResultTuple.getGameId());
-        assertEquals(invitingUserAnswerTuple.getUserId(), userResultTuple.getInvitingPlayerId());
-        assertEquals(invitedUserAnswerTuple.getUserId(), userResultTuple.getInvitedPlayerId());
+        assertEquals(invitingAnswer.getUserId(), userResultTuple.getInvitingPlayerId());
+        assertEquals(invitedAnswer.getUserId(), userResultTuple.getInvitedPlayerId());
         assertEquals(0L, userResultTuple.getInvitingPlayerResult());
-        assertEquals((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())), userResultTuple.getInvitedPlayerResult());
+        assertEquals((500L - (0.5 * invitedAnswer.getAnsweredTime())), userResultTuple.getInvitedPlayerResult());
 
         Question anotherQuestion = new Question();
         String[] incorrectAnswers = {"Paul McCartney", "Elton John", "Patti Smith"};
@@ -89,14 +87,14 @@ class GameTest {
         anotherQuestion.setAllAnswers(allAnswers);
         anotherQuestion.setQuestion("Who Wrote The Song \"Manic Monday\" For The Bangles\"");
 
-        UserAnswerTuple invitingSecondAnswer = new UserAnswerTuple(invitingUserAnswerTuple.getUserId(), anotherQuestion.getId(), anotherQuestion.getCorrectAnswer(), 200L);
-        UserAnswerTuple invitedSecondAnswer = new UserAnswerTuple(invitedUserAnswerTuple.getUserId(), anotherQuestion.getId(), anotherQuestion.getCorrectAnswer(), 250L);
+        Answer invitingSecondAnswer = new Answer(invitingAnswer.getUserId(), anotherQuestion.getId(), anotherQuestion.getCorrectAnswer(), 200L);
+        Answer invitedSecondAnswer = new Answer(invitedAnswer.getUserId(), anotherQuestion.getId(), anotherQuestion.getCorrectAnswer(), 250L);
 
         game.addQuestion(anotherQuestion);
 
         assertNotNull(game.getQuestions().peekFirst());
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitingUserAnswerTuple.getUserId()));
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitedUserAnswerTuple.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitingAnswer.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitedAnswer.getUserId()));
 
         game.addAnswer(invitingSecondAnswer);
         game.addAnswer(invitedSecondAnswer);
@@ -104,57 +102,57 @@ class GameTest {
         userResultTuple = game.getPointsOfBoth();
 
         assertEquals(game.getId(), userResultTuple.getGameId());
-        assertEquals(invitingUserAnswerTuple.getUserId(), userResultTuple.getInvitingPlayerId());
-        assertEquals(invitedUserAnswerTuple.getUserId(), userResultTuple.getInvitedPlayerId());
+        assertEquals(invitingAnswer.getUserId(), userResultTuple.getInvitingPlayerId());
+        assertEquals(invitedAnswer.getUserId(), userResultTuple.getInvitedPlayerId());
         assertEquals((0L + (500L - (0.5 * invitingSecondAnswer.getAnsweredTime()))), userResultTuple.getInvitingPlayerResult());
-        assertEquals(((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())) + (500L - (0.5 * invitedSecondAnswer.getAnsweredTime()))), userResultTuple.getInvitedPlayerResult());
+        assertEquals(((500L - (0.5 * invitedAnswer.getAnsweredTime())) + (500L - (0.5 * invitedSecondAnswer.getAnsweredTime()))), userResultTuple.getInvitedPlayerResult());
     }
 
     @Test
     void getPoints_success() {
         assertNotNull(game.getQuestions().peekFirst());
-        Map<Long, UserAnswerTuple> results = game.getQuestions().peekFirst().getResults();
-        assertNull(results.get(invitingUserAnswerTuple.getUserId()));
-        assertNull(results.get(invitedUserAnswerTuple.getUserId()));
+        Map<Long, Answer> results = game.getQuestions().peekFirst().getResults();
+        assertNull(results.get(invitingAnswer.getUserId()));
+        assertNull(results.get(invitedAnswer.getUserId()));
 
-        results.put(invitingUserAnswerTuple.getUserId(), invitingUserAnswerTuple);
-        results.put(invitedUserAnswerTuple.getUserId(), invitedUserAnswerTuple);
+        results.put(invitingAnswer.getUserId(), invitingAnswer);
+        results.put(invitedAnswer.getUserId(), invitedAnswer);
 
-        assertEquals(0L, game.getPoints(invitingUserAnswerTuple.getUserId()));
-        assertEquals(500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime()), game.getPoints(invitedUserAnswerTuple.getUserId()));
+        assertEquals(0L, game.getPoints(invitingAnswer.getUserId()));
+        assertEquals(500L - (0.5 * invitedAnswer.getAnsweredTime()), game.getPoints(invitedAnswer.getUserId()));
     }
 
     @Test
     void addAnswer_success() {
         assertNotNull(game.getQuestions().peekFirst());
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitedUserAnswerTuple.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitedAnswer.getUserId()));
 
-        game.addAnswer(invitedUserAnswerTuple);
+        game.addAnswer(invitedAnswer);
 
         assertNotNull(game.getQuestions().peekFirst());
-        assertEquals(invitedUserAnswerTuple.getAnsweredTime(), game.getQuestions().peekFirst().getResults().get(invitedUserAnswerTuple.getUserId()).getAnsweredTime());
+        assertEquals(invitedAnswer.getAnsweredTime(), game.getQuestions().peekFirst().getResults().get(invitedAnswer.getUserId()).getAnsweredTime());
     }
 
     @Test
     void addAnswer_alreadyAnswered_throwsException() {
         assertNotNull(game.getQuestions().peekFirst());
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitedUserAnswerTuple.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitedAnswer.getUserId()));
 
-        game.addAnswer(invitedUserAnswerTuple);
+        game.addAnswer(invitedAnswer);
 
         assertThrows(ResponseStatusException.class, () -> {
-            game.addAnswer(invitedUserAnswerTuple);
+            game.addAnswer(invitedAnswer);
         });
     }
 
     @Test
     void completelyAnswered_success() {
         assertNotNull(game.getQuestions().peekFirst());
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitingUserAnswerTuple.getUserId()));
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitedUserAnswerTuple.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitingAnswer.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitedAnswer.getUserId()));
 
-        game.addAnswer(invitingUserAnswerTuple);
-        game.addAnswer(invitedUserAnswerTuple);
+        game.addAnswer(invitingAnswer);
+        game.addAnswer(invitedAnswer);
 
         assertTrue(game.completelyAnswered());
     }
@@ -162,10 +160,10 @@ class GameTest {
     @Test
     void completelyAnswered_returnsFalse() {
         assertNotNull(game.getQuestions().peekFirst());
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitingUserAnswerTuple.getUserId()));
-        assertNull(game.getQuestions().peekFirst().getResults().get(invitedUserAnswerTuple.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitingAnswer.getUserId()));
+        assertNull(game.getQuestions().peekFirst().getResults().get(invitedAnswer.getUserId()));
 
-        game.addAnswer(invitingUserAnswerTuple);
+        game.addAnswer(invitingAnswer);
 
         assertFalse(game.completelyAnswered());
     }

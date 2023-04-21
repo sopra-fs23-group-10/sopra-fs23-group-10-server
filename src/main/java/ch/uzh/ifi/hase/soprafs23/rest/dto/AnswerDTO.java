@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.rest.dto;
 
-public class UserAnswerDTO {
+public class AnswerDTO {
 
     private Long userId;
     private String questionId;

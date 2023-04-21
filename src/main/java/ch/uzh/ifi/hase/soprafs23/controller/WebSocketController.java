@@ -6,7 +6,7 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
-import ch.uzh.ifi.hase.soprafs23.service.GameService;
+import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,15 @@ import java.util.Map;
 public class WebSocketController {
     private final UserService userService;
 
-    private final GameService gameService;
+    private final GameControllerService gameControllerService;
 
     @Autowired
     private WebSocketSessionRegistry sessionRegistry;
     private final WebSocketService webSocketService;
 
-    public WebSocketController(UserService userService,GameService gameService, WebSocketService webSocketService) {
+    public WebSocketController(UserService userService, GameControllerService gameControllerService, WebSocketService webSocketService) {
         this.userService = userService;
-        this.gameService = gameService;
+        this.gameControllerService = gameControllerService;
         this.webSocketService = webSocketService;
     }
 
@@ -86,9 +86,9 @@ public class WebSocketController {
     }
 
     private void deathSwitch(Long userId){
-        Long gameId = gameService.getGameIdOfUser(userId);
+        Long gameId = gameControllerService.getGameIdOfUser(userId);
         if(gameId != -1L){
-            gameService.removeGame(gameId);
+            gameControllerService.removeGame(gameId);
             this.webSocketService.sendMessageToClients("/game/result/" + gameId, "Game was deleted since one of the players left the game");
         }
     }

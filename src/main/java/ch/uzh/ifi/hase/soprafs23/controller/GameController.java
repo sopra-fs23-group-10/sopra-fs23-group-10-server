@@ -3,12 +3,12 @@ package ch.uzh.ifi.hase.soprafs23.controller;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.AnswerDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.dto.UserAnswerDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
-import ch.uzh.ifi.hase.soprafs23.service.GameService;
+import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +19,12 @@ import java.util.*;
 @RestController
 public class GameController {
 
-    private final GameService gameService;
+    private final GameControllerService gameControllerService;
     private final UserService userService;
     private final WebSocketController webSocketController;
 
-    GameController(GameService gameService, UserService userService, WebSocketController webSocketController) {
-        this.gameService = gameService;
+    GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
+        this.gameControllerService = gameControllerService;
         this.userService = userService;
         this.webSocketController = webSocketController;
     }
@@ -45,7 +45,7 @@ public class GameController {
         //userService.setInGame(invitedUser);
         //userService.setInGame(invitingUser);
 
-        Game game = gameService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
+        Game game = gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
 
@@ -60,12 +60,12 @@ public class GameController {
     public Map<Long, Boolean> respondInvitation(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token){
         userService.verifyToken(token);
 
-        Game game = gameService.getGame(gameId);
+        Game game = gameControllerService.getGame(gameId);
 
         if(!response){
             userService.setOnline(userService.searchUserById(game.getInvitedUserId()));
             userService.setOnline(userService.searchUserById(game.getInvitingUserId()));
-            gameService.removeGame(gameId);
+            gameControllerService.removeGame(gameId);
         }
 
         Map<Long, Boolean> answer = Collections.singletonMap(gameId,response);
@@ -79,7 +79,7 @@ public class GameController {
     @ResponseBody
     public Map<String, List<Category>> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
         User requestingUser = userService.verifyToken(token);
-        return gameService.getRandomTopics(gameId, requestingUser.getId());
+        return gameControllerService.getRandomTopics(gameId, requestingUser.getId());
     }
 
     @GetMapping("/game/topics/all")
@@ -87,7 +87,7 @@ public class GameController {
     @ResponseBody
     public Map<String, List<Category>> getAllTopics(@RequestHeader("token") String token) {
         userService.verifyToken(token);
-        return gameService.getAllTopics();
+        return gameControllerService.getAllTopics();
     }
 
     @PostMapping("/game/topics")
@@ -95,17 +95,17 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         userService.verifyToken(token);
-        QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
+        QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameControllerService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
         webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
         return questionDTOReturn;
     }
 
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void answerQuestion(@PathVariable long gameId, @RequestBody UserAnswerDTO userAnswerDTO, @RequestHeader("token") String token) {
+    public void answerQuestion(@PathVariable long gameId, @RequestBody AnswerDTO answerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerDTO);
-        gameService.answerQuestion(gameId, userAnswerTuple);
+        Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(answerDTO);
+        gameControllerService.answerQuestion(gameId, answer);
     }
 
     @GetMapping("game/online/{gameId}")
@@ -113,7 +113,7 @@ public class GameController {
     @ResponseBody
     public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
         userService.verifyToken(token);
-        return gameService.allUsersConnected(gameId);
+        return gameControllerService.allUsersConnected(gameId);
     }
 
     @DeleteMapping("/game/finish/{gameId}")
@@ -121,7 +121,7 @@ public class GameController {
     @ResponseBody
     public List<UserResultTupleDTO> finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        List<UserResultTupleDTO> userResultTupleDTOList = gameService.finishGame(gameId);
+        List<UserResultTupleDTO> userResultTupleDTOList = gameControllerService.finishGame(gameId);
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
         return userResultTupleDTOList;
@@ -133,7 +133,7 @@ public class GameController {
     public List<UserResultTupleDTO> intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
 
-        List<UserResultTupleDTO> userResultTupleDTOList = gameService.intermediateResults(gameId);
+        List<UserResultTupleDTO> userResultTupleDTOList = gameControllerService.intermediateResults(gameId);
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
         return userResultTupleDTOList;
@@ -144,15 +144,15 @@ public class GameController {
     @ResponseBody
     public UserResultTupleDTO getAllUsers(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        return gameService.getAllUsersOfGame(gameId);
+        return gameControllerService.getAllUsersOfGame(gameId);
     }
 
     @DeleteMapping("/games/{gameId}/deletions")
     @ResponseStatus(HttpStatus.OK)
     public Game deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        Game deletedGame = gameService.getGame(gameId);
-        gameService.removeGame(gameId);
+        Game deletedGame = gameControllerService.getGame(gameId);
+        gameControllerService.removeGame(gameId);
         webSocketController.informUsersGameDeleted(gameId);
         return deletedGame;
     }

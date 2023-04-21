@@ -1,16 +1,10 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
-import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.handler.GameMap;
-import ch.uzh.ifi.hase.soprafs23.service.GameService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +33,7 @@ class QuestionTest {
         question.setAllAnswers(allAnswers);
         question.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
 
-        Map<Long, UserAnswerTuple> resultsMap = new HashMap<>();
+        Map<Long, Answer> resultsMap = new HashMap<>();
         question.setResults(resultsMap);
 
         this.invitingUser = new User();
@@ -51,28 +45,28 @@ class QuestionTest {
 
     @Test
     void addAnswer() {
-        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
-        UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
+        Answer invitingAnswer = new Answer(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
+        Answer invitedAnswer = new Answer(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
 
-        question.addAnswer(invitingUserAnswerTuple);
-        question.addAnswer(invitedUserAnswerTuple);
+        question.addAnswer(invitingAnswer);
+        question.addAnswer(invitedAnswer);
 
-        Map<Long, UserAnswerTuple> testResults = question.getResults();
+        Map<Long, Answer> testResults = question.getResults();
 
-        assertEquals(invitingUserAnswerTuple, testResults.get(invitingUser.getId()));
-        assertEquals(invitedUserAnswerTuple, testResults.get(invitedUser.getId()));
+        assertEquals(invitingAnswer, testResults.get(invitingUser.getId()));
+        assertEquals(invitedAnswer, testResults.get(invitedUser.getId()));
     }
 
     @Test
     void getPoints() {
-        UserAnswerTuple invitingUserAnswerTuple = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
-        UserAnswerTuple invitedUserAnswerTuple = new UserAnswerTuple(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
+        Answer invitingAnswer = new Answer(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
+        Answer invitedAnswer = new Answer(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
 
-        question.addAnswer(invitingUserAnswerTuple);
-        question.addAnswer(invitedUserAnswerTuple);
+        question.addAnswer(invitingAnswer);
+        question.addAnswer(invitedAnswer);
 
         assertEquals(0L, question.getPoints(invitingUser.getId()));
-        assertEquals((500L - (0.5 * invitedUserAnswerTuple.getAnsweredTime())), question.getPoints(invitedUser.getId()));
+        assertEquals((500L - (0.5 * invitedAnswer.getAnsweredTime())), question.getPoints(invitedUser.getId()));
     }
 
     @Test
@@ -82,11 +76,11 @@ class QuestionTest {
 
     @Test
     void completelyAnswered_true() {
-        UserAnswerTuple userAnswerTuple1 = new UserAnswerTuple(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
-        UserAnswerTuple userAnswerTuple2 = new UserAnswerTuple(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
-        Map<Long, UserAnswerTuple> results = question.getResults();
-        results.put(userAnswerTuple1.getUserId(), userAnswerTuple1);
-        results.put(userAnswerTuple2.getUserId(), userAnswerTuple2);
+        Answer answer1 = new Answer(invitingUser.getId(), question.getId(), question.getIncorrectAnswers()[1], 200L);
+        Answer answer2 = new Answer(invitedUser.getId(), question.getId(), question.getCorrectAnswer(), 300L);
+        Map<Long, Answer> results = question.getResults();
+        results.put(answer1.getUserId(), answer1);
+        results.put(answer2.getUserId(), answer2);
         assertTrue(question.completelyAnswered());
     }
 }

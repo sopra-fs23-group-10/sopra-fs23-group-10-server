@@ -8,8 +8,6 @@ import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -167,35 +165,35 @@ class DTOMapperTest {
     @Test
     void testUserAnswerTuple_fromEntityToDTO_success() {
         // create UserPutDTO
-        UserAnswerTuple userAnswerTuple = new UserAnswerTuple(1L,"Is it ture?","True",10L);
+        Answer answer = new Answer(1L,"Is it ture?","True",10L);
 
         // MAP -> Create user
-        UserAnswerDTO userAnswerTupleDTO = DTOMapper.INSTANCE.convertUserAnswerEntitytoDTO(userAnswerTuple);
+        AnswerDTO userAnswerTupleDTO = DTOMapper.INSTANCE.convertUserAnswerEntitytoDTO(answer);
 
         // check content
-        assertEquals(userAnswerTuple.getUserId(), userAnswerTupleDTO.getUserId());
-        assertEquals(userAnswerTuple.getQuestionId(), userAnswerTupleDTO.getQuestionId());
-        assertEquals(userAnswerTuple.getAnswer(), userAnswerTupleDTO.getAnswer());
-        assertEquals(userAnswerTuple.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
+        assertEquals(answer.getUserId(), userAnswerTupleDTO.getUserId());
+        assertEquals(answer.getQuestionId(), userAnswerTupleDTO.getQuestionId());
+        assertEquals(answer.getAnswer(), userAnswerTupleDTO.getAnswer());
+        assertEquals(answer.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
     }
 
     @Test
     void testUserAnswerTupleDTO_fromDTOToEntity_success() {
         // create UserPutDTO
-        UserAnswerDTO userAnswerTupleDTO = new UserAnswerDTO();
+        AnswerDTO userAnswerTupleDTO = new AnswerDTO();
         userAnswerTupleDTO.setUserId(1L);
         userAnswerTupleDTO.setQuestionId("1");
         userAnswerTupleDTO.setAnswer("True");
         userAnswerTupleDTO.setAnsweredTime(10L);
 
         // MAP -> Create user
-        UserAnswerTuple userAnswerTuple = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerTupleDTO);
+        Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerTupleDTO);
 
         // check content
-        assertEquals(userAnswerTuple.getUserId(), userAnswerTupleDTO.getUserId());
-        assertEquals(userAnswerTuple.getQuestionId(), userAnswerTupleDTO.getQuestionId());
-        assertEquals(userAnswerTuple.getAnswer(), userAnswerTupleDTO.getAnswer());
-        assertEquals(userAnswerTuple.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
+        assertEquals(answer.getUserId(), userAnswerTupleDTO.getUserId());
+        assertEquals(answer.getQuestionId(), userAnswerTupleDTO.getQuestionId());
+        assertEquals(answer.getAnswer(), userAnswerTupleDTO.getAnswer());
+        assertEquals(answer.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
     }
 
     @Test
