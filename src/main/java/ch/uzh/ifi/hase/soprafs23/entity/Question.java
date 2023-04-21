@@ -100,7 +100,7 @@ public class Question implements Serializable {
                 (long) (500L - (0.5 * userAnswerTuple.getAnsweredTime())) : 0L;
     }
 
-    public void addAnswer(UserAnswerTuple userAnswerTuple) {
+    public synchronized void addAnswer(UserAnswerTuple userAnswerTuple) {
         if (results.get(userAnswerTuple.getUserId()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
         } else {

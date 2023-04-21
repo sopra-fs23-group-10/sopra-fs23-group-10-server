@@ -39,7 +39,7 @@ public class Game implements Serializable {
         return seconds > 20000;
     }
 
-    public void addQuestion(Question question){
+    public synchronized void addQuestion(Question question){
         questions.addFirst(question);
     }
 
@@ -120,7 +120,7 @@ public class Game implements Serializable {
         return userResultTuple;
     }
 
-    public void addAnswer(UserAnswerTuple userAnswerTuple) {
+    public synchronized void addAnswer(UserAnswerTuple userAnswerTuple) {
         if(timeRunUp()){
             Question question = questions.peek();
             question.addAnswer(
@@ -138,11 +138,11 @@ public class Game implements Serializable {
 
     }
 
-    public Boolean completelyAnswered() {
+    public synchronized Boolean completelyAnswered() {
         return questions.peekFirst().completelyAnswered();
     }
 
-    public void changeCurrentPlayer() {
+    public synchronized void changeCurrentPlayer() {
         currentPlayer = (currentPlayer == invitingUserId) ? invitedUserId : invitingUserId;
     }
 }
