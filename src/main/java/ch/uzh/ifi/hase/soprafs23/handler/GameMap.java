@@ -23,11 +23,11 @@ public class GameMap implements Serializable {
         return instance;
     }
 
-    public Game get(Long gameId) {
+    public synchronized Game get(Long gameId) {
         return this.games.get(gameId);
     }
 
-    public void put(Game game) {
+    public synchronized void put(Game game) {
         this.games.put(game.getId(), game);
     }
 
