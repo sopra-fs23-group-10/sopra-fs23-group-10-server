@@ -154,4 +154,14 @@ public class GameController {
         userService.verifyToken(token);
         return gameService.getAllUsersOfGame(gameId);
     }
+
+    @DeleteMapping("/games/{gameId}/deletions")
+    @ResponseStatus(HttpStatus.OK)
+    public Long deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+        userService.verifyToken(token);
+        gameService.checkGame(gameId);
+        gameService.removeGame(gameId);
+        webSocketController.informUsersGameDeleted(gameId);
+        return gameId;
+    }
 }

@@ -163,4 +163,8 @@ public class GameService {
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         return userResultTupleDTO;
     }
+
+    public Long getGameIdOfUser(Long userId){
+        return gameMap.getGameIdOfUser(userId);
+    }
 }

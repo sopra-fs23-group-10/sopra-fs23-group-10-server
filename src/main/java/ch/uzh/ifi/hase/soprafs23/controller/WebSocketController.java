@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,15 @@ import java.util.Map;
 public class WebSocketController {
     private final UserService userService;
 
+    private final GameService gameService;
+
     @Autowired
     private WebSocketSessionRegistry sessionRegistry;
     private final WebSocketService webSocketService;
 
-    public WebSocketController(UserService userService, WebSocketService webSocketService) {
+    public WebSocketController(UserService userService,GameService gameService, WebSocketService webSocketService) {
         this.userService = userService;
+        this.gameService = gameService;
         this.webSocketService = webSocketService;
     }
 
@@ -59,6 +63,11 @@ public class WebSocketController {
         this.webSocketService.sendMessageToClients("/games/"+gameId+"/questions", questionDTO);
     }
 
+    @MessageMapping("/games/{gameId}/deletions")
+    public void informUsersGameDeleted(long gameId) {
+        this.webSocketService.sendMessageToClients("/games/"+gameId, "A user has quit the game");
+    }
+
     @MessageMapping("/register")
     @Payload(required = false)
     public void register(@Payload String userId) {
@@ -75,5 +84,13 @@ public class WebSocketController {
         Long id = Long.parseLong(userId);
         userService.setOffline(userService.searchUserById(id), id);
         System.out.printf("User with userID: %s has logged OUT%n", userId);
+    }
+
+    private void deathSwitch(Long userId){
+        Long gameId = gameService.getGameIdOfUser(userId);
+        if(gameId != -1L){
+            gameService.removeGame(gameId);
+            this.webSocketService.sendMessageToClients("/game/result/" + gameId, "Game was deleted since one of the players left the game");
+        }
     }
 }
