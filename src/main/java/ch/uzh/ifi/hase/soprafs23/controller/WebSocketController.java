@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.Valid;
 
 
 import java.util.List;
@@ -61,11 +59,13 @@ public class WebSocketController {
     }
 
     @MessageMapping("/register")
-    public void register(@Payload @Valid @NotEmpty String userId) {
+    public void register(@Payload String userId) {
+        if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
         userService.setOnline(userService.searchUserById(id));
         System.out.printf("User with userID: %s has logged IN%n", userId);
     }
+
 
 
     @MessageMapping("/unregister")
