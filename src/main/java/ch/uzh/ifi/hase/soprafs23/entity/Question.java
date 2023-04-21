@@ -4,11 +4,12 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Question {
+public class Question implements Serializable {
     private Category category;
     private String id;
     private String correctAnswer;

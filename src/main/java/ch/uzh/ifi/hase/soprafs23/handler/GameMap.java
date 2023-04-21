@@ -4,12 +4,13 @@ import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class GameMap {
+public class GameMap implements Serializable {
     private final Map<Long, Game> games = Collections.synchronizedMap(new HashMap<Long, Game>());
     private static GameMap instance;
 
