@@ -542,7 +542,7 @@ class UserControllerTest {
         userPostDTO.setPassword(user.getPassword());
 
         given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
-        doCallRealMethod().when(userService).setOnline(user);
+        doCallRealMethod().when(userService).setOnline(user.getId());
 
 
         MockHttpServletRequestBuilder postRequest = post("/login")
@@ -569,7 +569,7 @@ class UserControllerTest {
         userPostDTO.setPassword(user.getPassword());
 
         given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
-        doCallRealMethod().when(userService).setOnline(user);
+        doCallRealMethod().when(userService).setOnline(user.getId());
 
 
         MockHttpServletRequestBuilder postRequest = post("/login")
@@ -588,7 +588,7 @@ class UserControllerTest {
         userPostDTO.setPassword(user.getPassword());
 
         given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
-        doCallRealMethod().when(userService).setOnline(user);
+        doCallRealMethod().when(userService).setOnline(user.getId());
 
 
         MockHttpServletRequestBuilder postRequest = post("/login")
@@ -607,7 +607,7 @@ class UserControllerTest {
         userPostDTO.setPassword("");
 
         given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
-        doCallRealMethod().when(userService).setOnline(user);
+        doCallRealMethod().when(userService).setOnline(user.getId());
 
 
         MockHttpServletRequestBuilder postRequest = post("/login")
@@ -626,7 +626,7 @@ class UserControllerTest {
         userPostDTO.setPassword(null);
 
         given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
-        doCallRealMethod().when(userService).setOnline(user);
+        doCallRealMethod().when(userService).setOnline(user.getId());
 
 
         MockHttpServletRequestBuilder postRequest = post("/login")

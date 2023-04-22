@@ -69,7 +69,7 @@ public class WebSocketController {
     public void register(@Payload String userId) {
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
-        userService.setOnline(userService.searchUserById(id));
+        userService.setOnline(id);
         System.out.printf("User with userID: %s has logged IN%n", userId);
     }
 

@@ -210,8 +210,8 @@ public class UserService {
      *
      * @param checkedUser
      */
-    public void setOnline(User checkedUser) {
-        checkedUser.setStatus(UserStatus.ONLINE);
+    public void setOnline(Long userId) {
+        userRepository.findUserById(userId).setStatus(UserStatus.ONLINE);
     }
 
     /**

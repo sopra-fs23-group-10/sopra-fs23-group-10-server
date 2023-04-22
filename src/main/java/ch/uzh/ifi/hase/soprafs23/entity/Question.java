@@ -68,6 +68,7 @@ public class Question implements Serializable {
         this.correctAnswer = correctAnswer;
     }
     public void setIncorrectAnswers(List<String> incorrectAnswers) {
+        System.out.println(incorrectAnswers.toString());
         this.incorrectAnswers = incorrectAnswers;
     }
     public void setAllAnswers(List<String> allAnswers) {

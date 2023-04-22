@@ -91,12 +91,9 @@ public class GameControllerService {
     }
 
     public void removeGame(Long gameId) {
-        gameService.deleteGame(gameId);
-        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
-        questionService.deleteQuestions(gameId);
-        for (Question question : questions) {
-            answerService.deleteAnswers(question.getQuestionId());
-        }
+        Game game = gameService.searchGameById(gameId);
+        userService.setOnline(game.getInvitedUserId());
+        userService.setOnline(game.getInvitingUserId());
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
@@ -217,7 +214,7 @@ public class GameControllerService {
 
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
         return answer.getAnswer().equals(question.getCorrectAnswer()) ?
-                (long) (500L - (0.5 * answer.getAnsweredTime())) : 0L;
+                (long) (750L - (0.5 * answer.getAnsweredTime()/10)) : 0L;
     }
 
     public synchronized boolean completelyAnswered(long gameId) {

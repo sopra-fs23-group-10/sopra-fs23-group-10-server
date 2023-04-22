@@ -63,8 +63,8 @@ public class GameController {
         Game game = gameControllerService.searchGame(gameId);
 
         if(!response) {
-            userService.setOnline(userService.searchUserById(game.getInvitedUserId()));
-            userService.setOnline(userService.searchUserById(game.getInvitingUserId()));
+            userService.setOnline(game.getInvitedUserId());
+            userService.setOnline(game.getInvitingUserId());
             gameControllerService.removeGame(gameId);
         }
 

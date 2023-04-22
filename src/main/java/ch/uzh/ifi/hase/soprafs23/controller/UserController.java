@@ -139,7 +139,7 @@ public class UserController {
         User checkedUser = userService.checkLoginCredentials(userInput.getUsername(), userInput.getPassword());
 
         // set user status to ONLINE
-        userService.setOnline(checkedUser);
+        userService.setOnline(checkedUser.getId());
 
         // return validated user (with token)
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(checkedUser);
