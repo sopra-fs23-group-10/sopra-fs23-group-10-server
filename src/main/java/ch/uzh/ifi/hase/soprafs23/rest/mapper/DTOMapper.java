@@ -45,29 +45,31 @@ public interface DTOMapper {
     @Mapping(target = "token", ignore = true)
     UserGetDTO convertEntityToUserGetDTONoToken(User user);
 
+    @Mapping(source = "gameId", target = "gameId")
     @Mapping(source = "invitingUserId", target = "invitingUserId")
     @Mapping(source = "invitedUserId", target = "invitedUserId")
     @Mapping(source = "quizType", target = "quizType")
     @Mapping(source = "modeType", target = "modeType")
-    @Mapping(source = "id", target = "id")
     GameDTO convertGameEntityToPostDTO(Game game);
 
 
+    @Mapping(source = "gameId", target = "gameId")
     @Mapping(source = "invitedUserId", target = "invitedUserId")
     @Mapping(source = "invitingUserId", target = "invitingUserId")
     @Mapping(source = "quizType", target = "quizType")
     @Mapping(source = "modeType", target = "modeType")
-    @Mapping(target = "questions", ignore = true)
     Game convertGamePostDTOtoEntity(GameDTO gameDTO);
 
     @Mapping(source = "category", target = "category")
-    @Mapping(source = "id", target = "id")
+    @Mapping(source = "questionId", target = "questionId")
+    @Mapping(source = "apiId", target = "apiId")
     @Mapping(source = "question", target = "question")
     @Mapping(source = "correctAnswer", target = "correctAnswer")
     @Mapping(source = "incorrectAnswers", target = "incorrectAnswers")
     Question convertQuestionDTOtoEntity(QuestionDTO questionDTO);
     @Mapping(source = "category", target = "category")
-    @Mapping(source = "id", target = "id")
+    @Mapping(source = "questionId", target = "questionId")
+    @Mapping(source = "apiId", target = "apiId")
     @Mapping(source = "question", target = "question")
     @Mapping(source = "allAnswers", target = "allAnswers")
     @Mapping(target = "correctAnswer", ignore = true)

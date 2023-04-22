@@ -1,12 +1,11 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
+import ch.uzh.ifi.hase.soprafs23.converter.StringListConverter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "QUESTION")
@@ -22,9 +21,11 @@ public class Question implements Serializable {
     private Category category;
     private String apiId;
     private String correctAnswer;
-    private String incorrectAnswers;
-    private String allAnswers;
-    private String questionString;
+    @Convert(converter = StringListConverter.class)
+    private List<String> incorrectAnswers;
+    @Convert(converter = StringListConverter.class)
+    private List<String> allAnswers;
+    private String question;
 
     public long getQuestionId() {
         return this.questionId;
@@ -41,14 +42,14 @@ public class Question implements Serializable {
     public String getCorrectAnswer() {
         return this.correctAnswer;
     }
-    public String getIncorrectAnswers() {
+    public List<String> getIncorrectAnswers() {
         return this.incorrectAnswers;
     }
-    public String getAllAnswers() {
+    public List<String> getAllAnswers() {
         return this.allAnswers;
     }
-    public String getQuestionString() {
-        return this.questionString;
+    public String getQuestion() {
+        return this.question;
     }
 
     public void setQuestionId(long questionId) {
@@ -66,13 +67,13 @@ public class Question implements Serializable {
     public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
-    public void setIncorrectAnswers(String incorrectAnswers) {
+    public void setIncorrectAnswers(List<String> incorrectAnswers) {
         this.incorrectAnswers = incorrectAnswers;
     }
-    public void setAllAnswers(String allAnswers) {
+    public void setAllAnswers(List<String> allAnswers) {
         this.allAnswers = allAnswers;
     }
-    public void setQuestionString(String questionString) {
-        this.questionString = questionString;
+    public void setQuestion(String questionString) {
+        this.question = questionString;
     }
 }

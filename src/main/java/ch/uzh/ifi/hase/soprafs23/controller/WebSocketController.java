@@ -45,10 +45,8 @@ public class WebSocketController {
     }
 
     @MessageMapping("/game/intermediateResult/{gameId}")
-    public void resultToUser(long gameId, GameDTO gameDTO) {
-        Game currentGame = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gameDTO);
-        List<UserResultTupleDTO> gameResults = currentGame.getResults();
-        this.webSocketService.sendMessageToClients("/game/result/" + gameId, gameResults);
+    public void resultToUser(long gameId, UserResultTupleDTO userResultTupleDTOList) {
+        this.webSocketService.sendMessageToClients("/game/result/" + gameId, userResultTupleDTOList);
     }
 
     @MessageMapping("/game/finalResult/{gameId}")

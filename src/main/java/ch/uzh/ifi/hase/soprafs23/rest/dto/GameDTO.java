@@ -4,14 +4,14 @@ import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
 public class GameDTO {
-    private long id;
+    private long gameId;
     private long invitedUserId;
     private long invitingUserId;
     private ModeType modeType;
     private QuizType quizType;
 
-    public long getId(){
-        return this.id;
+    public long getGameId(){
+        return this.gameId;
     }
 
     public long getInvitingUserId() {
@@ -29,7 +29,7 @@ public class GameDTO {
     public QuizType getQuizType() {
         return this.quizType;
     }
-    public void setId(long id){this.id = id;}
+    public void setGameId(long gameId){this.gameId = gameId;}
 
     public void setInvitedUserId(long invitedUserId) {
         this.invitedUserId = invitedUserId;

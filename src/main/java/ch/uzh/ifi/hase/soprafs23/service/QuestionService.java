@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.service;
 
-import ch.uzh.ifi.hase.soprafs23.entity.Answer;
+import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.repository.QuestionRepository;
 import org.slf4j.Logger;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -43,33 +45,23 @@ public class QuestionService {
         return questionRepository.findAllByGameId(gameId);
     }
 
+    public Question createQuestion(long gameId, String apiId, Category category, String correctAnswer, String questionString, List<String> incorrectAnswers) {
+        Question question = new Question();
+        question.setGameId(gameId);
+        question.setQuestion(questionString);
+        question.setCategory(category);
+        question.setApiId(apiId);
+        question.setCorrectAnswer(correctAnswer);
+        question.setIncorrectAnswers(incorrectAnswers);
+        List<String> allAnswers = new ArrayList<>(List.copyOf(incorrectAnswers));
+        allAnswers.add(correctAnswer);
+        Collections.shuffle(allAnswers);
+        question.setAllAnswers(allAnswers);
 
-    public void setResults(Map<Long, UserAnswerTuple> results) {
-        this.results = results;
+        return questionRepository.save(question);
     }
 
-    public long getPoints(long questionId, long userId) {
-        Answer answer = AnswerService.searchAnswerByUserId(questionId, userId);
-        UserAnswerTuple userAnswerTuple = results.get(userId);
-
-        if (userAnswerTuple == null) {
-            return 0L;
-        }
-
-        return userAnswerTuple.getAnswer().equals(this.correctAnswer) ?
-                (long) (500L - (0.5 * userAnswerTuple.getAnsweredTime())) : 0L;
-    }
-
-    public synchronized void addAnswer(Answer answer) {
-        Answer foundAnswer = answerService.searchAnswerByQuestionIdAndUserId(answer.getQuestionId(), answer.getUserId());
-        if (foundAnswer != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
-        } else {
-            answerService.createAnswer(answer);
-        }
-    }
-
-    public Boolean completelyAnswered(){
-        return results.size() >= 2;
+    public List<Question> deleteQuestions(Long gameId) {
+        return questionRepository.deleteAllByGameId(gameId);
     }
 }

@@ -3,7 +3,7 @@ package ch.uzh.ifi.hase.soprafs23.rest.dto;
 public class AnswerDTO {
 
     private Long userId;
-    private String questionId;
+    private Long questionId;
     private String answer;
     private Long answeredTime;
 
@@ -11,7 +11,7 @@ public class AnswerDTO {
         return this.userId;
     }
 
-    public String getQuestionId() {
+    public Long getQuestionId() {
         return this.questionId;
     }
 
@@ -27,7 +27,7 @@ public class AnswerDTO {
         this.userId = userId;
     }
 
-    public void setQuestionId(String questionId) {
+    public void setQuestionId(Long questionId) {
         this.questionId = questionId;
     }
 

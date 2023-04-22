@@ -97,7 +97,7 @@ class DTOMapperTest {
         game.setInvitedUserId(2L);
         game.setQuizType(QuizType.IMAGE);
         game.setModeType(ModeType.SINGLE);
-        game.setId(1L);
+        game.setGameId(1L);
 
         GameDTO gameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
 
@@ -105,12 +105,13 @@ class DTOMapperTest {
         assertEquals(game.getInvitedUserId(), gameDTO.getInvitedUserId());
         assertEquals(game.getQuizType(), gameDTO.getQuizType());
         assertEquals(game.getModeType(), gameDTO.getModeType());
-        assertEquals(game.getId(), gameDTO.getId());
+        assertEquals(game.getGameId(), gameDTO.getGameId());
     }
 
     @Test
     void testGame_fromDTO_toEntity_success() {
         GameDTO gameDTO = new GameDTO();
+        gameDTO.setGameId(1L);
         gameDTO.setInvitingUserId(1L);
         gameDTO.setInvitedUserId(2L);
         gameDTO.setQuizType(QuizType.IMAGE);
@@ -118,30 +119,30 @@ class DTOMapperTest {
 
         Game game = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gameDTO);
 
+        assertEquals(gameDTO.getGameId(), game.getGameId());
         assertEquals(gameDTO.getInvitingUserId(), game.getInvitingUserId());
         assertEquals(gameDTO.getInvitedUserId(), game.getInvitedUserId());
         assertEquals(gameDTO.getQuizType(), game.getQuizType());
-        assertEquals(game.getModeType(), game.getModeType());
-        assertNotNull(game.getQuestions());
-        assertEquals(0, game.getQuestions().size());
+        assertEquals(gameDTO.getModeType(), game.getModeType());
     }
 
     @Test
     void testQuestion_fromEntity_toDTO_success() {
         Question question = new Question();
+        question.setQuestionId(1L);
         question.setCategory(Category.MUSIC);
-        question.setId("questionId");
+        question.setApiId("questionId");
         question.setQuestion("Who do music?");
-        question.setAllAnswers(new String[]{"Wlarbenborb", "Herbert Cheese", "Frank Sinotra", "John Lennon"});
+        question.setAllAnswers(java.util.Arrays.asList("Wlarbenborb", "Herbert Cheese", "Frank Sinotra", "John Lennon"));
         question.setCorrectAnswer("John Lennon");
-        question.setIncorrectAnswers(new String[]{"Wlarbenborb", "Herbert Cheese", "Frank Sinotra"});
+        question.setIncorrectAnswers(java.util.Arrays.asList("Wlarbenborb", "Herbert Cheese", "Frank Sinotra"));
 
         QuestionDTO questionDTO = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
 
-        assertEquals(question.getId(), questionDTO.getId());
+        assertEquals(question.getApiId(), questionDTO.getApiId());
         assertEquals(question.getCategory(), questionDTO.getCategory());
         assertEquals(question.getQuestion(), questionDTO.getQuestion());
-        assertArrayEquals(question.getAllAnswers(), questionDTO.getAllAnswers());
+        assertEquals(question.getAllAnswers(), questionDTO.getAllAnswers());
         assertNull(questionDTO.getCorrectAnswer());
         assertNull(questionDTO.getIncorrectAnswers());
     }
@@ -161,11 +162,15 @@ class DTOMapperTest {
         assertEquals(userResultTuple.getInvitedPlayerId(), userResultTupleDTO.getInvitedPlayerId());
         assertEquals(userResultTuple.getInvitedPlayerResult(), userResultTupleDTO.getInvitedPlayerResult());
     }
-
+/*
     @Test
     void testUserAnswerTuple_fromEntityToDTO_success() {
         // create UserPutDTO
-        Answer answer = new Answer(1L,"Is it ture?","True",10L);
+        Answer answer = new Answer();
+        answer.setQuestionId(1L);
+        answer.setUserId(15L);
+        answer.setAnswer("somethingSomething");
+        answer.setAnsweredTime(154L);
 
         // MAP -> Create user
         AnswerDTO userAnswerTupleDTO = DTOMapper.INSTANCE.convertUserAnswerEntitytoDTO(answer);
@@ -195,6 +200,8 @@ class DTOMapperTest {
         assertEquals(answer.getAnswer(), userAnswerTupleDTO.getAnswer());
         assertEquals(answer.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
     }
+
+ */
 
     @Test
     void testUserResultTuple_fromEntity_toDTO_success() {

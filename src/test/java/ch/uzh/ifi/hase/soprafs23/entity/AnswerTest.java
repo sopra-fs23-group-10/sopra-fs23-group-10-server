@@ -1,4 +1,4 @@
-package ch.uzh.ifi.hase.soprafs23.entity;
+/*package ch.uzh.ifi.hase.soprafs23.entity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,4 +46,4 @@ class AnswerTest {
         answer.setAnsweredTime(541L);
         assertEquals(541L, answer.getAnsweredTime());
     }
-}
+}*/

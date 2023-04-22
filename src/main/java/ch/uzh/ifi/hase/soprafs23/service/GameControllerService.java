@@ -31,11 +31,15 @@ import java.util.*;
 public class GameControllerService {
     private final UserService userService;
     private final GameService gameService;
+    private final QuestionService questionService;
+    private final AnswerService answerService;
 
     @Autowired
-    public GameControllerService(UserService userService, GameService gameService) {
+    public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService) {
         this.userService = userService;
         this.gameService = gameService;
+        this.questionService = questionService;
+        this.answerService = answerService;
     }
 
     public Question getQuestion(Category category, Long gameId) {
@@ -67,9 +71,7 @@ public class GameControllerService {
                 String correctAnswer = jsonObj.getString("correctAnswer");
                 String[] incorrectAnswers = jsonObj.getJSONArray("incorrectAnswers").toList().toArray(new String[0]);
                 String question = jsonObj.getString("question");
-                Question createdQuestion = new Question(id, category, correctAnswer, question, incorrectAnswers);
-                game.addQuestion(createdQuestion);
-                return createdQuestion;
+                return questionService.createQuestion(game.getGameId(), id, category, correctAnswer, question, List.of(incorrectAnswers));
             } catch (JSONException e) {
                 System.err.println("Error parsing JSON response of external API: " + e.getMessage());
                 return null;
@@ -80,12 +82,20 @@ public class GameControllerService {
         }
     }
 
+    public Game searchGame(Long gameId) {
+        return gameService.searchGameById(gameId);
+    }
+
     public Game createGame(Long invitingUserId, Long invitedUserId, QuizType quizType, ModeType modeType) {
         return gameService.createGame(invitingUserId, invitedUserId, quizType, modeType);
     }
 
     public void removeGame(Long gameId) {
-        gameService.removeGame(gameId);
+        gameService.deleteGame(gameId);
+        List<Question> questions = questionService.deleteQuestions(gameId);
+        for (Question question : questions) {
+            answerService.deleteAnswers(question.getQuestionId());
+        }
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
@@ -108,28 +118,77 @@ public class GameControllerService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public void answerQuestion(long gameId, Answer answer) {
+    public synchronized void answerQuestion(long gameId, Answer answer) {
         if (answer == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
         }
-        gameService.addAnswer(gameId, answer);
+
+        Answer foundAnswer = answerService.searchAnswerByQuestionIdAndUserId(answer.getQuestionId(), answer.getUserId());
+        if (foundAnswer != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
+        }
+
+        questionService.searchQuestionByQuestionId(answer.getQuestionId());
+
+        if (gameService.timeRunUp(gameId)) {
+
+            Answer placeholderAnswer = new Answer();
+            placeholderAnswer.setUserId(answer.getUserId());
+            placeholderAnswer.setQuestionId(answer.getQuestionId());
+            placeholderAnswer.setAnswer("WrongAnswerAnywayBecauseYouTookTooLong");
+            placeholderAnswer.setAnsweredTime(1000L);
+
+            answerService.createAnswer(placeholderAnswer);
+        }
+        else {
+            answerService.createAnswer(answer);
+        }
+
+    }
+
+    private UserResultTuple getPointsOfBoth(Game game) {
+        UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), game.getInvitingUserId(), game.getInvitedUserId());
+        List<Question> questions = questionService.searchQuestionsByGameId(game.getGameId());
+        for (Question question : questions) {
+            Answer invitingAnswer = answerService.searchAnswerByQuestionIdAndUserId(question.getQuestionId(), game.getInvitingUserId());
+            userResultTuple.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult() + this.getPoints(invitingAnswer));
+            Answer invitedAnswer = answerService.searchAnswerByQuestionIdAndUserId(question.getQuestionId(), game.getInvitedUserId());
+            userResultTuple.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult() + this.getPoints(invitedAnswer));
+        }
+        return userResultTuple;
+    }
+
+    public List<UserResultTupleDTO> intermediateResults(long gameId) {
+        Game game = gameService.searchGameById(gameId);
+
+        List<UserResultTupleDTO> userResultTupleDTOList= new ArrayList<>();
+
+        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
+
+        for (Question question : questions) {
+            UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), game.getInvitingUserId(), game.getInvitedUserId());
+
+            Answer invitingAnswer = answerService.searchAnswerByQuestionIdAndUserId(question.getQuestionId(), game.getInvitingUserId());
+            userResultTuple.setInvitingPlayerResult(this.getPoints(invitingAnswer));
+            Answer invitedAnswer = answerService.searchAnswerByQuestionIdAndUserId(question.getQuestionId(), game.getInvitedUserId());
+            userResultTuple.setInvitedPlayerResult(this.getPoints(invitedAnswer));
+
+            UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
+            userResultTupleDTOList.add(userResultTupleDTO);
+        }
+        return userResultTupleDTOList;
     }
 
     public List<UserResultTupleDTO> finishGame(long gameId) {
         List<UserResultTupleDTO> userResultTupleDTOList = this.intermediateResults(gameId);
 
-        Game currentGame = gameService.searchGameById(gameId);
-        UserResultTuple userResultTuple = currentGame.getPointsOfBoth();
+        UserResultTuple userResultTuple = getPointsOfBoth(gameService.searchGameById(gameId));
         userService.updatePoints(userResultTuple);
 
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         userResultTupleDTOList.add(userResultTupleDTO);
         this.removeGame(gameId);
         return userResultTupleDTOList;
-    }
-
-    public List<UserResultTupleDTO> intermediateResults(long gameId) {
-        return gameService.getResults(gameId);
     }
 
     public UserResultTupleDTO getAllUsersOfGame(Long gameId){
@@ -148,5 +207,25 @@ public class GameControllerService {
 
     public long getGameIdOfUser(Long userId){
         return gameService.getGameIdOfUser(userId);
+    }
+
+    public long getPoints(Answer answer) {
+        if (answer == null) {
+            return 0L;
+        }
+
+        Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
+        return answer.getAnswer().equals(question.getCorrectAnswer()) ?
+                (long) (500L - (0.5 * answer.getAnsweredTime())) : 0L;
+    }
+
+    public synchronized boolean completelyAnswered(long gameId) {
+        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
+        for (Question question : questions) {
+            if (!answerService.completelyAnswered(question.getQuestionId())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

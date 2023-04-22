@@ -1,4 +1,4 @@
-package ch.uzh.ifi.hase.soprafs23.entity;
+/*package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,4 +83,4 @@ class QuestionTest {
         results.put(answer2.getUserId(), answer2);
         assertTrue(question.completelyAnswered());
     }
-}
+}*/

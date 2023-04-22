@@ -60,7 +60,7 @@ public class GameController {
     public Map<Long, Boolean> respondInvitation(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token){
         userService.verifyToken(token);
 
-        Game game = gameControllerService.getGame(gameId);
+        Game game = gameControllerService.searchGame(gameId);
 
         if(!response){
             userService.setOnline(userService.searchUserById(game.getInvitedUserId()));
@@ -151,7 +151,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     public Game deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        Game deletedGame = gameControllerService.getGame(gameId);
+        Game deletedGame = gameControllerService.searchGame(gameId);
         gameControllerService.removeGame(gameId);
         webSocketController.informUsersGameDeleted(gameId);
         return deletedGame;
