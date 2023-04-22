@@ -92,7 +92,8 @@ public class GameControllerService {
 
     public void removeGame(Long gameId) {
         gameService.deleteGame(gameId);
-        List<Question> questions = questionService.deleteQuestions(gameId);
+        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
+        questionService.deleteQuestions(gameId);
         for (Question question : questions) {
             answerService.deleteAnswers(question.getQuestionId());
         }

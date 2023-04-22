@@ -62,13 +62,13 @@ public class GameController {
 
         Game game = gameControllerService.searchGame(gameId);
 
-        if(!response){
+        if(!response) {
             userService.setOnline(userService.searchUserById(game.getInvitedUserId()));
             userService.setOnline(userService.searchUserById(game.getInvitingUserId()));
             gameControllerService.removeGame(gameId);
         }
 
-        Map<Long, Boolean> answer = Collections.singletonMap(gameId,response);
+        Map<Long, Boolean> answer = Collections.singletonMap(gameId, response);
         webSocketController.sendInviationRespond(game.getInvitedUserId(), answer);
         webSocketController.sendInviationRespond(game.getInvitingUserId(), answer);
         return answer;

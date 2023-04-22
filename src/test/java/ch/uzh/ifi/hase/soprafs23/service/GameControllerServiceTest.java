@@ -149,7 +149,7 @@ class GameControllerServiceTest {
 */
     @Test
     public void removeGame_nonValidInput_noChange() {
-        given(questionService.deleteQuestions(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));

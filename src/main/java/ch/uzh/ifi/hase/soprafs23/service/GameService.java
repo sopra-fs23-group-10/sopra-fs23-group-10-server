@@ -44,8 +44,11 @@ public class GameService {
         game.setCurrentPlayer(invitedUserId);
         game.setLastChange(new Date());
 
-        if (gameRepository.findGameByInvitingUserId(game.getInvitingUserId()) != null || gameRepository.findGameByInvitingUserId(game.getInvitedUserId()) != null || gameRepository.findGameByInvitedUserId(game.getInvitingUserId()) != null || gameRepository.findGameByInvitedUserId(game.getInvitedUserId()) != null) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "One of the users is already in a game.");
+        if (gameRepository.findGameByInvitingUserId(game.getInvitingUserId()) != null ||gameRepository.findGameByInvitedUserId(game.getInvitingUserId()) != null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Inviting user is already in a game.");
+        }
+        if (gameRepository.findGameByInvitingUserId(game.getInvitedUserId()) != null || gameRepository.findGameByInvitedUserId(game.getInvitedUserId()) != null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invited user is already in a game.");
         }
 
         game = gameRepository.save(game);
@@ -61,8 +64,6 @@ public class GameService {
         return game;
     }
 
-    //TODO: Delete related Questions and Answers too
-
     public long getGameIdOfUser(Long userId) {
         Game invitingGame = gameRepository.findGameByInvitingUserId(userId);
         if (invitingGame != null) {
@@ -74,12 +75,6 @@ public class GameService {
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Specified user is not in any game.");
     }
-/*
-    public String toString() {
-        return "Game(gameId=" + this.getId() + ", invitingUser=" + this.getInvitingUserId() + ", invitedUser=" + this.getInvitedUserId() + ", questions=" + this.getQuestions() + ", quizType=" + this.getQuizType() + ", modeType=" + this.getModeType() + ")";
-    }
-
- */
 
     public void deleteGame(Long gameId) {
         gameRepository.deleteGameByGameId(gameId);

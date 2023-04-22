@@ -61,7 +61,7 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
-    public List<Question> deleteQuestions(Long gameId) {
-        return questionRepository.deleteAllByGameId(gameId);
+    public void deleteQuestions(Long gameId) {
+        questionRepository.deleteAllByGameId(gameId);
     }
 }
