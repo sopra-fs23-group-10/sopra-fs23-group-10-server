@@ -561,7 +561,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email").doesNotExist());
     }
      */
-    
+
     @Test
     void login_whenEmptyUsername_thenThrowForbidden_403() throws Exception {
         user.setStatus(UserStatus.OFFLINE);
