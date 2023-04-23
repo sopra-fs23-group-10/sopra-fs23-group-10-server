@@ -94,6 +94,13 @@ public class GameControllerService {
         Game game = gameService.searchGameById(gameId);
         userService.setOnline(game.getInvitedUserId());
         userService.setOnline(game.getInvitingUserId());
+
+        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
+        for (Question question : questions) {
+            answerService.deleteAnswers(question.getQuestionId());
+        }
+        questionService.deleteQuestions(gameId);
+        gameService.deleteGame(gameId);
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {

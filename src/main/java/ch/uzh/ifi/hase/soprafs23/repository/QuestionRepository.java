@@ -9,7 +9,6 @@ import java.util.List;
 @Repository("questionRepository")
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Question findQuestionByQuestionId(long questionId);
-    Question findQuestionByApiId(String apiId);
     List<Question> findAllByGameId(long gameId);
     void deleteAllByGameId(long gameId);
 }
