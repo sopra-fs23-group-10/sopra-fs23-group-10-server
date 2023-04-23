@@ -560,6 +560,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
     }
+     */
 
      */
 

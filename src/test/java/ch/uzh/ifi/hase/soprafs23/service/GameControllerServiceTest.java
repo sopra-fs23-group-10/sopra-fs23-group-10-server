@@ -147,6 +147,7 @@ class GameControllerServiceTest {
         });
     }
 */
+
     /*
     @Test
     public void removeGame_nonValidInput_noChange() {
@@ -157,7 +158,6 @@ class GameControllerServiceTest {
         gameControllerService.removeGame(workingTextDuelGame.getGameId());
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
-
      */
 
 
