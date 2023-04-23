@@ -374,7 +374,7 @@ class GameControllerTest {
                 .andExpect(jsonPath("$[0].invitedPlayerId", is((int) game.getInvitedUserId())))
                 .andExpect(jsonPath("$[0].invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
     }
-/*
+
     @Test
     public void finishGame_whenInvalidToken_thenThrowUnautorized_401() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
@@ -397,13 +397,13 @@ class GameControllerTest {
         userResultTupleDTOs.add(userResultTupleDTO);
 
         given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
-        given(gameService.finishGame(game.getGameId())).willReturn(userResultTupleDTOs);
+        given(gameControllerService.finishGame(game.getGameId())).willReturn(userResultTupleDTOs);
 
         MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/" + game.getGameId())
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
-    }*/
+    }
 
     @Test
     public void intermediateGame_whenValid_returnResults_200() throws Exception {
@@ -465,10 +465,24 @@ class GameControllerTest {
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
-/*
-    @Test
+
+    private String asJsonString(final Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    format("The request body could not be created.%s", e.toString()));
+        }
+    }
+
+
+
+
+    /*
+        @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
         // given
+        gameRepository
         Game game = new Game(1L, 1L, 2L, QuizType.TEXT, ModeType.DUEL);
         games.put(game.getGameId(), game);
         //inviting User
@@ -493,27 +507,24 @@ class GameControllerTest {
         user2.setStatus(UserStatus.IN_GAME);
         Question question = new Question();
         question.setCategory(Category.ARTS_LITERATURE);
-        question.setId("1");
+        question.setApiId("1");
         question.setCorrectAnswer("True");
-        String[] incorrectAnswer = new String[1];
-        incorrectAnswer[0] = "False";
+        List<String> incorrectAnswer = new ArrayList<String>(List.of("False"));
         question.setIncorrectAnswers(incorrectAnswer);
-        String[] allAnswer = {"False","True"};
+        List<String> allAnswer = new ArrayList<String>(List.of("False", "True"));
         question.setAllAnswers(allAnswer);
         question.setQuestion("Is the sky blue?");
-        UserAnswerTuple answerTuple1 = new UserAnswerTuple();
+        Answer answerTuple1 = new Answer();
         answerTuple1.setUserId(user1.getId());
-        answerTuple1.setQuestionId(question.getId());
+        answerTuple1.setQuestionId(question.getQuestionId());
         answerTuple1.setAnswer("True");
         answerTuple1.setAnsweredTime(1L);
-        UserAnswerTuple answerTuple2 = new UserAnswerTuple();
+        Answer answerTuple2 = new Answer();
         answerTuple2.setUserId(user2.getId());
-        answerTuple2.setQuestionId(question.getId());
+        answerTuple2.setQuestionId(question.getQuestionId());
         answerTuple2.setAnswer("False");
         answerTuple2.setAnsweredTime(1L);
-        question.addAnswer(answerTuple1);
-        question.addAnswer(answerTuple2);
-        UserResultTuple userResultTuple = game.getResults();
+        UserResultTuple userResultTuple = gameControllerService.getPointsOfBoth(game.getGameId());
         // set up userService to throw the exception
         given(userService.verifyToken(user1.getToken())).willReturn(user1);
         given(userService.verifyToken(user2.getToken())).willReturn(user2);
@@ -530,16 +541,7 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.invitingPlayerResult", is(user1.getPoints()+ userResultTuple.getInvitingPlayerResult())))
                 .andExpect(jsonPath("$.invitedPlayerId", is(user2.getId())))
                 .andExpect(jsonPath("$.invitedPlayerResult", is(user2.getPoints()+ userResultTuple.getInvitedPlayerResult())));
-    }*/
-
-
-    private String asJsonString(final Object object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    format("The request body could not be created.%s", e.toString()));
-        }
     }
+     */
 
 }

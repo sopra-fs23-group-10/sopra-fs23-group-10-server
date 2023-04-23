@@ -94,6 +94,7 @@ public class GameControllerService {
         Game game = gameService.searchGameById(gameId);
         userService.setOnline(game.getInvitedUserId());
         userService.setOnline(game.getInvitingUserId());
+        gameService.deleteGame(gameId);
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
@@ -144,7 +145,7 @@ public class GameControllerService {
 
     }
 
-    private UserResultTuple getPointsOfBoth(Game game) {
+    public UserResultTuple getPointsOfBoth(Game game) {
         UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), game.getInvitingUserId(), game.getInvitedUserId());
         List<Question> questions = questionService.searchQuestionsByGameId(game.getGameId());
         for (Question question : questions) {
