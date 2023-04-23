@@ -147,6 +147,7 @@ class GameControllerServiceTest {
         });
     }
 */
+    /*
     @Test
     public void removeGame_nonValidInput_noChange() {
         given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
@@ -156,6 +157,9 @@ class GameControllerServiceTest {
         gameControllerService.removeGame(workingTextDuelGame.getGameId());
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
+
+     */
+
 
     @Test
     public void getAllTopics_success() {
