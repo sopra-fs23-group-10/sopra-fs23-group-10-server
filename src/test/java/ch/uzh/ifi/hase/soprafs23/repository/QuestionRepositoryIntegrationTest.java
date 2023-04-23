@@ -109,6 +109,24 @@ class QuestionRepositoryIntegrationTest {
     }
 
     @Test
+    void findAllByGameId_noneFound() {
+        List<Question> found = questionRepository.findAllByGameId(-1);
+
+        assertNotNull(found);
+        assertEquals(0, found.size());
+    }
+
+    @Test
     void deleteAllByGameId_success() {
+        List<Question> found = questionRepository.findAllByGameId(question.getGameId());
+
+        assertNotNull(found);
+        assertEquals(2, found.size());
+
+        questionRepository.deleteAllByGameId(question.getGameId());
+        found = questionRepository.findAllByGameId(question.getGameId());
+
+        assertNotNull(found);
+        assertEquals(0, found.size());
     }
 }
