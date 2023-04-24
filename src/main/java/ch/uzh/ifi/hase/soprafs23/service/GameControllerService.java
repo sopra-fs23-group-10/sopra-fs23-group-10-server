@@ -134,10 +134,19 @@ public class GameControllerService {
         }
 
         questionService.searchQuestionByQuestionId(answer.getQuestionId());
+        
+        if (gameService.timeRunUp(gameId)) {
+            Answer placeholderAnswer = new Answer();
+            placeholderAnswer.setUserId(answer.getUserId());
+            placeholderAnswer.setQuestionId(answer.getQuestionId());
+            placeholderAnswer.setAnswer("WrongAnswerAnywayBecauseYouTookTooLong");
+            placeholderAnswer.setAnsweredTime(1000L);
 
-        answerService.createAnswer(answer);
-
-
+            answerService.createAnswer(placeholderAnswer);
+        }
+        else {
+            answerService.createAnswer(answer);
+        }
     }
 
     private UserResultTuple getPointsOfBoth(Game game) {
