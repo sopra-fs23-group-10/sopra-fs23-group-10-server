@@ -28,25 +28,49 @@ class QuestionRepositoryIntegrationTest {
 
     @BeforeEach
     private void setup() {
-        this.question = new Question();
-        List<String> incorrectAnswers = java.util.Arrays.asList("Neil Young", "Eric Clapton", "Elton John");
-        List<String> allAnswers = java.util.Arrays.asList("Neil Young", "Bob Dylan", "Eric Clapton", "Elton John");
 
+        // set up valid question
+        this.question = new Question();
+        List<String> incorrectAnswers =
+                java.util.Arrays.asList(
+                        "Neil Young",
+                        "Eric Clapton",
+                        "Elton John"
+                );
+        List<String> allAnswers =
+                java.util.Arrays.asList(
+                        "Neil Young",
+                        "Bob Dylan",
+                        "Eric Clapton",
+                        "Elton John"
+                );
         question.setGameId(1L);
         question.setCategory(Category.MUSIC);
         question.setApiId("622a1c357cc59eab6f94ff56");
         question.setCorrectAnswer("Bob Dylan");
         question.setIncorrectAnswers(incorrectAnswers);
         question.setAllAnswers(allAnswers);
-        question.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
+        question.setQuestion(
+                "Which musician has famously performed over 3,000 shows" +
+                " in their 'Never Ending Tour'?"
+        );
 
+        // store first question in DB
         entityManager.persist(question);
         entityManager.flush();
 
+        // create second valid question
         this.anotherQuestion = new Question();
-        incorrectAnswers = java.util.Arrays.asList("you", "allOfUs", "WhoKnows?");
-        allAnswers = java.util.Arrays.asList("me", "you", "allOfUs", "WhoKnows?");
-
+        incorrectAnswers = java.util.Arrays.asList(
+                "you",
+                "allOfUs",
+                "WhoKnows?");
+        allAnswers = java.util.Arrays.asList(
+                "me",
+                "you",
+                "allOfUs",
+                "WhoKnows?"
+        );
         anotherQuestion.setGameId(1L);
         anotherQuestion.setCategory(Category.GENERAL_KNOWLEDGE);
         anotherQuestion.setApiId("62433573cfaae40c129614a9");
@@ -55,6 +79,7 @@ class QuestionRepositoryIntegrationTest {
         anotherQuestion.setAllAnswers(allAnswers);
         anotherQuestion.setQuestion("Who wrote this test?");
 
+        // store second question in DB
         entityManager.persist(anotherQuestion);
         entityManager.flush();
     }
@@ -118,15 +143,21 @@ class QuestionRepositoryIntegrationTest {
 
     @Test
     void deleteAllByGameId_success() {
-        List<Question> found = questionRepository.findAllByGameId(question.getGameId());
+        // get all Questions from the DB which are assigned to the gameId
+        List<Question> foundQuestionsInDb
+                = questionRepository.findAllByGameId(question.getGameId());
 
-        assertNotNull(found);
-        assertEquals(2, found.size());
+        // assert if all assigned questions were found
+        assertEquals(2, foundQuestionsInDb.size());
 
+        // execute a deletion of all questions in the DB which were assigned to gameId
         questionRepository.deleteAllByGameId(question.getGameId());
-        found = questionRepository.findAllByGameId(question.getGameId());
 
-        assertNotNull(found);
-        assertEquals(0, found.size());
+        //get again all questions in DB which were assigned to gameId
+        foundQuestionsInDb =
+                questionRepository.findAllByGameId(question.getGameId());
+
+        // assert if all questions were deleted
+        assertEquals(0, foundQuestionsInDb.size());
     }
 }

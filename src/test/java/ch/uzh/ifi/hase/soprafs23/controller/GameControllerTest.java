@@ -73,11 +73,13 @@ class GameControllerTest {
 
     @BeforeEach
     void setup() {
+        // set up valid user
         invitingUser = new User();
         invitingUser.setId(1L);
         invitingUser.setToken("inviting");
         invitingUser.setStatus(UserStatus.ONLINE);
 
+        // set up valid game
         game = new Game();
         game.setGameId(0L);
         game.setInvitingUserId(invitingUser.getId());
@@ -85,6 +87,7 @@ class GameControllerTest {
         game.setQuizType(QuizType.TEXT);
         game.setModeType(ModeType.DUEL);
 
+        // set up valid question
         question = new Question();
         question.setQuestionId(69L);
         question.setApiId("62433573cfaae40c129614a9");
@@ -344,35 +347,60 @@ class GameControllerTest {
 
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
+        // set user to status IN_GAME
         invitingUser.setStatus(UserStatus.IN_GAME);
 
-        UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), invitingUser.getId(), game.getInvitedUserId());
+        // set up result tuple with points assigned to both users
+        UserResultTuple userResultTuple = new UserResultTuple(
+                game.getGameId(),
+                invitingUser.getId(),
+                game.getInvitedUserId()
+        );
         userResultTuple.setInvitingPlayerResult(100L);
         userResultTuple.setInvitedPlayerResult(200L);
 
+        // create DTO of result tuple
         UserResultTupleDTO userResultTupleDTO = new UserResultTupleDTO();
         userResultTupleDTO.setGameId(userResultTuple.getGameId());
-        userResultTupleDTO.setInvitingPlayerId(userResultTuple.getInvitingPlayerId());
-        userResultTupleDTO.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult());
-        userResultTupleDTO.setInvitedPlayerId(userResultTuple.getInvitedPlayerId());
-        userResultTupleDTO.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult());
+        userResultTupleDTO.setInvitingPlayerId(
+                userResultTuple.getInvitingPlayerId());
+        userResultTupleDTO.setInvitingPlayerResult(
+                userResultTuple.getInvitingPlayerResult());
+        userResultTupleDTO.setInvitedPlayerId(
+                userResultTuple.getInvitedPlayerId());
+        userResultTupleDTO.setInvitedPlayerResult(
+                userResultTuple.getInvitedPlayerResult());
 
+        // put DTO of userResult to Array
         List<UserResultTupleDTO> userResultTupleDTOs = new ArrayList<>();
         userResultTupleDTOs.add(userResultTupleDTO);
 
-        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
-        given(gameControllerService.finishGame(game.getGameId())).willReturn(userResultTupleDTOs);
+        // mock token verification
+        given(userService.verifyToken(invitingUser.getToken()))
+                .willReturn(invitingUser);
 
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/" + game.getGameId())
+        // mock call to service class for finishing game
+        given(
+                gameControllerService.finishGame(game.getGameId()))
+                .willReturn(userResultTupleDTOs);
+
+        // prepare delete request with url, body and header
+        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"
+                + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
+        // execute delete request and check if returned DTO matches set up
         mockMvc.perform(deleteRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].gameId", is((int) game.getGameId())))
-                .andExpect(jsonPath("$[0].invitingPlayerId", is((int) invitingUser.getId())))
-                .andExpect(jsonPath("$[0].invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
-                .andExpect(jsonPath("$[0].invitedPlayerId", is((int) game.getInvitedUserId())))
-                .andExpect(jsonPath("$[0].invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
+                .andExpect(jsonPath("$[0].invitingPlayerId",
+                        is((int) invitingUser.getId())))
+                .andExpect(jsonPath("$[0].invitingPlayerResult",
+                        is((int) userResultTuple.getInvitingPlayerResult())))
+                .andExpect(jsonPath("$[0].invitedPlayerId",
+                        is((int) game.getInvitedUserId())))
+                .andExpect(jsonPath("$[0].invitedPlayerResult",
+                        is((int) userResultTuple.getInvitedPlayerResult())));
     }
 
     @Test

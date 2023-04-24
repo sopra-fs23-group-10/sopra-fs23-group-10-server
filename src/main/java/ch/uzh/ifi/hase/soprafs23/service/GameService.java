@@ -88,7 +88,7 @@ public class GameService {
     public boolean timeRunUp(long gameId) {
         Game game = this.searchGameById(gameId);
         long seconds = (new Date().getTime() - game.getLastChange().getTime())/1000;
-        game.setLastChange(seconds > 20000 ? game.getLastChange() : new Date());
-        return seconds > 20000;
+        game.setLastChange(seconds > 2000 ? game.getLastChange() : new Date());
+        return seconds > 2000;
     }
 }
