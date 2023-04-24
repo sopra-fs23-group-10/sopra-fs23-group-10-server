@@ -95,7 +95,7 @@ class GameServiceTest {
     }
 
     @Test
-    void getGameIdOfUser_noGameFound() {
+    void testGetGameIdOfUser_noGameFound_throwsNotFound_404() {
         // instantiating idlingUser as a new instance of class User
         // and setting the ID to 56L
         User idlingUser = new User();
