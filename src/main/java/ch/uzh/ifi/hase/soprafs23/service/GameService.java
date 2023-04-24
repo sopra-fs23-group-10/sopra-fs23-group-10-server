@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional
@@ -67,11 +65,11 @@ public class GameService {
     public long getGameIdOfUser(Long userId) {
         Game invitingGame = gameRepository.findGameByInvitingUserId(userId);
         if (invitingGame != null) {
-            return invitingGame.getInvitingUserId();
+            return invitingGame.getGameId();
         }
         Game invitedGame = gameRepository.findGameByInvitedUserId(userId);
         if (invitedGame != null) {
-            return invitedGame.getInvitedUserId();
+            return invitedGame.getGameId();
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Specified user is not in any game.");
     }

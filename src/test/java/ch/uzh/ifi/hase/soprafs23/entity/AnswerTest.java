@@ -19,28 +19,28 @@ class AnswerTest {
     }
 
     @Test
-    void getUserId_thenSet() {
+    void getAndSetUserId_thenSet() {
         assertEquals(0L, answer.getUserId());
         answer.setUserId(54L);
         assertEquals(54L, answer.getUserId());
     }
 
     @Test
-    void getQuestionId_thenSet() {
+    void getAndSetQuestionId_thenSet() {
         assertEquals(2, answer.getQuestionId());
         answer.setQuestionId(0);
         assertEquals(0, answer.getQuestionId());
     }
 
     @Test
-    void getAnswer_thenSet() {
+    void getAndSetAnswer_thenSet() {
         assertEquals("answer", answer.getAnswer());
         answer.setAnswer("differentAnswer");
         assertEquals("differentAnswer", answer.getAnswer());
     }
 
     @Test
-    void getAnsweredTime_thenSet() {
+    void getAndSetAnsweredTime_thenSet() {
         assertEquals(0L, answer.getAnsweredTime());
         answer.setAnsweredTime(541L);
         assertEquals(541L, answer.getAnsweredTime());
