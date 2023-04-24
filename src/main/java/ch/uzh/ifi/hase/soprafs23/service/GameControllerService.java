@@ -135,19 +135,8 @@ public class GameControllerService {
 
         questionService.searchQuestionByQuestionId(answer.getQuestionId());
 
-        if (gameService.timeRunUp(gameId)) {
+        answerService.createAnswer(answer);
 
-            Answer placeholderAnswer = new Answer();
-            placeholderAnswer.setUserId(answer.getUserId());
-            placeholderAnswer.setQuestionId(answer.getQuestionId());
-            placeholderAnswer.setAnswer("WrongAnswerAnywayBecauseYouTookTooLong");
-            placeholderAnswer.setAnsweredTime(1000L);
-
-            answerService.createAnswer(placeholderAnswer);
-        }
-        else {
-            answerService.createAnswer(answer);
-        }
 
     }
 
