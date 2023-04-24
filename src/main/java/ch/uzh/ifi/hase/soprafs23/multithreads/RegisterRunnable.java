@@ -19,10 +19,9 @@ public class RegisterRunnable implements Runnable{
 
     @Override
     public void run() {
-        Long gameId = gameControllerService.getGameIdOfUser(userId);
-        if(gameControllerService.gameExists(gameId)){
-            userService.setOnline(userId);
-            System.out.printf("User with userID: %s has logged IN%n", userId);
-        }
+        System.out.println("<<<<<<<<<< register >>>>>>>>>>>");
+        User user = userService.searchUserById(userId);
+        userService.setOnline(userId);
+        System.out.printf("User with userID: %s has logged IN%n", userId);
     }
 }
