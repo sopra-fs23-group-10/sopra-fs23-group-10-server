@@ -1,9 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -15,9 +12,13 @@ public class Answer implements Serializable {
     @Id
     @GeneratedValue
     private long id;
+    @Column(nullable = false)
     private long questionId;
+    @Column(nullable = false)
     private long userId;
+    @Column(nullable = false)
     private String answer;
+    @Column(nullable = false)
     private long answeredTime;
 
     public long getId() {

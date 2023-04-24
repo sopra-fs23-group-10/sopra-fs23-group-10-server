@@ -17,14 +17,21 @@ public class Question implements Serializable {
     @Id
     @GeneratedValue
     private long questionId;
+    @Column(nullable = false)
     private long gameId;
+    @Column(nullable = false)
     private Category category;
+    @Column(nullable = false)
     private String apiId;
+    @Column(nullable = false)
     private String correctAnswer;
+    @Column(nullable = false)
     @Convert(converter = StringListConverter.class)
     private List<String> incorrectAnswers;
+    @Column(nullable = false)
     @Convert(converter = StringListConverter.class)
     private List<String> allAnswers;
+    @Column(nullable = false)
     private String question;
 
     public long getQuestionId() {
