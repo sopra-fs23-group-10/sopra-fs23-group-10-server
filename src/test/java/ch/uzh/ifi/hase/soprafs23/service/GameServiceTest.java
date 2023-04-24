@@ -50,7 +50,6 @@ class GameServiceTest {
         prepTextDuelGame.setQuizType(QuizType.TEXT);
         prepTextDuelGame.setModeType(ModeType.DUEL);
         prepTextDuelGame.setCurrentPlayer(invitedUser.getId());
-        prepTextDuelGame.setLastChange(new Date());
     }
 
     @Test
@@ -66,7 +65,6 @@ class GameServiceTest {
         assertEquals(prepTextDuelGame.getQuizType(), game.getQuizType());
         assertEquals(prepTextDuelGame.getModeType(), game.getModeType());
         assertEquals(prepTextDuelGame.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(prepTextDuelGame.getLastChange(), game.getLastChange());
     }
 
     @Test
@@ -82,7 +80,6 @@ class GameServiceTest {
         assertEquals(prepTextDuelGame.getQuizType(), game.getQuizType());
         assertEquals(prepTextDuelGame.getModeType(), game.getModeType());
         assertEquals(prepTextDuelGame.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(prepTextDuelGame.getLastChange(), game.getLastChange());
     }
 
     @Test

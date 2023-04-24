@@ -27,8 +27,7 @@ public class Game implements Serializable {
     private ModeType modeType;
     @Column(nullable = false)
     private long currentPlayer;
-    @Column(nullable = false)
-    private Date lastChange;
+
 
     public long getGameId() {
         return this.gameId;
@@ -48,9 +47,6 @@ public class Game implements Serializable {
     public long getCurrentPlayer() {
         return this.currentPlayer;
     }
-    public Date getLastChange() {
-        return this.lastChange;
-    }
 
     public void setGameId(long gameId) {
         this.gameId = gameId;
@@ -69,8 +65,5 @@ public class Game implements Serializable {
     }
     public void setCurrentPlayer(long currentPlayer) {
         this.currentPlayer = currentPlayer;
-    }
-    public void setLastChange(Date lastChange) {
-        this.lastChange = lastChange;
     }
 }

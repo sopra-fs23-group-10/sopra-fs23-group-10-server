@@ -133,20 +133,12 @@ public class GameControllerService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
         }
 
-        questionService.searchQuestionByQuestionId(answer.getQuestionId());
-        
-        if (gameService.timeRunUp(gameId)) {
-            Answer placeholderAnswer = new Answer();
-            placeholderAnswer.setUserId(answer.getUserId());
-            placeholderAnswer.setQuestionId(answer.getQuestionId());
-            placeholderAnswer.setAnswer("WrongAnswerAnywayBecauseYouTookTooLong");
-            placeholderAnswer.setAnsweredTime(1000L);
+        Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
+        if (question.timeRunUp()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "The time run up, it is not possible to answer this question.");
+        }
 
-            answerService.createAnswer(placeholderAnswer);
-        }
-        else {
-            answerService.createAnswer(answer);
-        }
+        answerService.createAnswer(answer);
     }
 
     private UserResultTuple getPointsOfBoth(Game game) {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,6 +51,7 @@ class QuestionRepositoryIntegrationTest {
         question.setCorrectAnswer("Bob Dylan");
         question.setIncorrectAnswers(incorrectAnswers);
         question.setAllAnswers(allAnswers);
+        question.setCreationTime(new Date());
         question.setQuestion(
                 "Which musician has famously performed over 3,000 shows" +
                 " in their 'Never Ending Tour'?"
@@ -77,6 +79,7 @@ class QuestionRepositoryIntegrationTest {
         anotherQuestion.setCorrectAnswer("me");
         anotherQuestion.setIncorrectAnswers(incorrectAnswers);
         anotherQuestion.setAllAnswers(allAnswers);
+        anotherQuestion.setCreationTime(new Date());
         anotherQuestion.setQuestion("Who wrote this test?");
 
         // store second question in DB
@@ -97,6 +100,7 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(question.getIncorrectAnswers(), found.getIncorrectAnswers());
         assertEquals(question.getAllAnswers(), found.getAllAnswers());
         assertEquals(question.getQuestion(), found.getQuestion());
+        assertEquals(question.getCreationTime(), found.getCreationTime());
     }
 
     @Test
@@ -122,6 +126,8 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(question.getIncorrectAnswers(), found.get(0).getIncorrectAnswers());
         assertEquals(question.getAllAnswers(), found.get(0).getAllAnswers());
         assertEquals(question.getQuestion(), found.get(0).getQuestion());
+        assertEquals(question.getCreationTime(), found.get(0).getCreationTime());
+
 
         assertEquals(anotherQuestion.getQuestionId(), found.get(1).getQuestionId());
         assertEquals(anotherQuestion.getGameId(), found.get(1).getGameId());
@@ -131,6 +137,8 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(anotherQuestion.getIncorrectAnswers(), found.get(1).getIncorrectAnswers());
         assertEquals(anotherQuestion.getAllAnswers(), found.get(1).getAllAnswers());
         assertEquals(anotherQuestion.getQuestion(), found.get(1).getQuestion());
+        assertEquals(anotherQuestion.getCreationTime(), found.get(1).getCreationTime());
+
     }
 
     @Test
@@ -153,7 +161,7 @@ class QuestionRepositoryIntegrationTest {
         // execute a deletion of all questions in the DB which were assigned to gameId
         questionRepository.deleteAllByGameId(question.getGameId());
 
-        //get again all questions in DB which were assigned to gameId
+        // get again all questions in DB which were assigned to gameId
         foundQuestionsInDb =
                 questionRepository.findAllByGameId(question.getGameId());
 
