@@ -34,6 +34,7 @@ import java.util.*;
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -98,6 +99,7 @@ class GameControllerTest {
         String[] incorrectAnswers = {"you", "allOfUs", "WhoKnows?"};
         question.setIncorrectAnswers(List.of(incorrectAnswers));
         question.setCorrectAnswer("me");
+        question.setCreationTime(new Date());
     }
 
     @Test
@@ -503,9 +505,31 @@ class GameControllerTest {
         }
     }
 
+    @Test
+    public void answerQuestion_whenAnswerToLate_thenFail_Forbidden() throws Exception {
+        AnswerDTO answerDTO = new AnswerDTO();
+        answerDTO.setUserId(invitingUser.getId());
+        answerDTO.setQuestionId(question.getQuestionId());
+        answerDTO.setAnswer(question.getCorrectAnswer());
+        answerDTO.setAnsweredTime(112L);
+
+        question.setCreationTime(new Date(new Date().getTime() - 30000));
+
+        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN))
+                .when(gameControllerService)
+                .answerQuestion(Mockito.anyLong(), Mockito.any(Answer.class));
 
 
+        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(answerDTO))
+                .header("token", invitingUser.getToken());
 
+        mockMvc.perform(putRequest).andExpect(status().isForbidden());
+    }
+
+    
     /*
         @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {

@@ -128,11 +128,4 @@ class GameServiceTest {
         gameService.changeCurrentPlayer(prepTextDuelGame.getGameId());
         assertEquals(invitingUser.getId(), prepTextDuelGame.getCurrentPlayer());
     }
-
-    @Test
-    void timeRunUp_false() {
-        given(gameRepository.findGameByGameId(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-
-        assertFalse(gameService.timeRunUp(prepTextDuelGame.getGameId()));
-    }
 }
