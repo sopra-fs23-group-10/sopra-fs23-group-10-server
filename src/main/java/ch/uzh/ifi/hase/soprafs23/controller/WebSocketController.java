@@ -1,7 +1,11 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
 import ch.uzh.ifi.hase.soprafs23.WebSockets.WebSocketSessionRegistry;
+import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
+import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.multithreads.RegisterRunnable;
+import ch.uzh.ifi.hase.soprafs23.multithreads.UnregisterRunnable;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
@@ -67,27 +71,45 @@ public class WebSocketController {
 
     @MessageMapping("/register")
     public void register(@Payload String userId) {
+        try {
+            Thread.sleep(10);
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
-        userService.setOnline(id);
-        System.out.printf("User with userID: %s has logged IN%n", userId);
+        RegisterRunnable registerRunnable = new RegisterRunnable(id,userService,gameControllerService);
+        Thread thread = new Thread(registerRunnable);
+        thread.start();
+        /*
+        Long gameId = gameControllerService.getGameIdOfUser(userId);
+        if(gameControllerService.gameExists(gameId)){
+            userService.setOnline(userId);
+            System.out.printf("User with userID: %s has logged IN%n", userId);
+        }
+         */
     }
-
-
 
     @MessageMapping("/unregister")
     public void unregister(@Payload String userId) {
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
-        userService.setOffline(userService.searchUserById(id), id);
+        UnregisterRunnable unregisterRunnable = new UnregisterRunnable(id,userService,gameControllerService);
+        Thread thread = new Thread(unregisterRunnable);
+        thread.start();
+        /*
+        User user = userService.searchUserById(id);
+        userService.setOffline(user, id);
         System.out.printf("User with userID: %s has logged OUT%n", userId);
-    }
-
-    private void deathSwitch(Long userId){
-        Long gameId = gameControllerService.getGameIdOfUser(userId);
-        if(gameId != -1L){
-            gameControllerService.removeGame(gameId);
-            this.webSocketService.sendMessageToClients("/game/result/" + gameId, "Game was deleted since one of the players left the game");
+        try {
+            Thread.sleep(2000);
         }
+        catch (InterruptedException e) {}
+        User userUpdated = userService.searchUserById(id);
+        if(userUpdated.getStatus() == UserStatus.OFFLINE){
+            System.out.println("Game is getting deleted...");
+            this.deathSwitch(id);
+        }*/
     }
 }

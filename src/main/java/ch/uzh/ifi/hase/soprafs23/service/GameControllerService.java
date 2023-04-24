@@ -33,13 +33,15 @@ public class GameControllerService {
     private final GameService gameService;
     private final QuestionService questionService;
     private final AnswerService answerService;
+    private final WebSocketService webSocketService;
 
     @Autowired
-    public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService) {
+    public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService, WebSocketService webSocketService) {
         this.userService = userService;
         this.gameService = gameService;
         this.questionService = questionService;
         this.answerService = answerService;
+        this.webSocketService = webSocketService;
     }
 
     public Question getQuestion(Category category, Long gameId) {
@@ -232,5 +234,15 @@ public class GameControllerService {
             }
         }
         return true;
+    }
+
+    public void deathSwitch(Long userId){
+        Long gameId = this.getGameIdOfUser(userId);
+        this.removeGame(gameId);
+        this.webSocketService.sendMessageToClients("/game/result/" + gameId, "Game was deleted since one of the players left the game");
+    }
+
+    public boolean gameExists(Long gameId){
+        return gameService.gameExists(gameId);
     }
 }

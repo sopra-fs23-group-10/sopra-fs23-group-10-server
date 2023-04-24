@@ -64,6 +64,11 @@ public class GameService {
         return game;
     }
 
+    public Boolean gameExists(Long gameId){
+        Game game = gameRepository.findGameByGameId(gameId);
+        return game != null;
+    }
+
     public long getGameIdOfUser(Long userId) {
         Game invitingGame = gameRepository.findGameByInvitingUserId(userId);
         if (invitingGame != null) {
