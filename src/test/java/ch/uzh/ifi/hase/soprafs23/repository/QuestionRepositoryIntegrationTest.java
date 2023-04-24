@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,33 +29,60 @@ class QuestionRepositoryIntegrationTest {
 
     @BeforeEach
     private void setup() {
-        this.question = new Question();
-        List<String> incorrectAnswers = java.util.Arrays.asList("Neil Young", "Eric Clapton", "Elton John");
-        List<String> allAnswers = java.util.Arrays.asList("Neil Young", "Bob Dylan", "Eric Clapton", "Elton John");
 
+        // set up valid question
+        this.question = new Question();
+        List<String> incorrectAnswers =
+                java.util.Arrays.asList(
+                        "Neil Young",
+                        "Eric Clapton",
+                        "Elton John"
+                );
+        List<String> allAnswers =
+                java.util.Arrays.asList(
+                        "Neil Young",
+                        "Bob Dylan",
+                        "Eric Clapton",
+                        "Elton John"
+                );
         question.setGameId(1L);
         question.setCategory(Category.MUSIC);
         question.setApiId("622a1c357cc59eab6f94ff56");
         question.setCorrectAnswer("Bob Dylan");
         question.setIncorrectAnswers(incorrectAnswers);
         question.setAllAnswers(allAnswers);
-        question.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
+        question.setCreationTime(new Date());
+        question.setQuestion(
+                "Which musician has famously performed over 3,000 shows" +
+                " in their 'Never Ending Tour'?"
+        );
 
+        // store first question in DB
         entityManager.persist(question);
         entityManager.flush();
 
+        // create second valid question
         this.anotherQuestion = new Question();
-        incorrectAnswers = java.util.Arrays.asList("you", "allOfUs", "WhoKnows?");
-        allAnswers = java.util.Arrays.asList("me", "you", "allOfUs", "WhoKnows?");
-
+        incorrectAnswers = java.util.Arrays.asList(
+                "you",
+                "allOfUs",
+                "WhoKnows?");
+        allAnswers = java.util.Arrays.asList(
+                "me",
+                "you",
+                "allOfUs",
+                "WhoKnows?"
+        );
         anotherQuestion.setGameId(1L);
         anotherQuestion.setCategory(Category.GENERAL_KNOWLEDGE);
         anotherQuestion.setApiId("62433573cfaae40c129614a9");
         anotherQuestion.setCorrectAnswer("me");
         anotherQuestion.setIncorrectAnswers(incorrectAnswers);
         anotherQuestion.setAllAnswers(allAnswers);
+        anotherQuestion.setCreationTime(new Date());
         anotherQuestion.setQuestion("Who wrote this test?");
 
+        // store second question in DB
         entityManager.persist(anotherQuestion);
         entityManager.flush();
     }
@@ -72,6 +100,7 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(question.getIncorrectAnswers(), found.getIncorrectAnswers());
         assertEquals(question.getAllAnswers(), found.getAllAnswers());
         assertEquals(question.getQuestion(), found.getQuestion());
+        assertEquals(question.getCreationTime(), found.getCreationTime());
     }
 
     @Test
@@ -97,6 +126,8 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(question.getIncorrectAnswers(), found.get(0).getIncorrectAnswers());
         assertEquals(question.getAllAnswers(), found.get(0).getAllAnswers());
         assertEquals(question.getQuestion(), found.get(0).getQuestion());
+        assertEquals(question.getCreationTime(), found.get(0).getCreationTime());
+
 
         assertEquals(anotherQuestion.getQuestionId(), found.get(1).getQuestionId());
         assertEquals(anotherQuestion.getGameId(), found.get(1).getGameId());
@@ -106,9 +137,35 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(anotherQuestion.getIncorrectAnswers(), found.get(1).getIncorrectAnswers());
         assertEquals(anotherQuestion.getAllAnswers(), found.get(1).getAllAnswers());
         assertEquals(anotherQuestion.getQuestion(), found.get(1).getQuestion());
+        assertEquals(anotherQuestion.getCreationTime(), found.get(1).getCreationTime());
+
+    }
+
+    @Test
+    void findAllByGameId_noneFound() {
+        List<Question> found = questionRepository.findAllByGameId(-1);
+
+        assertNotNull(found);
+        assertEquals(0, found.size());
     }
 
     @Test
     void deleteAllByGameId_success() {
+        // get all Questions from the DB which are assigned to the gameId
+        List<Question> foundQuestionsInDb
+                = questionRepository.findAllByGameId(question.getGameId());
+
+        // assert if all assigned questions were found
+        assertEquals(2, foundQuestionsInDb.size());
+
+        // execute a deletion of all questions in the DB which were assigned to gameId
+        questionRepository.deleteAllByGameId(question.getGameId());
+
+        // get again all questions in DB which were assigned to gameId
+        foundQuestionsInDb =
+                questionRepository.findAllByGameId(question.getGameId());
+
+        // assert if all questions were deleted
+        assertEquals(0, foundQuestionsInDb.size());
     }
 }

@@ -116,15 +116,24 @@ public class GameController {
         return gameControllerService.allUsersConnected(gameId);
     }
 
-    @DeleteMapping("/game/finish/{gameId}")
+    @GetMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<UserResultTupleDTO> finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        List<UserResultTupleDTO> userResultTupleDTOList = gameControllerService.finishGame(gameId);
+        List<UserResultTupleDTO> userResultTupleDTOList = gameControllerService.getEndResult(gameId);
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
         return userResultTupleDTOList;
+    }
+
+    @DeleteMapping("/game/finish/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
+    public GameDTO deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+        userService.verifyToken(token);
+        Game game = gameControllerService.searchGame(gameId);
+        gameControllerService.removeGame(gameId);
+        return DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
     }
 
     @GetMapping("/game/intermediate/{gameId}")

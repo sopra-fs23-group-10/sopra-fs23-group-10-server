@@ -33,9 +33,10 @@ import java.util.*;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -73,11 +74,13 @@ class GameControllerTest {
 
     @BeforeEach
     void setup() {
+        // set up valid user
         invitingUser = new User();
         invitingUser.setId(1L);
         invitingUser.setToken("inviting");
         invitingUser.setStatus(UserStatus.ONLINE);
 
+        // set up valid game
         game = new Game();
         game.setGameId(0L);
         game.setInvitingUserId(invitingUser.getId());
@@ -85,6 +88,7 @@ class GameControllerTest {
         game.setQuizType(QuizType.TEXT);
         game.setModeType(ModeType.DUEL);
 
+        // set up valid question
         question = new Question();
         question.setQuestionId(69L);
         question.setApiId("62433573cfaae40c129614a9");
@@ -95,6 +99,7 @@ class GameControllerTest {
         String[] incorrectAnswers = {"you", "allOfUs", "WhoKnows?"};
         question.setIncorrectAnswers(List.of(incorrectAnswers));
         question.setCorrectAnswer("me");
+        question.setCreationTime(new Date());
     }
 
     @Test
@@ -344,35 +349,60 @@ class GameControllerTest {
 
     @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
+        // set user to status IN_GAME
         invitingUser.setStatus(UserStatus.IN_GAME);
 
-        UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), invitingUser.getId(), game.getInvitedUserId());
+        // set up result tuple with points assigned to both users
+        UserResultTuple userResultTuple = new UserResultTuple(
+                game.getGameId(),
+                invitingUser.getId(),
+                game.getInvitedUserId()
+        );
         userResultTuple.setInvitingPlayerResult(100L);
         userResultTuple.setInvitedPlayerResult(200L);
 
+        // create DTO of result tuple
         UserResultTupleDTO userResultTupleDTO = new UserResultTupleDTO();
         userResultTupleDTO.setGameId(userResultTuple.getGameId());
-        userResultTupleDTO.setInvitingPlayerId(userResultTuple.getInvitingPlayerId());
-        userResultTupleDTO.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult());
-        userResultTupleDTO.setInvitedPlayerId(userResultTuple.getInvitedPlayerId());
-        userResultTupleDTO.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult());
+        userResultTupleDTO.setInvitingPlayerId(
+                userResultTuple.getInvitingPlayerId());
+        userResultTupleDTO.setInvitingPlayerResult(
+                userResultTuple.getInvitingPlayerResult());
+        userResultTupleDTO.setInvitedPlayerId(
+                userResultTuple.getInvitedPlayerId());
+        userResultTupleDTO.setInvitedPlayerResult(
+                userResultTuple.getInvitedPlayerResult());
 
+        // put DTO of userResult to Array
         List<UserResultTupleDTO> userResultTupleDTOs = new ArrayList<>();
         userResultTupleDTOs.add(userResultTupleDTO);
 
-        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
-        given(gameControllerService.finishGame(game.getGameId())).willReturn(userResultTupleDTOs);
+        // mock token verification
+        given(userService.verifyToken(invitingUser.getToken()))
+                .willReturn(invitingUser);
 
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/" + game.getGameId())
+        // mock call to service class for finishing game
+        given(
+                gameControllerService.getEndResult(game.getGameId()))
+                .willReturn(userResultTupleDTOs);
+
+        // prepare delete request with url, body and header
+        MockHttpServletRequestBuilder getRequest = get("/game/finish/"
+                + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(deleteRequest).andExpect(status().isOk())
+        // execute delete request and check if returned DTO matches set up
+        mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].gameId", is((int) game.getGameId())))
-                .andExpect(jsonPath("$[0].invitingPlayerId", is((int) invitingUser.getId())))
-                .andExpect(jsonPath("$[0].invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
-                .andExpect(jsonPath("$[0].invitedPlayerId", is((int) game.getInvitedUserId())))
-                .andExpect(jsonPath("$[0].invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
+                .andExpect(jsonPath("$[0].invitingPlayerId",
+                        is((int) invitingUser.getId())))
+                .andExpect(jsonPath("$[0].invitingPlayerResult",
+                        is((int) userResultTuple.getInvitingPlayerResult())))
+                .andExpect(jsonPath("$[0].invitedPlayerId",
+                        is((int) game.getInvitedUserId())))
+                .andExpect(jsonPath("$[0].invitedPlayerResult",
+                        is((int) userResultTuple.getInvitedPlayerResult())));
     }
 
     @Test
@@ -397,12 +427,12 @@ class GameControllerTest {
         userResultTupleDTOs.add(userResultTupleDTO);
 
         given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
-        given(gameControllerService.finishGame(game.getGameId())).willReturn(userResultTupleDTOs);
+        given(gameControllerService.getEndResult(game.getGameId())).willReturn(userResultTupleDTOs);
 
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/game/finish/" + game.getGameId())
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
+        mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -475,9 +505,32 @@ class GameControllerTest {
         }
     }
 
+    @Test
+    public void answerQuestion_whenAnswerToLate_thenFail_Forbidden() throws Exception {
+        AnswerDTO answerDTO = new AnswerDTO();
+        answerDTO.setUserId(invitingUser.getId());
+        answerDTO.setQuestionId(question.getQuestionId());
+        answerDTO.setAnswer(question.getCorrectAnswer());
+        answerDTO.setAnsweredTime(112L);
 
+        question.setCreationTime(new Date(new Date().getTime() - 30000));
 
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
 
+        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(answerDTO))
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(putRequest).andExpect(status().isCreated());
+    }
+
+    @Test
+    public void testAnswerQuestionWithCorrectAnswer() {
+
+    }
+
+    
     /*
         @Test
     public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {

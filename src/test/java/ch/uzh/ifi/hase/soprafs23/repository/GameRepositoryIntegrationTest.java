@@ -33,7 +33,6 @@ class GameRepositoryIntegrationTest {
         game.setQuizType(QuizType.TEXT);
         game.setModeType(ModeType.DUEL);
         game.setCurrentPlayer(game.getInvitedUserId());
-        game.setLastChange(new Date());
 
         entityManager.persist(game);
         entityManager.flush();
@@ -50,7 +49,6 @@ class GameRepositoryIntegrationTest {
         assertEquals(found.getQuizType(), game.getQuizType());
         assertEquals(found.getModeType(), game.getModeType());
         assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(found.getLastChange(), game.getLastChange());
     }
 
     @Test
@@ -71,7 +69,6 @@ class GameRepositoryIntegrationTest {
         assertEquals(found.getQuizType(), game.getQuizType());
         assertEquals(found.getModeType(), game.getModeType());
         assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(found.getLastChange(), game.getLastChange());
 
         gameRepository.deleteGameByGameId(game.getGameId());
 
@@ -91,7 +88,6 @@ class GameRepositoryIntegrationTest {
         assertEquals(found.getQuizType(), game.getQuizType());
         assertEquals(found.getModeType(), game.getModeType());
         assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(found.getLastChange(), game.getLastChange());
 
         gameRepository.deleteGameByGameId(-1);
 
@@ -104,7 +100,6 @@ class GameRepositoryIntegrationTest {
         assertEquals(found.getQuizType(), game.getQuizType());
         assertEquals(found.getModeType(), game.getModeType());
         assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(found.getLastChange(), game.getLastChange());
     }
 
     @Test
@@ -118,7 +113,6 @@ class GameRepositoryIntegrationTest {
         assertEquals(found.getQuizType(), game.getQuizType());
         assertEquals(found.getModeType(), game.getModeType());
         assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(found.getLastChange(), game.getLastChange());
     }
 
     @Test
@@ -139,7 +133,6 @@ class GameRepositoryIntegrationTest {
         assertEquals(found.getQuizType(), game.getQuizType());
         assertEquals(found.getModeType(), game.getModeType());
         assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-        assertEquals(found.getLastChange(), game.getLastChange());
     }
 
     @Test

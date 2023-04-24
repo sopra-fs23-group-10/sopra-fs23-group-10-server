@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -57,7 +58,7 @@ public class QuestionService {
         allAnswers.add(correctAnswer);
         Collections.shuffle(allAnswers);
         question.setAllAnswers(allAnswers);
-
+        question.setCreationTime(new Date());
         return questionRepository.save(question);
     }
 

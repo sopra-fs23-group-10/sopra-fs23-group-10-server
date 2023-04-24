@@ -135,22 +135,12 @@ public class GameControllerService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.");
         }
 
-        questionService.searchQuestionByQuestionId(answer.getQuestionId());
-
-        if (gameService.timeRunUp(gameId)) {
-
-            Answer placeholderAnswer = new Answer();
-            placeholderAnswer.setUserId(answer.getUserId());
-            placeholderAnswer.setQuestionId(answer.getQuestionId());
-            placeholderAnswer.setAnswer("WrongAnswerAnywayBecauseYouTookTooLong");
-            placeholderAnswer.setAnsweredTime(1000L);
-
-            answerService.createAnswer(placeholderAnswer);
-        }
-        else {
-            answerService.createAnswer(answer);
+        Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
+        if (question.timeRunUp()) {
+            answer.setAnswer("WrongAnswer");
         }
 
+        answerService.createAnswer(answer);
     }
 
     private UserResultTuple getPointsOfBoth(Game game) {
@@ -186,7 +176,7 @@ public class GameControllerService {
         return userResultTupleDTOList;
     }
 
-    public List<UserResultTupleDTO> finishGame(long gameId) {
+    public List<UserResultTupleDTO> getEndResult(long gameId) {
         List<UserResultTupleDTO> userResultTupleDTOList = this.intermediateResults(gameId);
 
         UserResultTuple userResultTuple = getPointsOfBoth(gameService.searchGameById(gameId));
@@ -194,7 +184,6 @@ public class GameControllerService {
 
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         userResultTupleDTOList.add(userResultTupleDTO);
-        this.removeGame(gameId);
         return userResultTupleDTOList;
     }
 

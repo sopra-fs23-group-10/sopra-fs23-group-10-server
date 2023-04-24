@@ -3,10 +3,7 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,12 +17,17 @@ public class Game implements Serializable {
     @Id
     @GeneratedValue
     private long gameId;
+    @Column(nullable = false)
     private long invitingUserId;
+    @Column(nullable = false)
     private long invitedUserId;
+    @Column(nullable = false)
     private QuizType quizType;
+    @Column(nullable = false)
     private ModeType modeType;
+    @Column(nullable = false)
     private long currentPlayer;
-    private Date lastChange;
+
 
     public long getGameId() {
         return this.gameId;
@@ -45,9 +47,6 @@ public class Game implements Serializable {
     public long getCurrentPlayer() {
         return this.currentPlayer;
     }
-    public Date getLastChange() {
-        return this.lastChange;
-    }
 
     public void setGameId(long gameId) {
         this.gameId = gameId;
@@ -66,8 +65,5 @@ public class Game implements Serializable {
     }
     public void setCurrentPlayer(long currentPlayer) {
         this.currentPlayer = currentPlayer;
-    }
-    public void setLastChange(Date lastChange) {
-        this.lastChange = lastChange;
     }
 }
