@@ -121,14 +121,18 @@ class GameServiceTest {
     }
 
     @Test
-    void deleteGame() {
+    void changeCurrentPlayer_success() {
+        given(gameRepository.findGameByGameId(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+
+        assertEquals(invitedUser.getId(), prepTextDuelGame.getCurrentPlayer());
+        gameService.changeCurrentPlayer(prepTextDuelGame.getGameId());
+        assertEquals(invitingUser.getId(), prepTextDuelGame.getCurrentPlayer());
     }
 
     @Test
-    void changeCurrentPlayer() {
-    }
+    void timeRunUp_false() {
+        given(gameRepository.findGameByGameId(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
-    @Test
-    void timeRunUp() {
+        assertFalse(gameService.timeRunUp(prepTextDuelGame.getGameId()));
     }
 }
