@@ -95,6 +95,6 @@ public class Question implements Serializable {
     }
 
     public boolean timeRunUp() {
-        return (new Date().getTime() - this.creationTime.getTime())/1000 >= 20;
+        return (new Date().getTime() - this.creationTime.getTime())/1000 >= 30;
     }
 }

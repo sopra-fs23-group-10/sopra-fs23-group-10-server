@@ -33,10 +33,10 @@ import java.util.*;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -516,17 +516,19 @@ class GameControllerTest {
         question.setCreationTime(new Date(new Date().getTime() - 30000));
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
-        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN))
-                .when(gameControllerService)
-                .answerQuestion(Mockito.anyLong(), Mockito.any(Answer.class));
-
+        given(question.timeRunUp()).willReturn(true);
 
         MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(answerDTO))
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(putRequest).andExpect(status().isForbidden());
+        mockMvc.perform(putRequest).andExpect(status().isCreated());
+    }
+
+    @Test
+    public void testAnswerQuestionWithCorrectAnswer() {
+
     }
 
     

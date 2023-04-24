@@ -135,7 +135,7 @@ public class GameControllerService {
 
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
         if (question.timeRunUp()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "The time run up, it is not possible to answer this question.");
+            answer.setAnswer("WrongAnswer");
         }
 
         answerService.createAnswer(answer);
