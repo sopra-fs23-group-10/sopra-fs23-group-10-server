@@ -174,7 +174,7 @@ public class GameControllerService {
         return userResultTupleDTOList;
     }
 
-    public List<UserResultTupleDTO> finishGame(long gameId) {
+    public List<UserResultTupleDTO> getEndResult(long gameId) {
         List<UserResultTupleDTO> userResultTupleDTOList = this.intermediateResults(gameId);
 
         UserResultTuple userResultTuple = getPointsOfBoth(gameService.searchGameById(gameId));
@@ -182,7 +182,6 @@ public class GameControllerService {
 
         UserResultTupleDTO userResultTupleDTO = DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
         userResultTupleDTOList.add(userResultTupleDTO);
-        this.removeGame(gameId);
         return userResultTupleDTOList;
     }
 

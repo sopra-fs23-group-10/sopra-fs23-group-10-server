@@ -383,17 +383,17 @@ class GameControllerTest {
 
         // mock call to service class for finishing game
         given(
-                gameControllerService.finishGame(game.getGameId()))
+                gameControllerService.getEndResult(game.getGameId()))
                 .willReturn(userResultTupleDTOs);
 
         // prepare delete request with url, body and header
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"
+        MockHttpServletRequestBuilder getRequest = get("/game/finish/"
                 + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         // execute delete request and check if returned DTO matches set up
-        mockMvc.perform(deleteRequest).andExpect(status().isOk())
+        mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].gameId", is((int) game.getGameId())))
                 .andExpect(jsonPath("$[0].invitingPlayerId",
                         is((int) invitingUser.getId())))
@@ -427,12 +427,12 @@ class GameControllerTest {
         userResultTupleDTOs.add(userResultTupleDTO);
 
         given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
-        given(gameControllerService.finishGame(game.getGameId())).willReturn(userResultTupleDTOs);
+        given(gameControllerService.getEndResult(game.getGameId())).willReturn(userResultTupleDTOs);
 
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/game/finish/" + game.getGameId())
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(deleteRequest).andExpect(status().isUnauthorized());
+        mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -515,8 +515,7 @@ class GameControllerTest {
 
         question.setCreationTime(new Date(new Date().getTime() - 30000));
 
-        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
-        given(question.timeRunUp()).willReturn(true);
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
 
         MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)
