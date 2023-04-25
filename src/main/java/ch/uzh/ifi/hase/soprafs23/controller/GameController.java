@@ -42,9 +42,6 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
         }
 
-        //userService.setInGame(invitedUser);
-        //userService.setInGame(invitingUser);
-
         Game game = gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
@@ -69,8 +66,8 @@ public class GameController {
         }
 
         Map<Long, Boolean> answer = Collections.singletonMap(gameId, response);
-        webSocketController.sendInviationRespond(game.getInvitedUserId(), answer);
-        webSocketController.sendInviationRespond(game.getInvitingUserId(), answer);
+        webSocketController.sendInvitationRespond(game.getInvitedUserId(), answer);
+        webSocketController.sendInvitationRespond(game.getInvitingUserId(), answer);
         return answer;
     }
 

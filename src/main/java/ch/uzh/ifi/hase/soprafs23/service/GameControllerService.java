@@ -61,8 +61,11 @@ public class GameControllerService {
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (InterruptedException | IOException e){
-            System.err.println("Error during request of external API: " + e.getMessage());
+        } catch (InterruptedException e){
+            System.err.println("InterruptedException during request of external API: " + e.getMessage());
+            return null;
+        } catch (IOException e){
+            System.err.println("IOException during request of external API: " + e.getMessage());
             return null;
         }
         if (response.statusCode() == 200) {
@@ -230,6 +233,6 @@ public class GameControllerService {
     public void deathSwitch(Long userId){
         Long gameId = this.getGameIdOfUser(userId);
         this.removeGame(gameId);
-        this.webSocketService.sendMessageToClients("/game/result/" + gameId, "Game was deleted since one of the players left the game");
+        this.webSocketService.sendMessageToClients("/games/"+gameId, "Game was deleted since one of the players left the game");
     }
 }

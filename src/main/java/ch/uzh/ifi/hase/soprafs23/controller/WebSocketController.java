@@ -1,18 +1,17 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
 import ch.uzh.ifi.hase.soprafs23.WebSockets.WebSocketSessionRegistry;
-import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
 import ch.uzh.ifi.hase.soprafs23.multithreads.RegisterRunnable;
 import ch.uzh.ifi.hase.soprafs23.multithreads.UnregisterRunnable;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
-import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
+import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,6 +26,8 @@ public class WebSocketController {
     private final UserService userService;
 
     private final GameControllerService gameControllerService;
+
+    private final Logger log = LoggerFactory.getLogger(GameService.class);
 
     @Autowired
     private WebSocketSessionRegistry sessionRegistry;
@@ -44,8 +45,8 @@ public class WebSocketController {
     }
 
     @MessageMapping("/invitations/answer/{userId}")
-    public void sendInviationRespond(Long userId, Map map) {
-        this.webSocketService.sendMessageToClients("/invitations/answer/" + userId, map);
+    public void sendInvitationRespond(Long userId, Map<Long,Boolean> map) {
+        this.webSocketService.sendMessageToClients("/invitations/answer/" + userId,map);
     }
 
     @MessageMapping("/game/intermediateResult/{gameId}")
@@ -60,7 +61,7 @@ public class WebSocketController {
 
     @MessageMapping("/games/{gameId}/question")
     public void questionToUsers(long gameId, QuestionDTO questionDTO) {
-        System.out.println("/games/"+gameId+"/questions");
+        log.info("/games/"+gameId+"/questions");
         this.webSocketService.sendMessageToClients("/games/"+gameId+"/questions", questionDTO);
     }
 
