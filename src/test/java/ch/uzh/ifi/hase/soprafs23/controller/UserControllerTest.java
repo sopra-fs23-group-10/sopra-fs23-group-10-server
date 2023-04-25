@@ -660,7 +660,7 @@ class UserControllerTest {
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
         Mockito.doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized."))
-                .when(userService).setOffline(user, user.getId());
+                .when(userService).setOffline(user.getId());
         // when
         MockHttpServletRequestBuilder postRequest = post("/logout/" + user.getId())
                 .header("token", user.getToken());

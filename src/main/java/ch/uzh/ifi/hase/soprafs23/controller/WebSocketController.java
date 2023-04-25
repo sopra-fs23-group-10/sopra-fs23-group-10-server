@@ -101,6 +101,7 @@ public class WebSocketController {
         /*
         User user = userService.searchUserById(id);
         userService.setOffline(user, id);
+        userService.setOffline(id);
         System.out.printf("User with userID: %s has logged OUT%n", userId);
         try {
             Thread.sleep(2000);

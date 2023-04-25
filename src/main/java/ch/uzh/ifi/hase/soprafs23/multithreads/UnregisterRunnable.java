@@ -23,7 +23,7 @@ public class UnregisterRunnable implements Runnable{
     public void run() {
         System.out.println("<<<<<<<<<< unregister >>>>>>>>>>>");
         User user = userService.searchUserById(userId);
-        userService.setOffline(user, userId);
+        userService.setOffline(userId);
         System.out.printf("User with userID: %s has logged OUT%n", userId);
         try {
             System.out.println("Thread is going to sleep");

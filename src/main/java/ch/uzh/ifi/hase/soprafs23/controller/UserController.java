@@ -153,7 +153,7 @@ public class UserController {
         User user = userService.verifyTokenWithId(token, userId);
 
         // set user status to OFFLINE
-        userService.setOffline(user, userId);
+        userService.setOffline(userId);
 
         // convert user to API user and return (without token)
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user);
