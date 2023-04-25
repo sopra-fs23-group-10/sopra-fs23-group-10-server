@@ -230,8 +230,4 @@ public class GameControllerService {
         this.removeGame(gameId);
         this.webSocketService.sendMessageToClients("/game/result/" + gameId, "Game was deleted since one of the players left the game");
     }
-
-    public boolean gameExists(Long gameId){
-        return gameService.gameExists(gameId);
-    }
 }

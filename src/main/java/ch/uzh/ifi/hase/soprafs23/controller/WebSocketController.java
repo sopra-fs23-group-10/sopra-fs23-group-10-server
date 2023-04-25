@@ -82,13 +82,6 @@ public class WebSocketController {
         RegisterRunnable registerRunnable = new RegisterRunnable(id,userService,gameControllerService);
         Thread thread = new Thread(registerRunnable);
         thread.start();
-        /*
-        Long gameId = gameControllerService.getGameIdOfUser(userId);
-        if(gameControllerService.gameExists(gameId)){
-            userService.setOnline(userId);
-            System.out.printf("User with userID: %s has logged IN%n", userId);
-        }
-         */
     }
 
     @MessageMapping("/unregister")
@@ -98,19 +91,5 @@ public class WebSocketController {
         UnregisterRunnable unregisterRunnable = new UnregisterRunnable(id,userService,gameControllerService);
         Thread thread = new Thread(unregisterRunnable);
         thread.start();
-        /*
-        User user = userService.searchUserById(id);
-        userService.setOffline(user, id);
-        userService.setOffline(id);
-        System.out.printf("User with userID: %s has logged OUT%n", userId);
-        try {
-            Thread.sleep(2000);
-        }
-        catch (InterruptedException e) {}
-        User userUpdated = userService.searchUserById(id);
-        if(userUpdated.getStatus() == UserStatus.OFFLINE){
-            System.out.println("Game is getting deleted...");
-            this.deathSwitch(id);
-        }*/
     }
 }
