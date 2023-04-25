@@ -524,12 +524,7 @@ class GameControllerTest {
 
         mockMvc.perform(putRequest).andExpect(status().isCreated());
     }
-
-    @Test
-    public void testAnswerQuestionWithCorrectAnswer() {
-
-    }
-
+    
     
     /*
         @Test
