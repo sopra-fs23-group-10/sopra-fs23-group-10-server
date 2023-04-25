@@ -86,6 +86,7 @@ class GameControllerServiceTest {
         createdQuestion.setIncorrectAnswers(incorrectAnswers);
         createdQuestion.setAllAnswers(allAnswers);
         createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
+        createdQuestion.setCreationTime(new Date());
     }
 
     /*
@@ -317,16 +318,35 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void testAnswerQuestionWithTimeRunUp() {
-        when(answerService.searchAnswerByQuestionIdAndUserId(Mockito.any(), Mockito.any())).thenReturn(null);
-        when(questionService.searchQuestionByQuestionId(Mockito.any())).thenReturn(createdQuestion);
-        when(createdQuestion.timeRunUp()).thenReturn(true);
+    public void answerQuestion_correctAnswer_TimeRunUp() {
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getGameId(), invitedUser.getId())).willReturn(null);
+        given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
 
         Answer answer = new Answer();
         answer.setAnswer("CorrectAnswer");
+        answer.setAnsweredTime(3L);
+        answer.setQuestionId(1L);
+        answer.setUserId(3L);
 
-        verify(answerService).createAnswer(answer);
-        verify(answer).setAnswer("WrongAnswer");
+        createdQuestion.setCreationTime(new Date(createdQuestion.getCreationTime().getTime() - 31000));
+
+        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), answer);
+        assertEquals(answer.getAnswer(), "WrongAnswer");
+    }
+
+    @Test
+    public void answerQuestion_correctAnswer_TimeRunNotUp() {
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getGameId(), invitedUser.getId())).willReturn(null);
+        given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
+
+        Answer answer = new Answer();
+        answer.setAnswer("CorrectAnswer");
+        answer.setAnsweredTime(3L);
+        answer.setQuestionId(1L);
+        answer.setUserId(3L);
+
+        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), answer);
+        assertEquals(answer.getAnswer(), "CorrectAnswer");
     }
 /*
     @Test
