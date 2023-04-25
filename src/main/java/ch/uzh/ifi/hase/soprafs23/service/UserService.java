@@ -208,27 +208,26 @@ public class UserService {
     /**
      * This method sets a user's status to ONLINE
      *
-     * @param checkedUser
+     * @param userId
      */
     public void setOnline(Long userId) {
-        userRepository.findUserById(userId).setStatus(UserStatus.ONLINE);
+        User user = userRepository.findUserById(userId);
+        user.setStatus(UserStatus.ONLINE);
+        userRepository.save(user);
+        userRepository.flush();
     }
 
     /**
      * This method sets a user's status to offline.
      *
-     * @param user
      * @param userId
      * @throws org.springframework.web.server.ResponseStatusException
      */
-    public void setOffline(User user, Long userId) {
-        if (user == null || userId == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be logged out was not found.");
-        }
-        if (user.getId() != userId) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized.");
-        }
+    public void setOffline(Long userId) {
+        User user = searchUserById(userId);
         user.setStatus(UserStatus.OFFLINE);
+        userRepository.save(user);
+        userRepository.flush();
     }
 
     public void setInGame(User user) {

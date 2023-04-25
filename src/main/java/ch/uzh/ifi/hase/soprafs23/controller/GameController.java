@@ -158,11 +158,11 @@ public class GameController {
 
     @DeleteMapping("/games/{gameId}/deletions")
     @ResponseStatus(HttpStatus.OK)
-    public Game deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+    public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Game deletedGame = gameControllerService.searchGame(gameId);
         gameControllerService.removeGame(gameId);
         webSocketController.informUsersGameDeleted(gameId);
-        return deletedGame;
+        return DTOMapper.INSTANCE.convertGameEntityToPostDTO(deletedGame);
     }
 }

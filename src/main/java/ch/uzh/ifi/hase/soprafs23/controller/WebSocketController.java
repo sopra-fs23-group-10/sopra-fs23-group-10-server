@@ -79,7 +79,7 @@ public class WebSocketController {
     public void unregister(@Payload String userId) {
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
-        userService.setOffline(userService.searchUserById(id), id);
+        userService.setOffline(id);
         System.out.printf("User with userID: %s has logged OUT%n", userId);
     }
 

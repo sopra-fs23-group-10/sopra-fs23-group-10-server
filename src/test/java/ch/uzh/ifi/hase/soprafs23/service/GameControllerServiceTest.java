@@ -137,31 +137,37 @@ class GameControllerServiceTest {
         assertEquals(prepTextDuelGame.getQuizType(), createdGame.getQuizType());
         assertEquals(prepTextDuelGame.getModeType(), createdGame.getModeType());
     }
-/*
+
     @Test
     public void removeGame_validInput_success() {
-        given(questionService.deleteQuestions(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
 
-        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
         gameControllerService.removeGame(prepTextDuelGame.getGameId());
-        assertThrows(ResponseStatusException.class, () -> {
-            assertNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
-        });
-    }
-*/
 
-    /*
+        verify(gameService).searchGameById(prepTextDuelGame.getGameId());
+        verify(userService).setOnline(invitedUser.getId());
+        verify(userService).setOnline(invitingUser.getId());
+        verify(answerService).deleteAnswers(createdQuestion.getQuestionId());
+        verify(questionService).deleteQuestions(prepTextDuelGame.getGameId());
+        verify(gameService).deleteGame(prepTextDuelGame.getGameId());
+    }
+
+
+
     @Test
     public void removeGame_nonValidInput_noChange() {
         given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
-        gameControllerService.removeGame(workingTextDuelGame.getGameId());
+
+        gameControllerService.removeGame(prepTextDuelGame.getGameId());
+
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
-     */
+
 
 
     @Test

@@ -12,6 +12,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for the UserResource REST resource.
@@ -154,9 +155,13 @@ class UserServiceIntegrationTest {
 
         assertEquals(UserStatus.ONLINE, testUser.getStatus());
 
-        userService.setOffline(testUser, testUser.getId());
+        userService.setOffline(testUser.getId());
 
         assertEquals(UserStatus.OFFLINE, testUser.getStatus());
+
+        userService.setOnline(testUser.getId());
+
+        assertEquals(UserStatus.ONLINE, testUser.getStatus());
     }
 
     @Test
@@ -170,7 +175,7 @@ class UserServiceIntegrationTest {
 
         assertEquals(UserStatus.ONLINE, testUser.getStatus());
 
-        assertThrows(ResponseStatusException.class, () -> userService.setOffline(testUser, -1L));
+        assertThrows(ResponseStatusException.class, () -> userService.setOffline(null));
     }
 
     @Test

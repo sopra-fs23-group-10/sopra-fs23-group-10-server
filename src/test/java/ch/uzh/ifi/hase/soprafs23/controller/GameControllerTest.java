@@ -33,7 +33,7 @@ import java.util.*;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.*;
@@ -524,7 +524,43 @@ class GameControllerTest {
 
         mockMvc.perform(putRequest).andExpect(status().isCreated());
     }
-    
+
+    @Test
+    public void deleteGame_success() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
+
+        MockHttpServletRequestBuilder deleteRequest = delete("/games/" + game.getGameId() + "/deletions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(deleteRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
+                .andExpect(jsonPath("$.invitedUserId", is((int) game.getInvitedUserId())))
+                .andExpect(jsonPath("$.invitingUserId", is((int) game.getInvitingUserId())))
+                .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
+                .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
+    }
+
+    @Test
+    public void finishGame_success() throws Exception {
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
+
+        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/" + game.getGameId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("token", invitingUser.getToken());
+
+        mockMvc.perform(deleteRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
+                .andExpect(jsonPath("$.invitedUserId", is((int) game.getInvitedUserId())))
+                .andExpect(jsonPath("$.invitingUserId", is((int) game.getInvitingUserId())))
+                .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
+                .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
+    }
+
     
     /*
         @Test
