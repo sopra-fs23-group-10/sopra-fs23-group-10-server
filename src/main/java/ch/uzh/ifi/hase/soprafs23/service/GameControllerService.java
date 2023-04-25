@@ -189,7 +189,9 @@ public class GameControllerService {
 
     public UserResultTupleDTO getAllUsersOfGame(Long gameId){
         Game game = gameService.searchGameById(gameId);
-        UserResultTuple userResultTuple = new UserResultTuple(gameId, game.getInvitingUserId(), game.getInvitedUserId());
+        long invitingUserId = game.getInvitingUserId();
+        long invitedUserId = game.getInvitedUserId();
+        UserResultTuple userResultTuple = new UserResultTuple(gameId, invitingUserId, invitedUserId);
         return DTOMapper.INSTANCE.convertUserResultTupleEntitytoDTO(userResultTuple);
     }
 
