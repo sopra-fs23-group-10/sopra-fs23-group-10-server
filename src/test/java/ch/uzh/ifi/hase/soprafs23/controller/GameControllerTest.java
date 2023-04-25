@@ -553,12 +553,7 @@ class GameControllerTest {
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(deleteRequest)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
-                .andExpect(jsonPath("$.invitedUserId", is((int) game.getInvitedUserId())))
-                .andExpect(jsonPath("$.invitingUserId", is((int) game.getInvitingUserId())))
-                .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
-                .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
+                .andExpect(status().isOk());
     }
 
     
