@@ -129,11 +129,14 @@ public class GameController {
 
     @DeleteMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
-    public GameDTO deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+    public void deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
-        Game game = gameControllerService.searchGame(gameId);
-        gameControllerService.removeGame(gameId);
-        return DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
+        try {
+            Game game = gameControllerService.searchGame(gameId);
+            gameControllerService.removeGame(gameId);
+        } catch (Exception e) {
+
+        }
     }
 
     @GetMapping("/game/intermediate/{gameId}")
