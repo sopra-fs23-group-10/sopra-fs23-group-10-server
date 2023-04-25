@@ -151,11 +151,9 @@ class UserServiceIntegrationTest {
         testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
-
         assertEquals(UserStatus.ONLINE, testUser.getStatus());
 
         userService.setOffline(testUser, testUser.getId());
-
         assertEquals(UserStatus.OFFLINE, testUser.getStatus());
     }
 
