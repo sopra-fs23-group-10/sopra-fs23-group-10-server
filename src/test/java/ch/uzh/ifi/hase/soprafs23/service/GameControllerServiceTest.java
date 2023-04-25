@@ -16,6 +16,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class GameControllerServiceTest {
 
@@ -224,6 +226,7 @@ class GameControllerServiceTest {
             gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
         });
     }
+
  /*
     @Test
     public void getQuestion_validInput_success() {
@@ -311,6 +314,19 @@ class GameControllerServiceTest {
         assertThrows(ResponseStatusException.class, () -> {
             gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), null);
         });
+    }
+
+    @Test
+    public void testAnswerQuestionWithTimeRunUp() {
+        when(answerService.searchAnswerByQuestionIdAndUserId(Mockito.any(), Mockito.any())).thenReturn(null);
+        when(questionService.searchQuestionByQuestionId(Mockito.any())).thenReturn(createdQuestion);
+        when(createdQuestion.timeRunUp()).thenReturn(true);
+
+        Answer answer = new Answer();
+        answer.setAnswer("CorrectAnswer");
+
+        verify(answerService).createAnswer(answer);
+        verify(answer).setAnswer("WrongAnswer");
     }
 /*
     @Test
