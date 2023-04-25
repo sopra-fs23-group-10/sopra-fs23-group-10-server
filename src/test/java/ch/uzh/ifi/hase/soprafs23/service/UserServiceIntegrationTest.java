@@ -144,6 +144,7 @@ class UserServiceIntegrationTest {
         assertThrows(ResponseStatusException.class, () -> userService.verifyTokenWithId(testUser.getToken(), -1L));
     }
 
+
     @Test
     void checkDoLogout_success() {
         User testUser = new User();
@@ -152,17 +153,16 @@ class UserServiceIntegrationTest {
         testUser.setEmail("email@email.com");
 
         userService.createUser(testUser);
-
-        assertEquals(UserStatus.ONLINE, testUser.getStatus());
+        assertEquals(UserStatus.ONLINE, userService.searchUserById(testUser.getId()).getStatus());
 
         userService.setOffline(testUser.getId());
-
-        assertEquals(UserStatus.OFFLINE, testUser.getStatus());
+        assertEquals(UserStatus.OFFLINE, userService.searchUserById(testUser.getId()).getStatus());
 
         userService.setOnline(testUser.getId());
-
-        assertEquals(UserStatus.ONLINE, testUser.getStatus());
+        assertEquals(UserStatus.ONLINE, userService.searchUserById(testUser.getId()).getStatus());
     }
+
+
 
     @Test
     void checkDoLogout_noMatchingId_failure() {
@@ -173,7 +173,7 @@ class UserServiceIntegrationTest {
 
         userService.createUser(testUser);
 
-        assertEquals(UserStatus.ONLINE, testUser.getStatus());
+        assertEquals(UserStatus.ONLINE, userService.searchUserById(testUser.getId()).getStatus());
 
         assertThrows(ResponseStatusException.class, () -> userService.setOffline(null));
     }
