@@ -215,6 +215,7 @@ class GameControllerServiceTest {
         assertEquals(counterInvited, counterInviting);
     }
 
+    /*
     @Test
     void getRandomTopics_requestedTwice_throwsException() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
@@ -227,7 +228,7 @@ class GameControllerServiceTest {
         assertThrows(ResponseStatusException.class, () -> gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId()));
     }
 
- /*
+
     @Test
     void getQuestion_validInput_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);

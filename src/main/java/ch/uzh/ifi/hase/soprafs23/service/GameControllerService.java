@@ -113,10 +113,6 @@ public class GameControllerService {
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
-        if (!requestingUserId.equals(gameService.searchGameById(gameId).getCurrentPlayer())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
-        }
-
         List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
         while (randomTopics.size() > 3) {
             randomTopics.remove(random.nextInt(randomTopics.size()));
