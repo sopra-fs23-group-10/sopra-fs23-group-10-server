@@ -67,7 +67,6 @@ public class WebSocketController {
         this.webSocketService.sendMessageToClients(GAMES_URL+gameId, "A user has quit the game");
     }
 
-    /*
     @MessageMapping("/register")
     public void register(@Payload String userId) {
         try {
@@ -92,6 +91,4 @@ public class WebSocketController {
         Thread thread = new Thread(unregisterRunnable);
         thread.start();
     }
-
-     */
 }
