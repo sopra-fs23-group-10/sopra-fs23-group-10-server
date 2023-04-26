@@ -17,7 +17,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class GameControllerServiceTest {
 
@@ -98,7 +97,7 @@ class GameControllerServiceTest {
     }*/
 
     @Test
-    public void searchGame_validInput_success() {
+    void searchGame_validInput_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
         Game foundGame = gameControllerService.searchGame(prepTextDuelGame.getGameId());
@@ -112,18 +111,14 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void searchGame_gameNotExists_exceptionRaised() {
+    void searchGame_gameNotExists_exceptionRaised() {
         given(gameService.searchGameById(Mockito.any())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Game with specified ID cannot be found."));
-        assertThrows(ResponseStatusException.class, () -> {
-            gameControllerService.searchGame(workingTextDuelGame.getGameId());
-        });
-        assertThrows(ResponseStatusException.class, () -> {
-            gameControllerService.searchGame(prepTextDuelGame.getGameId());
-        });
+        assertThrows(ResponseStatusException.class, () -> gameControllerService.searchGame(workingTextDuelGame.getGameId()));
+        assertThrows(ResponseStatusException.class, () -> gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
 
     @Test
-    public void createGame_validInput_success() {
+    void createGame_validInput_success() {
         given(gameService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType())).willReturn(prepTextDuelGame);
 
         Game createdGame = gameControllerService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
@@ -139,7 +134,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void removeGame_validInput_success() {
+    void removeGame_validInput_success() {
 
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
         given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
@@ -157,7 +152,7 @@ class GameControllerServiceTest {
 
 
     @Test
-    public void removeGame_nonValidInput_noChange() {
+    void removeGame_nonValidInput_noChange() {
         given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
@@ -171,7 +166,7 @@ class GameControllerServiceTest {
 
 
     @Test
-    public void getAllTopics_success() {
+    void getAllTopics_success() {
         Map<String, List<Category>> topicsMap = gameControllerService.getAllTopics();
         List<Category> topicsList = topicsMap.get("topics");
 
@@ -187,7 +182,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void getRandomTopics_once_success() {
+    void getRandomTopics_once_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
         Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
@@ -198,7 +193,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void getRandomTopics_rotating_success() {
+    void getRandomTopics_rotating_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
         int counterInvited = 0;
@@ -221,7 +216,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void getRandomTopics_requestedTwice_throwsException() {
+    void getRandomTopics_requestedTwice_throwsException() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
         Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
@@ -229,14 +224,12 @@ class GameControllerServiceTest {
         List<Category> topicsList = topicsMap.get("topics");
 
         assertEquals(3, topicsList.size());
-        assertThrows(ResponseStatusException.class, () -> {
-            gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
-        });
+        assertThrows(ResponseStatusException.class, () -> gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId()));
     }
 
  /*
     @Test
-    public void getQuestion_validInput_success() {
+    void getQuestion_validInput_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
         given(questionService.createQuestion(Mockito.any(Long.class), Mockito.any(String.class), Mockito.any(Category.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(List.class))).willCallRealMethod();
 
@@ -317,14 +310,12 @@ class GameControllerServiceTest {
     }*/
 
     @Test
-    public void answerQuestion_nullAnswer_throwsException() {
-        assertThrows(ResponseStatusException.class, () -> {
-            gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), null);
-        });
+    void answerQuestion_nullAnswer_throwsException() {
+        assertThrows(ResponseStatusException.class, () -> gameControllerService.answerQuestion(null));
     }
 
     @Test
-    public void answerQuestion_correctAnswer_TimeRunUp() {
+    void answerQuestion_correctAnswer_TimeRunUp() {
         given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getGameId(), invitedUser.getId())).willReturn(null);
         given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
 
@@ -336,12 +327,12 @@ class GameControllerServiceTest {
 
         createdQuestion.setCreationTime(new Date(createdQuestion.getCreationTime().getTime() - 31000));
 
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), answer);
-        assertEquals(answer.getAnswer(), "WrongAnswer");
+        gameControllerService.answerQuestion(answer);
+        assertEquals( "WrongAnswer",answer.getAnswer());
     }
 
     @Test
-    public void answerQuestion_correctAnswer_TimeRunNotUp() {
+    void answerQuestion_correctAnswer_TimeRunNotUp() {
         given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getGameId(), invitedUser.getId())).willReturn(null);
         given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
 
@@ -351,8 +342,8 @@ class GameControllerServiceTest {
         answer.setQuestionId(1L);
         answer.setUserId(3L);
 
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), answer);
-        assertEquals(answer.getAnswer(), "CorrectAnswer");
+        gameControllerService.answerQuestion(answer);
+        assertEquals("CorrectAnswer",answer.getAnswer());
     }
 /*
     @Test

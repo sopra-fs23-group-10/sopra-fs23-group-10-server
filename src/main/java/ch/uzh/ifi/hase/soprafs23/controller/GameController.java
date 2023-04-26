@@ -9,7 +9,10 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
+import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,6 +25,7 @@ public class GameController {
     private final GameControllerService gameControllerService;
     private final UserService userService;
     private final WebSocketController webSocketController;
+    private final Logger log = LoggerFactory.getLogger(GameService.class);
 
     GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
         this.gameControllerService = gameControllerService;
@@ -42,9 +46,6 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
         }
 
-        //userService.setInGame(invitedUser);
-        //userService.setInGame(invitingUser);
-
         Game game = gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
@@ -62,15 +63,15 @@ public class GameController {
 
         Game game = gameControllerService.searchGame(gameId);
 
-        if(!response) {
+        if(Boolean.FALSE.equals(response)) {
             userService.setOnline(game.getInvitedUserId());
             userService.setOnline(game.getInvitingUserId());
             gameControllerService.removeGame(gameId);
         }
 
         Map<Long, Boolean> answer = Collections.singletonMap(gameId, response);
-        webSocketController.sendInviationRespond(game.getInvitedUserId(), answer);
-        webSocketController.sendInviationRespond(game.getInvitingUserId(), answer);
+        webSocketController.sendInvitationRespond(game.getInvitedUserId(), answer);
+        webSocketController.sendInvitationRespond(game.getInvitingUserId(), answer);
         return answer;
     }
 
@@ -105,7 +106,7 @@ public class GameController {
     public void answerQuestion(@PathVariable long gameId, @RequestBody AnswerDTO answerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(answerDTO);
-        gameControllerService.answerQuestion(gameId, answer);
+        gameControllerService.answerQuestion(answer);
     }
 
     @GetMapping("game/online/{gameId}")
@@ -132,10 +133,9 @@ public class GameController {
     public void deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         try {
-            Game game = gameControllerService.searchGame(gameId);
             gameControllerService.removeGame(gameId);
-        } catch (Exception e) {
-
+        } catch (ResponseStatusException e) {
+            log.info("No game with ID: " + gameId + " found");
         }
     }
 

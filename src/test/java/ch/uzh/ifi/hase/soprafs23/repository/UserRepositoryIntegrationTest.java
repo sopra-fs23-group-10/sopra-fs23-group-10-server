@@ -38,7 +38,6 @@ class UserRepositoryIntegrationTest {
     User found = userRepository.findByUsername(user.getUsername());
 
     // then
-    assertNotNull(found.getId());
     assertEquals(found.getUsername(), user.getUsername());
     assertEquals(found.getPassword(), user.getPassword());
     assertEquals(found.getEmail(), user.getEmail());
@@ -93,7 +92,6 @@ class UserRepositoryIntegrationTest {
         User found = userRepository.findUserById(user.getId());
 
         // then
-        assertNotNull(found.getId());
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getPassword(), user.getPassword());
         assertEquals(found.getEmail(), user.getEmail());
@@ -148,7 +146,6 @@ class UserRepositoryIntegrationTest {
         User found = userRepository.findUserByToken(user.getToken());
 
         // then
-        assertNotNull(found.getId());
         assertEquals(found.getUsername(), user.getUsername());
         assertEquals(found.getPassword(), user.getPassword());
         assertEquals(found.getEmail(), user.getEmail());

@@ -4,8 +4,6 @@ import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.entity.Game;
 import ch.uzh.ifi.hase.soprafs23.repository.GameRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -17,16 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @Transactional
 public class GameService {
-    private final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameRepository gameRepository;
-    private final QuestionService questionService;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, QuestionService questionService) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
         this.gameRepository = gameRepository;
-        this.questionService = questionService;
     }
-
 
     public Game createGame(Long invitingUserId, Long invitedUserId, QuizType quizType, ModeType modeType) {
         Game game = new Game();

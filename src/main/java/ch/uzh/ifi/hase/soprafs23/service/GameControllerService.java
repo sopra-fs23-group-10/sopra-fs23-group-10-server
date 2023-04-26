@@ -13,6 +13,8 @@ import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class GameControllerService {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final WebSocketService webSocketService;
+    private final Logger log = LoggerFactory.getLogger(AnswerService.class);
+    private final Random random;
 
     @Autowired
     public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService, WebSocketService webSocketService) {
@@ -42,6 +46,7 @@ public class GameControllerService {
         this.questionService = questionService;
         this.answerService = answerService;
         this.webSocketService = webSocketService;
+        this.random = new Random();
     }
 
     public Question getQuestion(Category category, Long gameId) {
@@ -49,7 +54,6 @@ public class GameControllerService {
         Game game = gameService.searchGameById(gameId);
         userService.searchUserById(game.getInvitedUserId());
         userService.searchUserById(game.getInvitingUserId());
-
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -61,8 +65,11 @@ public class GameControllerService {
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (InterruptedException | IOException e){
-            System.err.println("Error during request of external API: " + e.getMessage());
+        } catch (InterruptedException e){
+            log.error("InterruptedException during request of external API: " + e.getMessage());
+            return null;
+        } catch (IOException e){
+            log.error("IOException during request of external API: " + e.getMessage());
             return null;
         }
         if (response.statusCode() == 200) {
@@ -75,11 +82,11 @@ public class GameControllerService {
                 String question = jsonObj.getString("question");
                 return questionService.createQuestion(game.getGameId(), id, category, correctAnswer, question, List.of(incorrectAnswers));
             } catch (JSONException e) {
-                System.err.println("Error parsing JSON response of external API: " + e.getMessage());
+                log.error("Error parsing JSON response of external API: " + e.getMessage());
                 return null;
             }
         } else {
-            System.err.println("Request to external API failed with code: " + response.statusCode());
+            log.error("Request to external API failed with code: " + response.statusCode());
             return null;
         }
     }
@@ -106,14 +113,13 @@ public class GameControllerService {
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
-        //TODO: Does this possibly throw a NullPointerException?
         if (!requestingUserId.equals(gameService.searchGameById(gameId).getCurrentPlayer())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
         }
 
         List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
         while (randomTopics.size() > 3) {
-            randomTopics.remove((int) ((Math.random() * randomTopics.size())));
+            randomTopics.remove(random.nextInt(randomTopics.size()));
         }
 
         gameService.changeCurrentPlayer(gameId);
@@ -125,7 +131,7 @@ public class GameControllerService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public synchronized void answerQuestion(long gameId, Answer answer) {
+    public synchronized void answerQuestion(Answer answer) {
         if (answer == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
         }
@@ -139,7 +145,6 @@ public class GameControllerService {
         if (question.timeRunUp()) {
             answer.setAnswer("WrongAnswer");
         }
-
         answerService.createAnswer(answer);
     }
 
@@ -230,6 +235,6 @@ public class GameControllerService {
     public void deathSwitch(Long userId){
         Long gameId = this.getGameIdOfUser(userId);
         this.removeGame(gameId);
-        this.webSocketService.sendMessageToClients("/game/result/" + gameId, "Game was deleted since one of the players left the game");
+        this.webSocketService.sendMessageToClients("/games/"+gameId, "Game was deleted since one of the players left the game");
     }
 }

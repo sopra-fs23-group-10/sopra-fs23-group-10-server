@@ -65,7 +65,7 @@ class UserControllerTest {
 
 // Tests of PostMappings
     @Test
-    public void createUser_nonexistentUser_thenUserCreated_201() throws Exception {
+    void createUser_nonexistentUser_thenUserCreated_201() throws Exception {
         // given
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
