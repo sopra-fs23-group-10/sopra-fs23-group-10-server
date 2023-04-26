@@ -37,6 +37,7 @@ public class GameControllerService {
     private final AnswerService answerService;
     private final WebSocketService webSocketService;
     private final Logger log = LoggerFactory.getLogger(AnswerService.class);
+    private final Random random;
 
     @Autowired
     public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService, WebSocketService webSocketService) {
@@ -45,6 +46,7 @@ public class GameControllerService {
         this.questionService = questionService;
         this.answerService = answerService;
         this.webSocketService = webSocketService;
+        this.random = new Random();
     }
 
     public Question getQuestion(Category category, Long gameId) {
@@ -111,14 +113,13 @@ public class GameControllerService {
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
-        //TODO: Does this possibly throw a NullPointerException?
         if (!requestingUserId.equals(gameService.searchGameById(gameId).getCurrentPlayer())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
         }
 
         List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
         while (randomTopics.size() > 3) {
-            randomTopics.remove((int) (Math.random() * randomTopics.size()));
+            randomTopics.remove(random.nextInt(randomTopics.size()));
         }
 
         gameService.changeCurrentPlayer(gameId);

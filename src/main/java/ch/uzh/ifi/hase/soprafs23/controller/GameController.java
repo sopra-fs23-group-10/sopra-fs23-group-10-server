@@ -63,7 +63,7 @@ public class GameController {
 
         Game game = gameControllerService.searchGame(gameId);
 
-        if(!response) {
+        if(Boolean.FALSE.equals(response)) {
             userService.setOnline(game.getInvitedUserId());
             userService.setOnline(game.getInvitingUserId());
             gameControllerService.removeGame(gameId);
@@ -133,10 +133,9 @@ public class GameController {
     public void deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         try {
-            Game game = gameControllerService.searchGame(gameId);
             gameControllerService.removeGame(gameId);
-        } catch (Exception e) {
-            log.info("Exception found");
+        } catch (ResponseStatusException e) {
+            log.info("No game with ID: " + gameId + " found");
         }
     }
 

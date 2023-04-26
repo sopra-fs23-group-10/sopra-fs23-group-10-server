@@ -76,7 +76,8 @@ public class WebSocketController {
             Thread.sleep(10);
         }
         catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            log.error("Register thread was interrupted...");
         }
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);

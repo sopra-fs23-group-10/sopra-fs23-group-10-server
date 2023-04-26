@@ -202,7 +202,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void getTopicSelection_whenValid_thenReturnTopics_200() throws Exception {
+    void getTopicSelection_whenValid_thenReturnTopics_200() throws Exception {
         List<Category> categories = new ArrayList<>();
         categories.add(Category.MUSIC);
         categories.add(Category.FILM_TV);
@@ -222,7 +222,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void getTopicSelection_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
+    void getTopicSelection_whenInvalidToken_thenThrowUnauthorized_401() throws Exception {
         List<Category> categories = new ArrayList<>();
         categories.add(Category.MUSIC);
         categories.add(Category.FILM_TV);
@@ -240,9 +240,8 @@ class GameControllerTest {
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
 
-    //TODO: This test does not do much yet
     @Test
-    public void getAllTopics_whenValid_thenSuccess_200() throws Exception {
+    void getAllTopics_whenValid_thenSuccess_200() throws Exception {
         Map<String, List<Category>> topics = Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
 
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
@@ -256,7 +255,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void answerQuestion_whenQuestionNotAnswered_thenSuccess_201() throws Exception {
+    void answerQuestion_whenQuestionNotAnswered_thenSuccess_201() throws Exception {
         AnswerDTO answerDTO = new AnswerDTO();
         answerDTO.setUserId(invitingUser.getId());
         answerDTO.setQuestionId(question.getQuestionId());
@@ -274,7 +273,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void answerQuestion_whenNullAnswer_thenNotAcceptable_406() throws Exception {
+    void answerQuestion_whenNullAnswer_thenNotAcceptable_406() throws Exception {
         AnswerDTO answerDTO = new AnswerDTO();
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
@@ -290,7 +289,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void answerQuestion_alreadyAnswered_thenConflict_409() throws Exception {
+    void answerQuestion_alreadyAnswered_thenConflict_409() throws Exception {
         AnswerDTO answerDTO = new AnswerDTO();
         answerDTO.setUserId(invitingUser.getId());
         answerDTO.setQuestionId(question.getQuestionId());
@@ -309,7 +308,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void allUsersConnected_bothConnected_validInput_success() throws Exception {
+    void allUsersConnected_bothConnected_validInput_success() throws Exception {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.allUsersConnected(game.getGameId())).willReturn(Collections.singletonMap("status", true));
 
@@ -322,7 +321,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void allUsersConnected_oneNotConnected_validInput_success() throws Exception {
+    void allUsersConnected_oneNotConnected_validInput_success() throws Exception {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.allUsersConnected(game.getGameId())).willReturn(Collections.singletonMap("status", false));
 
@@ -335,7 +334,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void allUsersConnected_bothConnected_invalidToken_throws_401() throws Exception {
+    void allUsersConnected_bothConnected_invalidToken_throws_401() throws Exception {
         given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
         given(gameControllerService.allUsersConnected(game.getGameId())).willReturn(Collections.singletonMap("status", true));
 
@@ -347,7 +346,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
+    void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
         // set user to status IN_GAME
         invitingUser.setStatus(UserStatus.IN_GAME);
 
@@ -405,7 +404,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void finishGame_whenInvalidToken_thenThrowUnautorized_401() throws Exception {
+    void finishGame_whenInvalidToken_thenThrowUnautorized_401() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
 
         User invitedUser = new User();
@@ -435,7 +434,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void intermediateGame_whenValid_returnResults_200() throws Exception {
+    void intermediateGame_whenValid_returnResults_200() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
 
         UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), invitingUser.getId(), game.getInvitedUserId());
@@ -468,7 +467,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void intermediateGame_whenInvalidToken_throwsUnauthorized_401() throws Exception {
+    void intermediateGame_whenInvalidToken_throwsUnauthorized_401() throws Exception {
         invitingUser.setStatus(UserStatus.IN_GAME);
 
         UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), invitingUser.getId(), game.getInvitedUserId());
@@ -505,7 +504,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void answerQuestion_whenAnswerToLate_thenFail_Forbidden() throws Exception {
+    void answerQuestion_whenAnswerToLate_thenFail_Forbidden() throws Exception {
         AnswerDTO answerDTO = new AnswerDTO();
         answerDTO.setUserId(invitingUser.getId());
         answerDTO.setQuestionId(question.getQuestionId());
@@ -525,7 +524,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void deleteGame_success() throws Exception {
+    void deleteGame_success() throws Exception {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
 
@@ -543,7 +542,7 @@ class GameControllerTest {
     }
 
     @Test
-    public void finishGame_success() throws Exception {
+    void finishGame_success() throws Exception {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
 

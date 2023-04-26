@@ -1,11 +1,15 @@
 package ch.uzh.ifi.hase.soprafs23.multithreads;
 
 import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RegisterRunnable implements Runnable{
     private final UserService userService;
     private final Long userId;
+    private final Logger log = LoggerFactory.getLogger(GameService.class);
 
     public RegisterRunnable(Long userId, UserService userService){
         this.userId = userId;
@@ -14,8 +18,8 @@ public class RegisterRunnable implements Runnable{
 
     @Override
     public void run() {
-        User user = userService.searchUserById(userId);
+        userService.searchUserById(userId);
         userService.setOnline(userId);
-        System.out.printf("User with userID: %s has logged IN%n", userId);
+        log.info("User with userID: "+userId+" has logged IN%n");
     }
 }
