@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.SecureRandom;
 import java.util.*;
 
 @Service
@@ -36,8 +37,8 @@ public class GameControllerService {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final WebSocketService webSocketService;
-    private final Logger log = LoggerFactory.getLogger(AnswerService.class);
-    private final Random random;
+    private final Logger log = LoggerFactory.getLogger(GameControllerService.class);
+    private final SecureRandom secureRandom;
 
     @Autowired
     public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService, WebSocketService webSocketService) {
@@ -46,7 +47,7 @@ public class GameControllerService {
         this.questionService = questionService;
         this.answerService = answerService;
         this.webSocketService = webSocketService;
-        this.random = new Random();
+        this.secureRandom = new SecureRandom();
     }
 
     public Question getQuestion(Category category, Long gameId) {
@@ -66,10 +67,11 @@ public class GameControllerService {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (InterruptedException e){
-            log.error("InterruptedException during request of external API: " + e.getMessage());
+            log.error("InterruptedException during request of external API: {}", e.getMessage());
+            Thread.currentThread().interrupt();
             return null;
         } catch (IOException e){
-            log.error("IOException during request of external API: " + e.getMessage());
+            log.error("IOException during request of external API: {}", e.getMessage());
             return null;
         }
         if (response.statusCode() == 200) {
@@ -82,11 +84,11 @@ public class GameControllerService {
                 String question = jsonObj.getString("question");
                 return questionService.createQuestion(game.getGameId(), id, category, correctAnswer, question, List.of(incorrectAnswers));
             } catch (JSONException e) {
-                log.error("Error parsing JSON response of external API: " + e.getMessage());
+                log.error("Error parsing JSON response of external API: {}", e.getMessage());
                 return null;
             }
         } else {
-            log.error("Request to external API failed with code: " + response.statusCode());
+            log.error("Request to external API failed with code: {}", response.statusCode());
             return null;
         }
     }
@@ -119,7 +121,7 @@ public class GameControllerService {
 
         List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
         while (randomTopics.size() > 3) {
-            randomTopics.remove(random.nextInt(randomTopics.size()));
+            randomTopics.remove(secureRandom.nextInt(randomTopics.size()));
         }
 
         gameService.changeCurrentPlayer(gameId);
@@ -219,7 +221,7 @@ public class GameControllerService {
 
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
         return answer.getAnswer().equals(question.getCorrectAnswer()) ?
-                (long) (750L - (0.5 * answer.getAnsweredTime()/10)) : 0L;
+                (long) (750L - (0.5 * ((double)answer.getAnsweredTime())/10)) : 0L;
     }
 
     public synchronized boolean completelyAnswered(long gameId) {

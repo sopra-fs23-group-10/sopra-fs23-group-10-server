@@ -25,7 +25,7 @@ public class GameController {
     private final GameControllerService gameControllerService;
     private final UserService userService;
     private final WebSocketController webSocketController;
-    private final Logger log = LoggerFactory.getLogger(GameService.class);
+    private final Logger log = LoggerFactory.getLogger(GameController.class);
 
     GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
         this.gameControllerService = gameControllerService;
@@ -135,7 +135,7 @@ public class GameController {
         try {
             gameControllerService.removeGame(gameId);
         } catch (ResponseStatusException e) {
-            log.info("No game with ID: " + gameId + " found");
+            log.info("No game with ID: {} found",gameId);
         }
     }
 

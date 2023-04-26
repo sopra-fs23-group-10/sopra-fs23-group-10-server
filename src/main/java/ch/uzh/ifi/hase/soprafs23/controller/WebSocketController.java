@@ -7,7 +7,6 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
-import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import org.slf4j.Logger;
@@ -27,7 +26,9 @@ public class WebSocketController {
 
     private final GameControllerService gameControllerService;
 
-    private final Logger log = LoggerFactory.getLogger(GameService.class);
+    private final Logger log = LoggerFactory.getLogger(WebSocketController.class);
+
+    private static final String GAMES_URL = "/games/";
 
     @Autowired
     private WebSocketSessionRegistry sessionRegistry;
@@ -61,13 +62,13 @@ public class WebSocketController {
 
     @MessageMapping("/games/{gameId}/question")
     public void questionToUsers(long gameId, QuestionDTO questionDTO) {
-        log.info("/games/"+gameId+"/questions");
-        this.webSocketService.sendMessageToClients("/games/"+gameId+"/questions", questionDTO);
+        log.info(GAMES_URL+"{}/questions",gameId);
+        this.webSocketService.sendMessageToClients(GAMES_URL+gameId+"/questions", questionDTO);
     }
 
     @MessageMapping("/games/{gameId}/deletions")
     public void informUsersGameDeleted(long gameId) {
-        this.webSocketService.sendMessageToClients("/games/"+gameId, "A user has quit the game");
+        this.webSocketService.sendMessageToClients(GAMES_URL+gameId, "A user has quit the game");
     }
 
     @MessageMapping("/register")
