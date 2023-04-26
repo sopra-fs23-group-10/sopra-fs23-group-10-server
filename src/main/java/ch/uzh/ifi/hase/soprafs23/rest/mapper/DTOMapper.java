@@ -52,7 +52,6 @@ public interface DTOMapper {
     @Mapping(source = "modeType", target = "modeType")
     GameDTO convertGameEntityToPostDTO(Game game);
 
-
     @Mapping(source = "gameId", target = "gameId")
     @Mapping(source = "invitedUserId", target = "invitedUserId")
     @Mapping(source = "invitingUserId", target = "invitingUserId")
@@ -67,6 +66,7 @@ public interface DTOMapper {
     @Mapping(source = "correctAnswer", target = "correctAnswer")
     @Mapping(source = "incorrectAnswers", target = "incorrectAnswers")
     Question convertQuestionDTOtoEntity(QuestionDTO questionDTO);
+
     @Mapping(source = "category", target = "category")
     @Mapping(source = "questionId", target = "questionId")
     @Mapping(source = "apiId", target = "apiId")
@@ -75,7 +75,6 @@ public interface DTOMapper {
     @Mapping(target = "correctAnswer", ignore = true)
     @Mapping(target = "incorrectAnswers", ignore = true)
     QuestionDTO convertQuestionEntityToDTO(Question question);
-
 
     @Mapping(source = "userId", target = "userId")
     @Mapping(source = "questionId", target = "questionId")

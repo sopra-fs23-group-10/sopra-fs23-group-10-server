@@ -20,14 +20,11 @@ import java.util.List;
 @Service
 @Transactional
 public class QuestionService {
-    private final Logger log = LoggerFactory.getLogger(QuestionService.class);
     private final QuestionRepository questionRepository;
-    private final AnswerService answerService;
 
     @Autowired
-    public QuestionService(@Qualifier("questionRepository") QuestionRepository questionRepository, AnswerService answerService) {
+    public QuestionService(@Qualifier("questionRepository") QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
-        this.answerService = answerService;
     }
 
     public Question searchQuestionByQuestionId(long questionId) {
@@ -39,10 +36,6 @@ public class QuestionService {
     }
 
     public List<Question> searchQuestionsByGameId(long gameId) {
-        /*
-        if (questionList.size() == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not have any questions yet");
-        }*/
         return questionRepository.findAllByGameId(gameId);
     }
 

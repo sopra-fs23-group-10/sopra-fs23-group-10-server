@@ -13,36 +13,29 @@ public class GameDTO {
     public long getGameId(){
         return this.gameId;
     }
-
     public long getInvitingUserId() {
         return this.invitingUserId;
     }
-
     public long getInvitedUserId() {
         return this.invitedUserId;
     }
-
     public ModeType getModeType() {
         return this.modeType;
     }
-
     public QuizType getQuizType() {
         return this.quizType;
     }
-    public void setGameId(long gameId){this.gameId = gameId;}
 
+    public void setGameId(long gameId){this.gameId = gameId;}
     public void setInvitedUserId(long invitedUserId) {
         this.invitedUserId = invitedUserId;
     }
-
     public void setInvitingUserId(long invitingUserId) {
         this.invitingUserId = invitingUserId;
     }
-
     public void setModeType(ModeType modeType) {
         this.modeType = modeType;
     }
-
     public void setQuizType(QuizType quizType) {
         this.quizType = quizType;
     }

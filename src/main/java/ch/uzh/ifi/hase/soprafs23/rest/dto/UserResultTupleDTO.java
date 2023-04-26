@@ -10,19 +10,15 @@ public class UserResultTupleDTO {
     public long getGameId() {
         return this.gameId;
     }
-
     public long getInvitingPlayerId() {
         return this.invitingPlayerId;
     }
-
     public long getInvitingPlayerResult() {
         return this.invitingPlayerResult;
     }
-
     public long getInvitedPlayerId() {
         return this.invitedPlayerId;
     }
-
     public long getInvitedPlayerResult() {
         return this.invitedPlayerResult;
     }
@@ -30,19 +26,15 @@ public class UserResultTupleDTO {
     public void setGameId(long gameId) {
         this.gameId = gameId;
     }
-
     public void setInvitingPlayerId(long invitingPlayerId) {
         this.invitingPlayerId = invitingPlayerId;
     }
-
     public void setInvitingPlayerResult(long invitingPlayerResult) {
         this.invitingPlayerResult = invitingPlayerResult;
     }
-
     public void setInvitedPlayerId(long invitedPlayerId) {
         this.invitedPlayerId = invitedPlayerId;
     }
-
     public void setInvitedPlayerResult(long invitedPlayerResult) {
         this.invitedPlayerResult = invitedPlayerResult;
     }

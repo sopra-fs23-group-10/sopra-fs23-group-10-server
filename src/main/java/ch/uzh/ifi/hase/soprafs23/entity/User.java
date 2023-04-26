@@ -31,15 +31,15 @@ public class User implements Serializable {
     private String email;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)//, columnDefinition = "long default 0L")
+    @Column(nullable = false)
     private long points;
     @Column(nullable = false)
     private UserStatus status;
     @Column(nullable = false, unique = true)
     private String token;
-    @Column(nullable = false)//, columnDefinition = "varchar(255) default 'John Snow'")
+    @Column(nullable = false)
     private String profilePicture;
-    @Column(nullable = false)//, columnDefinition = "boolean default true")
+    @Column(nullable = false)
     private boolean backgroundMusic;
 
     public long getId() {

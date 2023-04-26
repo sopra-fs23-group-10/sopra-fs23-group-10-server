@@ -1,9 +1,6 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
-import org.springframework.data.util.Pair;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class UserResultTuple implements Serializable {
     private long gameId;

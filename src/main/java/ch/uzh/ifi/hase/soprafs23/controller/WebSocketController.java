@@ -80,7 +80,7 @@ public class WebSocketController {
         }
         if (userId == null || userId.isEmpty()) {return;}
         Long id = Long.parseLong(userId);
-        RegisterRunnable registerRunnable = new RegisterRunnable(id,userService,gameControllerService);
+        RegisterRunnable registerRunnable = new RegisterRunnable(id,userService);
         Thread thread = new Thread(registerRunnable);
         thread.start();
     }

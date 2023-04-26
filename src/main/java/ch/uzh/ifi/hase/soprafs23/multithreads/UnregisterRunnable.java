@@ -1,17 +1,15 @@
 package ch.uzh.ifi.hase.soprafs23.multithreads;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.controller.WebSocketController;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
-import ch.uzh.ifi.hase.soprafs23.service.GameService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import org.springframework.web.server.ResponseStatusException;
 
 public class UnregisterRunnable implements Runnable{
     private final UserService userService;
     private final GameControllerService gameControllerService;
-    private Long userId;
+    private final Long userId;
 
     public UnregisterRunnable(Long userId, UserService userService, GameControllerService gameControllerService){
         this.userId = userId;

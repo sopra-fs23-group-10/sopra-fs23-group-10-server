@@ -14,40 +14,34 @@ public class UserGetDTO {
     public long getId() {
         return this.id;
     }
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getUsername() {
         return this.username;
+    }
+    public long getPoints() {
+        return points;
+    }
+    public UserStatus getStatus() {
+        return this.status;
+    }
+    public String getToken() {
+        return this.token;
+    }
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
     public void setUsername(String username) {
         this.username = username;
     }
-
-    public long getPoints() {
-        return points;
-    }
-    public void setPoints(long points) {
-        this.points = points;
-    }
-
-    public UserStatus getStatus() {
-        return this.status;
-    }
+    public void setPoints(long points) {this.points = points;}
     public void setStatus(UserStatus status) {
         this.status = status;
     }
-
-    public String getToken() {
-        return this.token;
-    }
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
     }
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;

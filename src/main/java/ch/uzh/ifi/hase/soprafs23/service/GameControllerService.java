@@ -53,7 +53,6 @@ public class GameControllerService {
         userService.searchUserById(game.getInvitedUserId());
         userService.searchUserById(game.getInvitingUserId());
 
-
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://the-trivia-api.com/api/questions?categories="
@@ -145,7 +144,6 @@ public class GameControllerService {
         if (question.timeRunUp()) {
             answer.setAnswer("WrongAnswer");
         }
-
         answerService.createAnswer(answer);
     }
 

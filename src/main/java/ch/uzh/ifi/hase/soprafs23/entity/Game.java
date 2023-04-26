@@ -5,8 +5,6 @@ import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-
 
 @Entity
 @Table(name = "GAME")
