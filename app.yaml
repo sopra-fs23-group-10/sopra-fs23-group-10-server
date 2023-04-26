@@ -4,12 +4,15 @@
 runtime: java
 env: flex
 
-automatic_scaling:
-  max_num_instances: 1
+#automatic_scaling:
+  #max_num_instances: 1
 
 runtime_config:
   operating_system: "ubuntu22"
   runtime_version: "17"
+
+network:
+  session_affinity: true
 
 env_variables:
   spring_profiles_active: "dev"
