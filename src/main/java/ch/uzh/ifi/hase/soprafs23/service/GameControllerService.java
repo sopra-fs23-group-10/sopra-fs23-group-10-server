@@ -115,10 +115,6 @@ public class GameControllerService {
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
-        if (!requestingUserId.equals(gameService.searchGameById(gameId).getCurrentPlayer())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This user cannot request topics at this point.");
-        }
-
         List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
         while (randomTopics.size() > 3) {
             randomTopics.remove(secureRandom.nextInt(randomTopics.size()));
@@ -221,7 +217,7 @@ public class GameControllerService {
 
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
         return answer.getAnswer().equals(question.getCorrectAnswer()) ?
-                (long) (750L - (0.5 * ((double)answer.getAnsweredTime())/10)) : 0L;
+                (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime())/10))) : 0L;
     }
 
     public synchronized boolean completelyAnswered(long gameId) {
