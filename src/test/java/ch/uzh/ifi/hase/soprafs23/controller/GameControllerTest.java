@@ -33,7 +33,6 @@ import java.util.*;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.*;
@@ -279,7 +278,7 @@ class GameControllerTest {
         AnswerDTO answerDTO = new AnswerDTO();
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
-        Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.")).when(gameControllerService).answerQuestion(Mockito.any(Long.class), Mockito.any(Answer.class));
+        Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.")).when(gameControllerService).answerQuestion(Mockito.any(Answer.class));
 
 
         MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
@@ -299,7 +298,7 @@ class GameControllerTest {
         answerDTO.setAnsweredTime(112L);
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
-        Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.")).when(gameControllerService).answerQuestion(Mockito.any(Long.class), Mockito.any(Answer.class));
+        Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.")).when(gameControllerService).answerQuestion(Mockito.any(Answer.class));
 
         MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)

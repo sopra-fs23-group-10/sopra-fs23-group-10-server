@@ -87,8 +87,8 @@ public class Question implements Serializable {
     public void setAllAnswers(List<String> allAnswers) {
         this.allAnswers = allAnswers;
     }
-    public void setQuestion(String questionString) {
-        this.question = questionString;
+    public void setQuestion(String question) {
+        this.question = question;
     }
     public void setCreationTime(Date lastChange) {
         this.creationTime = lastChange;

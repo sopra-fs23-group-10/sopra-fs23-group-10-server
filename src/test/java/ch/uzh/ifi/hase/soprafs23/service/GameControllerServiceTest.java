@@ -17,7 +17,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class GameControllerServiceTest {
 
@@ -319,7 +318,7 @@ class GameControllerServiceTest {
     @Test
     public void answerQuestion_nullAnswer_throwsException() {
         assertThrows(ResponseStatusException.class, () -> {
-            gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), null);
+            gameControllerService.answerQuestion(null);
         });
     }
 
@@ -336,7 +335,7 @@ class GameControllerServiceTest {
 
         createdQuestion.setCreationTime(new Date(createdQuestion.getCreationTime().getTime() - 31000));
 
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), answer);
+        gameControllerService.answerQuestion(answer);
         assertEquals(answer.getAnswer(), "WrongAnswer");
     }
 
@@ -351,7 +350,7 @@ class GameControllerServiceTest {
         answer.setQuestionId(1L);
         answer.setUserId(3L);
 
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), answer);
+        gameControllerService.answerQuestion(answer);
         assertEquals(answer.getAnswer(), "CorrectAnswer");
     }
 /*

@@ -4,7 +4,7 @@ public class AnswerDTO {
 
     private Long userId;
     private Long questionId;
-    private String answer;
+    private String answerString;
     private Long answeredTime;
 
     public Long getUserId() {
@@ -16,7 +16,7 @@ public class AnswerDTO {
     }
 
     public String getAnswer() {
-        return this.answer;
+        return this.answerString;
     }
 
     public Long getAnsweredTime() {
@@ -32,7 +32,7 @@ public class AnswerDTO {
     }
 
     public void setAnswer(String answer) {
-        this.answer = answer;
+        this.answerString = answer;
     }
 
     public void setAnsweredTime(Long answeredTime) {
