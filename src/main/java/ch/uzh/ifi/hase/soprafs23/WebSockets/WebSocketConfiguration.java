@@ -19,9 +19,11 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/questions", "/invitations", "/topics", "/game/result", "/games")
-                .setHeartbeatValue(new long[] {10000, 10000})
-                .setTaskScheduler(heartBeatScheduler());
+                .setHeartbeatValue(new long[] {1000, 1000})
+                .setTaskScheduler(heartBeatScheduler())
+                .setHeartbeatValue(new long[] {60000, 120000});
     }
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -39,13 +41,14 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        container.setMaxBinaryMessageBufferSize(1024 * 1024);
-        container.setMaxTextMessageBufferSize(1024 * 1024);
+        container.setMaxSessionIdleTimeout(-1L);
         return container;
     }
 
     @Bean
     public TaskScheduler heartBeatScheduler() {
-        return new ThreadPoolTaskScheduler();
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(1);
+        return scheduler;
     }
 }

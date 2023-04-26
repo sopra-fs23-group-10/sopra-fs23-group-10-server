@@ -1,6 +1,5 @@
 package ch.uzh.ifi.hase.soprafs23.controller;
 
-import ch.uzh.ifi.hase.soprafs23.WebSockets.WebSocketSessionRegistry;
 import ch.uzh.ifi.hase.soprafs23.multithreads.RegisterRunnable;
 import ch.uzh.ifi.hase.soprafs23.multithreads.UnregisterRunnable;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
@@ -12,7 +11,6 @@ import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
@@ -29,8 +27,6 @@ public class WebSocketController {
 
     private final Logger log = LoggerFactory.getLogger(GameService.class);
 
-    @Autowired
-    private WebSocketSessionRegistry sessionRegistry;
     private final WebSocketService webSocketService;
 
     public WebSocketController(UserService userService, GameControllerService gameControllerService, WebSocketService webSocketService) {
@@ -70,6 +66,7 @@ public class WebSocketController {
         this.webSocketService.sendMessageToClients("/games/"+gameId, "A user has quit the game");
     }
 
+    /*
     @MessageMapping("/register")
     public void register(@Payload String userId) {
         try {
@@ -94,4 +91,6 @@ public class WebSocketController {
         Thread thread = new Thread(unregisterRunnable);
         thread.start();
     }
+
+     */
 }
