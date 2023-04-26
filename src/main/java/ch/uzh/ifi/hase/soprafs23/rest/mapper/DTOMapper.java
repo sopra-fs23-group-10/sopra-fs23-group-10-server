@@ -21,12 +21,26 @@ public interface DTOMapper {
 
     DTOMapper INSTANCE = Mappers.getMapper(DTOMapper.class);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "username", target = "username")
     @Mapping(source = "password", target = "password")
     @Mapping(source = "email", target = "email")
+    @Mapping(target = "points", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "token", ignore = true)
+    @Mapping(target = "profilePicture", ignore = true)
+    @Mapping(target = "backgroundMusic", ignore = true)
     User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "username", target = "username")
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "points", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "token", ignore = true)
+    @Mapping(target = "profilePicture", ignore = true)
+    @Mapping(target = "backgroundMusic", ignore = true)
     User convertUserPutDTOtoEntity(UserPutDTO userPostDTO);
 
     @Mapping(source = "id", target = "id")
@@ -57,6 +71,7 @@ public interface DTOMapper {
     @Mapping(source = "invitingUserId", target = "invitingUserId")
     @Mapping(source = "quizType", target = "quizType")
     @Mapping(source = "modeType", target = "modeType")
+    @Mapping(target = "currentPlayer", ignore = true)
     Game convertGamePostDTOtoEntity(GameDTO gameDTO);
 
     @Mapping(source = "category", target = "category")
@@ -65,6 +80,7 @@ public interface DTOMapper {
     @Mapping(source = "question", target = "question")
     @Mapping(source = "correctAnswer", target = "correctAnswer")
     @Mapping(source = "incorrectAnswers", target = "incorrectAnswers")
+    @Mapping(target = "creationTime", ignore = true)
     Question convertQuestionDTOtoEntity(QuestionDTO questionDTO);
 
     @Mapping(source = "category", target = "category")
@@ -80,6 +96,7 @@ public interface DTOMapper {
     @Mapping(source = "questionId", target = "questionId")
     @Mapping(source = "answer", target = "answer")
     @Mapping(source = "answeredTime", target = "answeredTime")
+    @Mapping(target = "id", ignore = true)
     Answer convertUserAnswerDTOtoEntity(AnswerDTO answerDTO);
 
     @Mapping(source = "userId", target = "userId")
