@@ -11,10 +11,10 @@ runtime_config:
   operating_system: "ubuntu22"
   runtime_version: "17"
 
-resources:
-  cpu: 4
-  memory_gb: 4
-  disk_size_gb: 10
+#resources:
+#  cpu: 4
+#  memory_gb: 4
+#  disk_size_gb: 10
 
 network:
   session_affinity: true
