@@ -118,8 +118,7 @@ public class UserController {
         }
 
         // make changes to user
-        userService.changeUsername(userId, userInput);
-        userService.changeProfilePicture(userId,userInput.getProfilePicture());
+        userService.changeUsernameAndProfilePic(userId, userInput);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(userToChange);
     }

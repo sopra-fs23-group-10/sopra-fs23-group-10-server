@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs23.service;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,7 +82,7 @@ class UserServiceTest {
         User changeUser = new User();
         changeUser.setUsername("changedUsername");
 
-        User updatedUser = userService.changeUsername(1L,changeUser);
+        User updatedUser = userService.changeUsernameAndProfilePic(1L, changeUser);
 
         assertEquals(testUser.getId(), updatedUser.getId());
         assertEquals(testUser.getUsername(), updatedUser.getUsername());
@@ -102,50 +101,7 @@ class UserServiceTest {
         // The outcome of the method call is asserted,
         // expecting the method to throw a ResponseStatusException
         Exception exception = assertThrows(ResponseStatusException.class,
-                () -> userService.changeUsername(1L,changeUser));
-
-        // Assert if the right message is thrown with the exception
-        String expectedMessage = "User with specified userID does not exist.";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-
-        // Assert if the right status code is thrown with the exception
-        String expectedStatusCode = "404 NOT FOUND";
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    void changeProfilePicture_validInputs_success() {
-        // when -> any object is being save in the userRepository -> return the dummy
-        // createdUser
-        User createdUser = userService.createUser(testUser);
-        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
-        given(userRepository.findUserById(testUser.getId())).willReturn(createdUser);
-
-        // then
-        User changeUser = new User();
-        changeUser.setProfilePicture("changedProfilePicture");
-
-        User updatedUser = userService.changeProfilePicture(1L,changeUser.getProfilePicture());
-
-        assertEquals(testUser.getId(), updatedUser.getId());
-        assertEquals(testUser.getUsername(), updatedUser.getUsername());
-        assertEquals(testUser.getPassword(), updatedUser.getPassword());
-        assertEquals(testUser.getEmail(), updatedUser.getEmail());
-        assertNotNull(updatedUser.getToken());
-        assertEquals(UserStatus.ONLINE , updatedUser.getStatus());
-    }
-
-    @Test
-    void changeProfilePicture_validInputs_throwsException404() {
-        // when
-        User changeUser = new User();
-        changeUser.setProfilePicture("changedProfilePicture");
-
-        // The outcome of the method call is asserted,
-        // expecting the method to throw a ResponseStatusException
-        Exception exception = assertThrows(ResponseStatusException.class,
-                () -> userService.changeProfilePicture(1L,changeUser.getProfilePicture()));
+                () -> userService.changeUsernameAndProfilePic(1L, changeUser));
 
         // Assert if the right message is thrown with the exception
         String expectedMessage = "User with specified userID does not exist.";

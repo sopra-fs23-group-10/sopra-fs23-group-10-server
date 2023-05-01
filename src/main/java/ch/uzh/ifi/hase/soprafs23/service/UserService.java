@@ -191,7 +191,7 @@ public class UserService {
      * @throws org.springframework.web.server.ResponseStatusException
      * @return User userById
      */
-    public User changeUsername(long userId, User userWithAdjustments) {
+    public User changeUsernameAndProfilePic(long userId, User userWithAdjustments) {
         User userById = this.userRepository.findUserById(userId);
 
         if (userById == null) {
@@ -202,20 +202,7 @@ public class UserService {
             checkIfUserExists(userWithAdjustments);
             userById.setUsername(userWithAdjustments.getUsername());
         }
-
-        return userById;
-    }
-
-    public User changeProfilePicture(long userId, String userNewProfilePicture) {
-        User userById = this.userRepository.findUserById(userId);
-
-        if (userById == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified userID does not exist.");
-        }
-
-        if (!userById.getProfilePicture().equals(userNewProfilePicture)) {
-            userById.setProfilePicture(userNewProfilePicture);
-        }
+        userById.setProfilePicture(userWithAdjustments.getProfilePicture());
 
         return userById;
     }

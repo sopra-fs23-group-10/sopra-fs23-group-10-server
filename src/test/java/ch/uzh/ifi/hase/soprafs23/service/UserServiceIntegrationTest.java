@@ -12,7 +12,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 /**
  * Test class for the UserResource REST resource.
@@ -189,7 +188,7 @@ class UserServiceIntegrationTest {
         User testUser2 = new User();
         testUser2.setUsername("changedUsername");
 
-        User changedUser = userService.changeUsername(testUser.getId(), testUser2);
+        User changedUser = userService.changeUsernameAndProfilePic(testUser.getId(), testUser2);
 
         assertEquals(changedUser.getUsername(), testUser2.getUsername());
         assertEquals(changedUser.getId(), testUser.getId());
@@ -213,6 +212,6 @@ class UserServiceIntegrationTest {
         User testUser2 = new User();
         testUser2.setUsername(testUserConflict.getUsername());
 
-        assertThrows(ResponseStatusException.class, () -> userService.changeUsername(testUser.getId(), testUser2));
+        assertThrows(ResponseStatusException.class, () -> userService.changeUsernameAndProfilePic(testUser.getId(), testUser2));
     }
 }
