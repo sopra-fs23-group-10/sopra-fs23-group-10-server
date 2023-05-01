@@ -58,7 +58,7 @@ class UserControllerTest {
         user.setPassword("testPassword");
         user.setPoints(2L);
         user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
+        user.setProfilePicture("testProfilePicture");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
     }
@@ -378,12 +378,13 @@ class UserControllerTest {
         // given
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
+        userPutDTO.setProfilePicture("changedProfilePicture");
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
         given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
-
+        given(userService.changeProfilePicture(Mockito.anyLong(), Mockito.any())).willReturn(user);
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
