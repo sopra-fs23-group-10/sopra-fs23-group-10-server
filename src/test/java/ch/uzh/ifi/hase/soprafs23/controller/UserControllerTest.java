@@ -384,7 +384,6 @@ class UserControllerTest {
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
         given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
-        given(userService.changeProfilePicture(Mockito.anyLong(), Mockito.any())).willReturn(user);
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
