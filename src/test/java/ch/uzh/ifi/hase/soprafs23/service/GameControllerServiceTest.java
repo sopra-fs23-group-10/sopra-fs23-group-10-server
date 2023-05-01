@@ -393,7 +393,7 @@ class GameControllerServiceTest {
     */
 
     @Test
-    public void intermediateResults_success() {
+    public void intermediateResults_OnlyOneUserAnswered_success() {
         gameControllerService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
 
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
