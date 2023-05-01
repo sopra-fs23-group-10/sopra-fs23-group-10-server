@@ -31,7 +31,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         user.setStatus(UserStatus.ONLINE);
         user.setProfilePicture(user.getUsername());
         user.setPoints(0L);
-        user.setId(0);
+        user.setId(1);
         try {
             userRepository.save(user);
             userRepository.flush();
