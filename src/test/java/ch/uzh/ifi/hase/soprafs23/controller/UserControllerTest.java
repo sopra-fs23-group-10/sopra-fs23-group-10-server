@@ -383,7 +383,7 @@ class UserControllerTest {
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         given(userService.changeProfilePicture(Mockito.anyLong(), Mockito.any())).willReturn(user);
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
@@ -413,7 +413,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), invalidID)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
         // when
@@ -434,7 +434,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), user.getId())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
         // when
@@ -456,7 +456,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(invalidToken, user.getId())).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
 
         // when
@@ -479,7 +479,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), offsetId)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized."));
 
         // when
@@ -501,7 +501,7 @@ class UserControllerTest {
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
@@ -522,7 +522,7 @@ class UserControllerTest {
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
