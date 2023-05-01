@@ -106,7 +106,7 @@ public class UserController {
 
     @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public UserGetDTO putUsername(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token, @RequestBody UserPutDTO userPutDTO) {
+    public UserGetDTO putUser(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token, @RequestBody UserPutDTO userPutDTO) {
         // verify token with userId from path variable to authorise changes
         User userToChange = userService.verifyTokenWithId(token, userId);
 
@@ -119,6 +119,7 @@ public class UserController {
 
         // make changes to user
         userService.changeUsername(userId, userInput);
+        userService.changeProfilePicture(userId,userInput.getProfilePicture());
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(userToChange);
     }

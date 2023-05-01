@@ -206,6 +206,20 @@ public class UserService {
         return userById;
     }
 
+    public User changeProfilePicture(long userId, String userNewProfilePicture) {
+        User userById = this.userRepository.findUserById(userId);
+
+        if (userById == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified userID does not exist.");
+        }
+
+        if (!userById.getProfilePicture().equals(userNewProfilePicture)) {
+            userById.setProfilePicture(userNewProfilePicture);
+        }
+
+        return userById;
+    }
+
     /**
      * This method sets a user's status to ONLINE
      *
