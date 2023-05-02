@@ -178,29 +178,33 @@ class UserServiceIntegrationTest {
     }
 
     @Test
-    void changeUsername_allValid_success() {
+    void changeUsernameAndProfilePic_allValid_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
         testUser.setEmail("email@email.com");
+        testUser.setProfilePicture(testUser.getUsername());
         userService.createUser(testUser);
 
         User testUser2 = new User();
         testUser2.setUsername("changedUsername");
+        testUser2.setProfilePicture("changedProfilePicture");
 
         User changedUser = userService.changeUsernameAndProfilePic(testUser.getId(), testUser2);
 
         assertEquals(changedUser.getUsername(), testUser2.getUsername());
+        assertEquals(changedUser.getProfilePicture(), testUser2.getProfilePicture());
         assertEquals(changedUser.getId(), testUser.getId());
         assertEquals(changedUser.getToken(), testUser.getToken());
     }
 
     @Test
-    void changeUsernameBirthday_duplicateUsername_success() {
+    void changeUsernameAndProfilePic_duplicateUsername_success() {
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
         testUser.setEmail("email@email.com");
+        testUser.setProfilePicture(testUser.getUsername());
         userService.createUser(testUser);
 
         User testUserConflict = new User();
@@ -211,6 +215,7 @@ class UserServiceIntegrationTest {
 
         User testUser2 = new User();
         testUser2.setUsername(testUserConflict.getUsername());
+        testUser2.setProfilePicture(testUser.getProfilePicture());
 
         assertThrows(ResponseStatusException.class, () -> userService.changeUsernameAndProfilePic(testUser.getId(), testUser2));
     }
