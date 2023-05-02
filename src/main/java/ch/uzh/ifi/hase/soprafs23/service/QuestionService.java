@@ -33,6 +33,10 @@ public class QuestionService {
         return question;
     }
 
+    public Boolean existsQuestionByApiIdAndGameId(Question question) {
+        return questionRepository.existsQuestionByApiIdAndGameId(question.getApiId(), question.getGameId());
+    }
+
     public List<Question> searchQuestionsByGameId(long gameId) {
         return questionRepository.findAllByGameId(gameId);
     }
@@ -50,6 +54,10 @@ public class QuestionService {
         Collections.shuffle(allAnswers);
         question.setAllAnswers(allAnswers);
         question.setCreationTime(new Date());
+        return question;
+    }
+
+    public Question saveQuestion(Question question){
         return questionRepository.save(question);
     }
 

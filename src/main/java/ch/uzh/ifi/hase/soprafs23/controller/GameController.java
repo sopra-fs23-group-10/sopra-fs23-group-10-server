@@ -9,7 +9,7 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
-import ch.uzh.ifi.hase.soprafs23.service.GameService;
+import ch.uzh.ifi.hase.soprafs23.service.QuestionService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +25,14 @@ public class GameController {
     private final GameControllerService gameControllerService;
     private final UserService userService;
     private final WebSocketController webSocketController;
+    private final QuestionService questionService;
     private final Logger log = LoggerFactory.getLogger(GameController.class);
 
-    GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
+    GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController, QuestionService questionService) {
         this.gameControllerService = gameControllerService;
         this.userService = userService;
         this.webSocketController = webSocketController;
+        this.questionService = questionService;
     }
 
     @PostMapping("/game/creation")
@@ -100,7 +102,8 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         userService.verifyToken(token);
-        QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameControllerService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
+        Question question = gameControllerService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId());
+        QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
         webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
         return questionDTOReturn;
     }

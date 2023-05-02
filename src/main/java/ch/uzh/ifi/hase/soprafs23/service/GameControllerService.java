@@ -50,7 +50,7 @@ public class GameControllerService {
         this.secureRandom = new SecureRandom();
     }
 
-    public Question getQuestion(Category category, Long gameId) {
+    protected Question getQuestionFromExternalApi(Category category, Long gameId){
 
         Game game = gameService.searchGameById(gameId);
         userService.searchUserById(game.getInvitedUserId());
@@ -60,7 +60,7 @@ public class GameControllerService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://the-trivia-api.com/api/questions?categories="
                         + category.toString().toLowerCase()
-                        + "&limit=1&difficulty=easy"
+                        + "&limit=1"
                 ))
                 .build();
         HttpResponse<String> response;
@@ -91,6 +91,17 @@ public class GameControllerService {
             log.error("Request to external API failed with code: {}", response.statusCode());
             return null;
         }
+    }
+
+    public Question getQuestion(Category category, Long gameId) {
+        Question question = this.getQuestionFromExternalApi(category, gameId);
+        for (int i = 0; i <= 5; i++) {
+            if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
+                break;
+            }
+            question = this.getQuestionFromExternalApi(category, gameId);
+        }
+        return questionService.saveQuestion(question);
     }
 
     public Game searchGame(Long gameId) {

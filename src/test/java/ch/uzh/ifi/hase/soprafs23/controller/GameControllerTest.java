@@ -10,6 +10,7 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
+import ch.uzh.ifi.hase.soprafs23.service.QuestionService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import ch.uzh.ifi.hase.soprafs23.service.WebSocketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -66,6 +67,9 @@ class GameControllerTest {
 
     @Autowired
     private GameController gameController;
+
+    @MockBean
+    private QuestionService questionService;
 
     private User invitingUser;
     private Question question;
