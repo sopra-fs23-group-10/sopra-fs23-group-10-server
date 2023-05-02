@@ -113,7 +113,7 @@ class GameControllerServiceTest {
         gameControllerService.getQuestion(createdQuestion.getCategory(), createdQuestion.getGameId());
 
         verify(gameControllerService, times(2)).getQuestionFromExternalApi(createdQuestion.getCategory(), createdQuestion.getGameId());
-        verify(questionService).saveQuestion(createdQuestion);
+        verify(questionService, times(1)).saveQuestion(createdQuestion);
     }
 
     /*
