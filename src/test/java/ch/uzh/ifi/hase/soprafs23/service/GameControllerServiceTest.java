@@ -412,7 +412,7 @@ class GameControllerServiceTest {
     */
 
     @Test
-    public void intermediateResults_OnlyOneUserAnswered_success() {
+    void intermediateResults_OnlyOneUserAnswered_success() {
         gameControllerService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
 
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
@@ -439,7 +439,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void intermediateResults_success() {
+    void intermediateResults_success() {
 
         Answer invitingAnswer = new Answer();
         invitingAnswer.setUserId(invitingUser.getId());
