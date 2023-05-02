@@ -533,7 +533,7 @@ class UserControllerTest {
         mockMvc.perform(putRequest).andExpect(status().isBadRequest());
     }
 
-    /*
+
     @Test
     void login_whenValid_thenReturnUserWithToken_200() throws Exception {
         user.setStatus(UserStatus.OFFLINE);
@@ -542,9 +542,7 @@ class UserControllerTest {
         userPostDTO.setUsername(user.getUsername());
         userPostDTO.setPassword(user.getPassword());
 
-        given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
-        doCallRealMethod().when(userService).setOnline(user.getId());
-
+        given(userService.checkLoginCredentials(user.getUsername(), user.getPassword())).willReturn(user);
 
         MockHttpServletRequestBuilder postRequest = post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -560,7 +558,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
     }
-     */
+
 
     @Test
     void login_whenEmptyUsername_thenThrowForbidden_403() throws Exception {
