@@ -6,10 +6,13 @@ import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.*;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,13 +22,13 @@ import static org.assertj.core.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class GameControllerServiceTest {
 
     @InjectMocks
+    @Spy
     private GameControllerService gameControllerService;
-
     @Mock
     private UserService userService;
     @Mock
@@ -51,7 +54,6 @@ class GameControllerServiceTest {
 
     private final List<String> incorrectAnswers = Arrays.asList("Neil Young", "Eric Clapton", "Elton John");
     private final List<String> allAnswers = Arrays.asList("Neil Young", "Bob Dylan", "Eric Clapton", "Elton John");
-
 
     @BeforeEach
     public void setup() {
@@ -97,6 +99,22 @@ class GameControllerServiceTest {
         correctAnswer.setAnsweredTime(10000L);
         correctAnswer.setId(createdQuestion.getQuestionId());
         correctAnswer.setUserId(invitedUser.getId());
+    }
+
+    @Test
+    public void createQuestion_returnsQuestionDTOW_LoopTwiceBecauseAlreadyExistent() throws Exception {
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setCategory(createdQuestion.getCategory());
+        questionDTO.setGameId(workingTextDuelGame.getGameId());
+
+        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        doReturn(createdQuestion).when(gameControllerService).getQuestionFromExternalApi(createdQuestion.getCategory(), createdQuestion.getGameId());
+        given(questionService.existsQuestionByApiIdAndGameId(createdQuestion)).willReturn(true, false);
+
+        gameControllerService.getQuestion(createdQuestion.getCategory(), createdQuestion.getGameId());
+
+        verify(gameControllerService, times(2)).getQuestionFromExternalApi(createdQuestion.getCategory(), createdQuestion.getGameId());
+        verify(questionService, times(1)).saveQuestion(createdQuestion);
     }
 
     /*
