@@ -10,5 +10,4 @@ public enum Category {
     SCIENCE,
     SOCIETY_CULTURE,
     SPORT_LEISURE
-
 }
