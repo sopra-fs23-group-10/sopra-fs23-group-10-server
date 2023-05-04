@@ -140,7 +140,7 @@ public class GameControllerService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public synchronized void answerQuestion(Answer answer) {
+    public synchronized String answerQuestion(Answer answer) {
         if (answer == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
         }
@@ -155,6 +155,7 @@ public class GameControllerService {
             answer.setAnswer("WrongAnswer");
         }
         answerService.createAnswer(answer);
+        return question.getCorrectAnswer();
     }
 
     private UserResultTuple getPointsOfBoth(Game game) {

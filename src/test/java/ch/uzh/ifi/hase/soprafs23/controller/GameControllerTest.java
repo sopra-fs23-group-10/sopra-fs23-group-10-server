@@ -267,13 +267,15 @@ class GameControllerTest {
         answerDTO.setAnsweredTime(112L);
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        given(gameControllerService.answerQuestion(Mockito.any())).willReturn(question.getCorrectAnswer());
 
         MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(answerDTO))
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(putRequest).andExpect(status().isCreated());
+        mockMvc.perform(putRequest).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.correctAnswer", is(question.getCorrectAnswer())));
     }
 
     @Test
