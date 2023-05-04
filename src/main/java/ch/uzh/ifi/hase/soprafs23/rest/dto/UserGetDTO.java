@@ -10,6 +10,7 @@ public class UserGetDTO {
     private String profilePicture;
     private UserStatus status;
     private String token;
+    private long rank;
 
     public long getId() {
         return this.id;
@@ -29,6 +30,7 @@ public class UserGetDTO {
     public String getProfilePicture() {
         return profilePicture;
     }
+    public long getRank(){return this.rank;}
 
     public void setId(long id) {
         this.id = id;
@@ -46,4 +48,5 @@ public class UserGetDTO {
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
+    public void setRank(long rank){this.rank = rank;}
 }

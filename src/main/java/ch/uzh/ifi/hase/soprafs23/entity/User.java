@@ -41,6 +41,8 @@ public class User implements Serializable {
     private String profilePicture;
     @Column(nullable = false)
     private boolean backgroundMusic;
+    @Column(nullable = false)
+    private long rank;
 
     public long getId() {
         return this.id;
@@ -104,4 +106,7 @@ public class User implements Serializable {
     public void setBackgroundMusic(boolean backgroundMusic) {
         this.backgroundMusic = backgroundMusic;
     }
+
+    public long getRank(){return this.rank;}
+    public void setRank(long rank){ this.rank = rank;}
 }

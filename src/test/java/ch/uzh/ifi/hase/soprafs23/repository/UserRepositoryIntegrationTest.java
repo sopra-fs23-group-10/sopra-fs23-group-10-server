@@ -30,6 +30,7 @@ class UserRepositoryIntegrationTest {
     user.setBackgroundMusic(false);
     user.setStatus(UserStatus.OFFLINE);
     user.setToken("1");
+    user.setRank(1L);
 
     entityManager.persist(user);
     entityManager.flush();
@@ -46,6 +47,7 @@ class UserRepositoryIntegrationTest {
     assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
     assertEquals(found.getId(), user.getId());
     assertEquals(found.getToken(), user.getToken());
+      assertEquals(found.getRank(), user.getRank());
     assertEquals(found.getStatus(), user.getStatus());
   }
 
@@ -61,6 +63,8 @@ class UserRepositoryIntegrationTest {
         user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
+        user.setRank(1L);
+
 
         entityManager.persist(user);
         entityManager.flush();
@@ -84,6 +88,8 @@ class UserRepositoryIntegrationTest {
         user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
+        user.setRank(1L);
+
 
         entityManager.persist(user);
         entityManager.flush();
@@ -100,6 +106,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
+        assertEquals(found.getRank(), user.getRank());
         assertEquals(found.getStatus(), user.getStatus());
     }
 
@@ -115,6 +122,8 @@ class UserRepositoryIntegrationTest {
         user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
+        user.setRank(1L);
+
 
         entityManager.persist(user);
         entityManager.flush();
@@ -138,6 +147,8 @@ class UserRepositoryIntegrationTest {
         user.setBackgroundMusic(false);
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
+        user.setRank(1L);
+
 
         entityManager.persist(user);
         entityManager.flush();
@@ -155,6 +166,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());
+        assertEquals(found.getRank(), user.getRank());
     }
 
     @Test
@@ -170,6 +182,8 @@ class UserRepositoryIntegrationTest {
         user.setEmail("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
+        user.setRank(1L);
+
 
         entityManager.persist(user);
         entityManager.flush();
@@ -193,6 +207,8 @@ class UserRepositoryIntegrationTest {
         user.setBackgroundMusic(false);
         user.setStatus(UserStatus.ONLINE);
         user.setToken("1");
+        user.setRank(1L);
+
 
         entityManager.persist(user);
         entityManager.flush();
@@ -214,5 +230,6 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());
+        assertEquals(found.getRank(), user.getRank());
     }
 }

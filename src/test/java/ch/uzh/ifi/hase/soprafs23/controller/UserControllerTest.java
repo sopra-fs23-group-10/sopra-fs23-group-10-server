@@ -61,6 +61,7 @@ class UserControllerTest {
         user.setProfilePicture("testProfilePicture");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
+        user.setRank(1L);
     }
 
 // Tests of PostMappings

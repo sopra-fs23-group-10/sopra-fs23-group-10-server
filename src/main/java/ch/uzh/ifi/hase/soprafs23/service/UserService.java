@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,11 +82,13 @@ public class UserService {
      * @return List<User>
      */
     public List<User> getUsers() {
-        return this.userRepository.findAll();
+      List<User> users = this.userRepository.findAll();
+      users.removeIf(user -> user.getId() == 1L);
+      return users;
     }
 
     public List<User> getOnlineUsers() {
-        List<User> allUsers = this.userRepository.findAll();
+        List<User> allUsers = this.getUsers();
         List<User> allOnlineUsers = new ArrayList<>();
         for (User user : allUsers) {
             if (user.getStatus() != UserStatus.OFFLINE) {
@@ -106,9 +109,8 @@ public class UserService {
         newUser.setStatus(UserStatus.ONLINE);
         newUser.setProfilePicture(newUser.getUsername());
         newUser.setPoints(0L);
+        newUser.setRank(this.calculateRanks());
         checkIfUserExists(newUser);
-        // saves the given entity but data is only persisted in the database once
-        // flush() is called
         newUser = userRepository.save(newUser);
         userRepository.flush();
 
@@ -250,9 +252,24 @@ public class UserService {
 
         invitingUser.setPoints(invitingUser.getPoints() + userResultTuple.getInvitingPlayerResult());
         invitedUser.setPoints(invitedUser.getPoints() + userResultTuple.getInvitedPlayerResult());
+        userRepository.save(invitedUser);
+        userRepository.save(invitingUser);
+        this.calculateRanks();
     }
 
     public long getPoints(long userId) {
         return userRepository.findUserById(userId).getPoints();
+    }
+
+    public long calculateRanks(){
+        List<User> users = this.getUsers();
+        users.sort(Comparator.comparingLong(User::getPoints).reversed());
+        long rank = 1;
+        for (User user : users) {
+            user.setRank(rank++);
+            userRepository.save(user);
+        }
+        userRepository.flush();
+        return rank;
     }
 }

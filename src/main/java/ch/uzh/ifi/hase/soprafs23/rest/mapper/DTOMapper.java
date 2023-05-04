@@ -30,6 +30,7 @@ public interface DTOMapper {
     @Mapping(target = "token", ignore = true)
     @Mapping(target = "profilePicture", ignore = true)
     @Mapping(target = "backgroundMusic", ignore = true)
+    @Mapping(target = "rank", ignore = true)
     User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
     @Mapping(target = "id", ignore = true)
@@ -41,6 +42,7 @@ public interface DTOMapper {
     @Mapping(target = "token", ignore = true)
     @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(target = "backgroundMusic", ignore = true)
+    @Mapping(target = "rank", ignore = true)
     User convertUserPutDTOtoEntity(UserPutDTO userPostDTO);
 
     @Mapping(source = "id", target = "id")
@@ -49,6 +51,7 @@ public interface DTOMapper {
     @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "token", target = "token")
+    @Mapping(source = "rank", target = "rank")
     UserGetDTO convertEntityToUserGetDTO(User user);
 
     @Mapping(source = "id", target = "id")
@@ -57,6 +60,7 @@ public interface DTOMapper {
     @Mapping(source = "profilePicture", target = "profilePicture")
     @Mapping(source = "status", target = "status")
     @Mapping(target = "token", ignore = true)
+    @Mapping(source = "rank", target = "rank")
     UserGetDTO convertEntityToUserGetDTONoToken(User user);
 
     @Mapping(source = "gameId", target = "gameId")

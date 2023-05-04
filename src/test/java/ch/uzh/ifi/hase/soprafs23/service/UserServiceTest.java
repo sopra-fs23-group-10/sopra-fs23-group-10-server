@@ -11,6 +11,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
@@ -111,5 +114,29 @@ class UserServiceTest {
         // Assert if the right status code is thrown with the exception
         String expectedStatusCode = "404 NOT FOUND";
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void updateRank_success(){
+
+      User user1 = new User();
+      User user2 = new User();
+      User user3 = new User();
+      user1.setPoints(3);
+      user2.setPoints(2);
+      user3.setPoints(1);
+      List<User> users = Arrays.asList(user1, user2, user3);
+
+      given(userRepository.findAll()).willReturn(users);
+
+      long nextLowestRank = userService.calculateRanks();
+
+      Mockito.verify(userRepository, Mockito.times(3)).save(Mockito.any());
+      Mockito.verify(userRepository, Mockito.times(1)).flush();
+
+      assertEquals(4L, nextLowestRank);
+      assertEquals(1L, user1.getRank());
+      assertEquals(2L, user2.getRank());
+      assertEquals(3L, user3.getRank());
     }
 }
