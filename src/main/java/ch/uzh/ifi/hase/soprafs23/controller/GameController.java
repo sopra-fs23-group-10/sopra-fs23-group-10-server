@@ -108,6 +108,17 @@ public class GameController {
         return questionDTOReturn;
     }
 
+  @PostMapping("/games/images")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public QuestionDTO createImageQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
+    userService.verifyToken(token);
+    Question question = gameControllerService.getImageQuestion(questionDTO.getGameId());
+    QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
+    webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
+    return questionDTOReturn;
+  }
+
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody

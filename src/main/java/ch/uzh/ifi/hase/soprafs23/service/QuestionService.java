@@ -57,6 +57,20 @@ public class QuestionService {
         return question;
     }
 
+  public Question createImageQuestion(long templateImageQuestionId, String apiId, String correctAnswer, String questionString, List<String> incorrectAnswers,List<String> allAnswers) {
+    Question question = new Question();
+    question.setGameId(templateImageQuestionId);
+    question.setQuestion(questionString);
+    question.setApiId(apiId);
+    question.setCorrectAnswer(correctAnswer);
+    question.setIncorrectAnswers(incorrectAnswers);
+
+    Collections.shuffle(allAnswers);
+    question.setAllAnswers(allAnswers);
+    question.setCreationTime(new Date());
+    return question;
+  }
+
     public Question saveQuestion(Question question){
         return questionRepository.save(question);
     }

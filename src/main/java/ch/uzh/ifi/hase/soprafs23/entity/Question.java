@@ -20,7 +20,7 @@ public class Question implements Serializable {
     private long questionId;
     @Column(nullable = false)
     private long gameId;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Category category;
     @Column(nullable = false)
     private String apiId;

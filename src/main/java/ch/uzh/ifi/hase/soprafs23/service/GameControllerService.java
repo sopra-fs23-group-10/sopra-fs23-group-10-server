@@ -4,10 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.Answer;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.json.JSONArray;
@@ -37,16 +34,20 @@ public class GameControllerService {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final WebSocketService webSocketService;
+    private final TemplateImageQuestionService templateImageQuestionService;
     private final Logger log = LoggerFactory.getLogger(GameControllerService.class);
     private final SecureRandom secureRandom;
 
     @Autowired
-    public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService, WebSocketService webSocketService) {
+    public GameControllerService(UserService userService, GameService gameService,
+                                 QuestionService questionService, AnswerService answerService,
+                                 WebSocketService webSocketService,TemplateImageQuestionService templateImageQuestionService) {
         this.userService = userService;
         this.gameService = gameService;
         this.questionService = questionService;
         this.answerService = answerService;
         this.webSocketService = webSocketService;
+        this.templateImageQuestionService = templateImageQuestionService;
         this.secureRandom = new SecureRandom();
     }
 
@@ -103,6 +104,35 @@ public class GameControllerService {
         }
         return questionService.saveQuestion(question);
     }
+
+  public Question getImageQuestion(Long gameId) {
+    Question question = this.getImageQuestionFromApi(gameId);
+    /*
+    for (int i = 0; i <= 5; i++) {
+      if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
+        break;
+      }
+      question = this.getImageQuestionFromApi(gameId);
+    }
+    */
+    return questionService.saveQuestion(question);
+  }
+
+  private Question getImageQuestionFromApi(Long gameId){
+    Game game = gameService.searchGameById(gameId);
+    userService.searchUserById(game.getInvitedUserId());
+    userService.searchUserById(game.getInvitingUserId());
+
+    try{
+      TemplateImageQuestion templateImageQuestion = templateImageQuestionService.getRandomImageQuestion();
+      return questionService.createImageQuestion(game.getGameId(), templateImageQuestion.getApiId(),
+              templateImageQuestion.getCorrectAnswer(), templateImageQuestion.getQuestion(),
+              templateImageQuestion.getIncorrectAnswers(), templateImageQuestion.getAllAnswers());
+    }catch (ResponseStatusException e){
+      log.error("Question not found");
+      return null;
+    }
+  }
 
     public Game searchGame(Long gameId) {
         return gameService.searchGameById(gameId);
