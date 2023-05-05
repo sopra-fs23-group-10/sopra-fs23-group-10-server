@@ -159,4 +159,11 @@ public class UserController {
         // convert user to API user and return (without token)
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user);
     }
+
+    @PostMapping("/reset/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void sendEmail(@PathVariable long userId) {
+        userService.sendEmail(userId);
+    }
 }

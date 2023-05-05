@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
 import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.repository.UserRepository;
+import com.mailjet.client.errors.MailjetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+
+    private final MailSenderService mailSenderService = new MailSenderService();
 
     @Autowired
     public UserService(@Qualifier("userRepository") UserRepository userRepository) {
@@ -271,5 +274,14 @@ public class UserService {
         }
         userRepository.flush();
         return rank;
+    }
+
+    public void sendEmail(long userId) {
+        User user = searchUserById(userId);
+        try {
+            mailSenderService.sendEmail(user);
+        } catch (MailjetException e) {
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "iopjerthijophbertijobtopjhbrdjht");
+        }
     }
 }
