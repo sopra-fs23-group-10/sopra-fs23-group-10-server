@@ -31,7 +31,7 @@ public class MailSenderService {
                                                     .put("Email", user.getEmail())
                                                     .put("Name", user.getUsername())))
                                     .put(Emailv31.Message.SUBJECT, "Your password has been requested")
-                                    .put(Emailv31.Message.TEXTPART, String.format("Hello %s!\n\n", user.getUsername()) +
+                                    .put(Emailv31.Message.TEXTPART, "Hello " + user.getUsername() + "!\n\n" +
                                             "It seems like you forgot your password. Let us help you out.\n" +
                                             "Your password is: " + user.getPassword() + "\n\n" +
                                             "Make sure you don't loose it again!\n\n" +
