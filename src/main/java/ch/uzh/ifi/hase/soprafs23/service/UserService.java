@@ -164,6 +164,14 @@ public class UserService {
       return userById;
     }
 
+    private User searchUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    private User searchUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     /**
      * This method searches for an existing username in the repository and validates the provided password.
      *
@@ -275,8 +283,16 @@ public class UserService {
         return rank;
     }
 
-    public void sendEmail(long userId) {
-        User user = searchUserById(userId);
-        mailSenderService.sendEmail(user);
+    public void sendPasswordEmail(User user) {
+        User emailUser = searchUserByEmail(user.getEmail());
+        User usernameUser = searchUserByUsername(user.getUsername());
+
+        if (emailUser == null || usernameUser == null) {
+            log.error("Either username or email in password reset request does not exist.");
+        } else if (emailUser.getUsername().equals(user.getUsername()) && usernameUser.getEmail().equals(user.getEmail())) {
+            mailSenderService.sendPasswordEmail(emailUser);
+        } else {
+            log.error("Provided user for password reset does not match user in database.");
+        }
     }
 }

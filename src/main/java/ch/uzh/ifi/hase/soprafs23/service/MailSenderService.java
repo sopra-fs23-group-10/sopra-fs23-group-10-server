@@ -15,7 +15,7 @@ import ch.uzh.ifi.hase.soprafs23.entity.User;
 public class MailSenderService {
     private final Logger log = LoggerFactory.getLogger(MailSenderService.class);
     
-    public void sendEmail(User user) {
+    public void sendPasswordEmail(User user) {
         try {
             MailjetRequest request;
             MailjetResponse response;
