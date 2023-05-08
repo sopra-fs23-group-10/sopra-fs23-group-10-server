@@ -236,9 +236,10 @@ public class UserService {
         userRepository.flush();
     }
 
-    public void setInGame(User user) {
+    public void setInGame(long userId) {
+        User user = userRepository.findUserById(userId);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be in game was not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User cannot be found.");
         }
         user.setStatus(UserStatus.IN_GAME);
     }
