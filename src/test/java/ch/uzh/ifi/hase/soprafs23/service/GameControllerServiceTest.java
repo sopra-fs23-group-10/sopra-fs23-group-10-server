@@ -163,32 +163,36 @@ class GameControllerServiceTest {
 
     @Test
     void removeGame_validInput_success() {
-
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
+        given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
 
-        gameControllerService.removeGame(prepTextDuelGame.getGameId());
+        invitedUser.setStatus(UserStatus.IN_GAME);
+        invitingUser.setStatus(UserStatus.IN_GAME);
+
+        gameControllerService.setInGamePlayersToOnline(prepTextDuelGame.getGameId());
 
         verify(gameService).searchGameById(prepTextDuelGame.getGameId());
-        verify(userService).setOnline(invitedUser.getId());
         verify(userService).setOnline(invitingUser.getId());
-        verify(answerService).deleteAnswers(createdQuestion.getQuestionId());
-        verify(questionService).deleteQuestions(prepTextDuelGame.getGameId());
-        verify(gameService).deleteGame(prepTextDuelGame.getGameId());
+        verify(userService).setOnline(invitedUser.getId());
     }
 
 
 
     @Test
     void removeGame_nonValidInput_noChange() {
-        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
+        given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
 
-        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+        invitedUser.setStatus(UserStatus.ONLINE);
+        invitingUser.setStatus(UserStatus.ONLINE);
 
-        gameControllerService.removeGame(prepTextDuelGame.getGameId());
+        gameControllerService.setInGamePlayersToOnline(prepTextDuelGame.getGameId());
 
-        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+        verify(gameService).searchGameById(prepTextDuelGame.getGameId());
+        verify(userService, never()).setOnline(invitingUser.getId());
+        verify(userService, never()).setOnline(invitedUser.getId());
     }
 
 

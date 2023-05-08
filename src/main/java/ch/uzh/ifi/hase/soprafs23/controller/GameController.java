@@ -72,7 +72,7 @@ public class GameController {
         if(Boolean.FALSE.equals(response)) {
             userService.setOnline(game.getInvitedUserId());
             userService.setOnline(game.getInvitingUserId());
-            gameControllerService.removeGame(gameId);
+            gameControllerService.setInGamePlayersToOnline(gameId);
         }
 
         Map<Long, Boolean> answer = Collections.singletonMap(gameId, response);
@@ -141,7 +141,7 @@ public class GameController {
     public void deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         try {
-            gameControllerService.removeGame(gameId);
+            gameControllerService.setInGamePlayersToOnline(gameId);
         } catch (ResponseStatusException e) {
             log.info("No game with ID: {} found",gameId);
         }
@@ -172,7 +172,7 @@ public class GameController {
     public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Game deletedGame = gameControllerService.searchGame(gameId);
-        gameControllerService.removeGame(gameId);
+        gameControllerService.setInGamePlayersToOnline(gameId);
         webSocketController.informUsersGameDeleted(gameId);
         return DTOMapper.INSTANCE.convertGameEntityToPostDTO(deletedGame);
     }
