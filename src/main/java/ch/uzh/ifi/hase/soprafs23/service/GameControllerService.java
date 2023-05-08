@@ -4,10 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.Answer;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.json.JSONArray;
@@ -112,17 +109,16 @@ public class GameControllerService {
         return gameService.createGame(invitingUserId, invitedUserId, quizType, modeType);
     }
 
-    public void removeGame(Long gameId) {
+    public void setInGamePlayersToOnline(Long gameId) {
         Game game = gameService.searchGameById(gameId);
-        userService.setOnline(game.getInvitedUserId());
-        userService.setOnline(game.getInvitingUserId());
-
-        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
-        for (Question question : questions) {
-            answerService.deleteAnswers(question.getQuestionId());
+        User invitingUser = userService.searchUserById(game.getInvitingUserId());
+        if (invitingUser != null && invitingUser.getStatus() == UserStatus.IN_GAME) {
+            userService.setOnline(game.getInvitingUserId());
         }
-        questionService.deleteQuestions(gameId);
-        gameService.deleteGame(gameId);
+        User invitedUser = userService.searchUserById(game.getInvitedUserId());
+        if (invitedUser != null && invitedUser.getStatus() == UserStatus.IN_GAME) {
+            userService.setOnline(game.getInvitedUserId());
+        }
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
@@ -222,7 +218,7 @@ public class GameControllerService {
         return gameService.getGameIdOfUser(userId);
     }
 
-    private long getPoints(Answer answer) {
+    public long getPoints(Answer answer) {
         if (answer == null) {
             return 0L;
         }
@@ -244,7 +240,7 @@ public class GameControllerService {
 
     public void deathSwitch(Long userId){
         Long gameId = this.getGameIdOfUser(userId);
-        this.removeGame(gameId);
+        this.setInGamePlayersToOnline(gameId);
         this.webSocketService.sendMessageToClients("/games/"+gameId, "Game was deleted since one of the players left the game");
     }
 }
