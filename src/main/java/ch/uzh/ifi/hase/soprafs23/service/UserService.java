@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * User Service
@@ -85,19 +82,14 @@ public class UserService {
      */
     public List<User> getUsers() {
       List<User> users = this.userRepository.findAll();
-      users.removeIf(user -> user.getId() == 1L);
+      users.removeIf(user -> Objects.equals(user.getId(), 1));
       return users;
     }
 
     public List<User> getOnlineUsers() {
         List<User> allUsers = this.getUsers();
-        List<User> allOnlineUsers = new ArrayList<>();
-        for (User user : allUsers) {
-            if (user.getStatus() != UserStatus.OFFLINE) {
-                allOnlineUsers.add(user);
-            }
-        }
-        return allOnlineUsers;
+        allUsers.removeIf(user -> !Objects.equals(user.getStatus(), UserStatus.OFFLINE));
+        return allUsers;
     }
 
     /**
