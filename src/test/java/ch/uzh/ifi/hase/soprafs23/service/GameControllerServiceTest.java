@@ -5,23 +5,22 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.*;
+import ch.uzh.ifi.hase.soprafs23.entity.Answer;
+import ch.uzh.ifi.hase.soprafs23.entity.Game;
+import ch.uzh.ifi.hase.soprafs23.entity.Question;
+import ch.uzh.ifi.hase.soprafs23.entity.User;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
-import static org.assertj.core.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.*;
 
 class GameControllerServiceTest {
@@ -469,5 +468,32 @@ class GameControllerServiceTest {
             assertEquals(400L, userResultTupleDTO.getInvitedPlayerResult());
         }
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+    }
+
+    @Test
+    void intermediatePoints_timeDifference_fasterGetsMorePoints() {
+        Answer fasterAnswer = new Answer();
+        fasterAnswer.setUserId(invitingUser.getId());
+        fasterAnswer.setQuestionId(createdQuestion.getQuestionId());
+        fasterAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        fasterAnswer.setAnsweredTime(10000L);
+
+        Answer slowerAnswer = new Answer();
+        slowerAnswer.setUserId(invitedUser.getId());
+        slowerAnswer.setQuestionId(createdQuestion.getQuestionId());
+        slowerAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        slowerAnswer.setAnsweredTime(2000L);
+
+        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitingUserId())). willReturn(fasterAnswer);
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitedUserId())). willReturn(slowerAnswer);
+        given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
+
+        List<UserResultTupleDTO> intermediateResult = gameControllerService.intermediateResults(prepTextDuelGame.getGameId());
+
+        for (UserResultTupleDTO userResultTupleDTO : intermediateResult) {
+            assertTrue(userResultTupleDTO.getInvitingPlayerResult() > userResultTupleDTO.getInvitedPlayerResult());
+        }
     }
 }

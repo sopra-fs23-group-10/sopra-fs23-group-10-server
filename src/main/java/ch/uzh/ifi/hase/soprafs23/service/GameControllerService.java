@@ -222,7 +222,7 @@ public class GameControllerService {
         return gameService.getGameIdOfUser(userId);
     }
 
-    private long getPoints(Answer answer) {
+    public long getPoints(Answer answer) {
         if (answer == null) {
             return 0L;
         }
