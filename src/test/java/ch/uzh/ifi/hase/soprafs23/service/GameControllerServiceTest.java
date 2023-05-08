@@ -5,23 +5,22 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.*;
+import ch.uzh.ifi.hase.soprafs23.entity.Answer;
+import ch.uzh.ifi.hase.soprafs23.entity.Game;
+import ch.uzh.ifi.hase.soprafs23.entity.Question;
+import ch.uzh.ifi.hase.soprafs23.entity.User;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
-import static org.assertj.core.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.*;
 
 class GameControllerServiceTest {
@@ -164,32 +163,36 @@ class GameControllerServiceTest {
 
     @Test
     void removeGame_validInput_success() {
-
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
+        given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
 
-        gameControllerService.removeGame(prepTextDuelGame.getGameId());
+        invitedUser.setStatus(UserStatus.IN_GAME);
+        invitingUser.setStatus(UserStatus.IN_GAME);
+
+        gameControllerService.setInGamePlayersToOnline(prepTextDuelGame.getGameId());
 
         verify(gameService).searchGameById(prepTextDuelGame.getGameId());
-        verify(userService).setOnline(invitedUser.getId());
         verify(userService).setOnline(invitingUser.getId());
-        verify(answerService).deleteAnswers(createdQuestion.getQuestionId());
-        verify(questionService).deleteQuestions(prepTextDuelGame.getGameId());
-        verify(gameService).deleteGame(prepTextDuelGame.getGameId());
+        verify(userService).setOnline(invitedUser.getId());
     }
 
 
 
     @Test
     void removeGame_nonValidInput_noChange() {
-        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
+        given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
 
-        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+        invitedUser.setStatus(UserStatus.ONLINE);
+        invitingUser.setStatus(UserStatus.ONLINE);
 
-        gameControllerService.removeGame(prepTextDuelGame.getGameId());
+        gameControllerService.setInGamePlayersToOnline(prepTextDuelGame.getGameId());
 
-        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+        verify(gameService).searchGameById(prepTextDuelGame.getGameId());
+        verify(userService, never()).setOnline(invitingUser.getId());
+        verify(userService, never()).setOnline(invitedUser.getId());
     }
 
 
@@ -469,5 +472,32 @@ class GameControllerServiceTest {
             assertEquals(400L, userResultTupleDTO.getInvitedPlayerResult());
         }
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+    }
+
+    @Test
+    void intermediatePoints_timeDifference_fasterGetsMorePoints() {
+        Answer fasterAnswer = new Answer();
+        fasterAnswer.setUserId(invitingUser.getId());
+        fasterAnswer.setQuestionId(createdQuestion.getQuestionId());
+        fasterAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        fasterAnswer.setAnsweredTime(10000L);
+
+        Answer slowerAnswer = new Answer();
+        slowerAnswer.setUserId(invitedUser.getId());
+        slowerAnswer.setQuestionId(createdQuestion.getQuestionId());
+        slowerAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        slowerAnswer.setAnsweredTime(2000L);
+
+        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitingUserId())). willReturn(fasterAnswer);
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitedUserId())). willReturn(slowerAnswer);
+        given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
+
+        List<UserResultTupleDTO> intermediateResult = gameControllerService.intermediateResults(prepTextDuelGame.getGameId());
+
+        for (UserResultTupleDTO userResultTupleDTO : intermediateResult) {
+            assertTrue(userResultTupleDTO.getInvitingPlayerResult() > userResultTupleDTO.getInvitedPlayerResult());
+        }
     }
 }

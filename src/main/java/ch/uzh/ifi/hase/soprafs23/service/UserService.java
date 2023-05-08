@@ -4,7 +4,6 @@ import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
 import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.repository.UserRepository;
-import com.mailjet.client.errors.MailjetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * User Service
@@ -86,19 +82,14 @@ public class UserService {
      */
     public List<User> getUsers() {
       List<User> users = this.userRepository.findAll();
-      users.removeIf(user -> user.getId() == 1L);
+      users.removeIf(user -> Objects.equals(user.getId(), 1));
       return users;
     }
 
     public List<User> getOnlineUsers() {
         List<User> allUsers = this.getUsers();
-        List<User> allOnlineUsers = new ArrayList<>();
-        for (User user : allUsers) {
-            if (user.getStatus() != UserStatus.OFFLINE) {
-                allOnlineUsers.add(user);
-            }
-        }
-        return allOnlineUsers;
+        allUsers.removeIf(user -> Objects.equals(user.getStatus(), UserStatus.OFFLINE));
+        return allUsers;
     }
 
     /**
@@ -163,6 +154,14 @@ public class UserService {
       }
 
       return userById;
+    }
+
+    private User searchUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    private User searchUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     /**
@@ -237,9 +236,10 @@ public class UserService {
         userRepository.flush();
     }
 
-    public void setInGame(User user) {
+    public void setInGame(long userId) {
+        User user = userRepository.findUserById(userId);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be in game was not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User cannot be found.");
         }
         user.setStatus(UserStatus.IN_GAME);
     }
@@ -276,12 +276,16 @@ public class UserService {
         return rank;
     }
 
-    public void sendEmail(long userId) {
-        User user = searchUserById(userId);
-        try {
-            mailSenderService.sendEmail(user);
-        } catch (MailjetException e) {
-            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "iopjerthijophbertijobtopjhbrdjht");
+    public void sendPasswordEmail(User user) {
+        User emailUser = searchUserByEmail(user.getEmail());
+        User usernameUser = searchUserByUsername(user.getUsername());
+
+        if (emailUser == null || usernameUser == null) {
+            log.error("Either username or email in password reset request does not exist.");
+        } else if (emailUser.getUsername().equals(user.getUsername()) && usernameUser.getEmail().equals(user.getEmail())) {
+            mailSenderService.sendPasswordEmail(emailUser);
+        } else {
+            log.error("Provided user for password reset does not match user in database.");
         }
     }
 }

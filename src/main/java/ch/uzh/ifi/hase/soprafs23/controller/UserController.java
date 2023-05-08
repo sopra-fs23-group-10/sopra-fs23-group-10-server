@@ -160,10 +160,11 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user);
     }
 
-    @PostMapping("/reset/{userId}")
+    @PostMapping("/reset")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void sendEmail(@PathVariable long userId) {
-        userService.sendEmail(userId);
+    public void sendEmail(@RequestBody UserPostDTO userPostDTO) {
+        User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+        userService.sendPasswordEmail(user);
     }
 }

@@ -45,7 +45,7 @@ public class GameController {
         User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
 
         if(invitingUser.getStatus() != UserStatus.ONLINE ||invitedUser.getStatus() != UserStatus.ONLINE){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "One of the users is not online.");
         }
 
         Game game = gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
@@ -70,9 +70,11 @@ public class GameController {
         Game game = gameControllerService.searchGame(gameId);
 
         if(Boolean.FALSE.equals(response)) {
-            userService.setOnline(game.getInvitedUserId());
-            userService.setOnline(game.getInvitingUserId());
-            gameControllerService.removeGame(gameId);
+            try {
+                gameControllerService.setInGamePlayersToOnline(gameId);
+            } catch (ResponseStatusException e) {
+                log.info("No game with ID: {} found",gameId);
+            }
         }
 
         Map<Long, Boolean> answer = Collections.singletonMap(gameId, response);
@@ -144,15 +146,20 @@ public class GameController {
         List<UserResultTupleDTO> userResultTupleDTOList = gameControllerService.getEndResult(gameId);
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
+        try {
+            gameControllerService.setInGamePlayersToOnline(gameId);
+        } catch (ResponseStatusException e) {
+            log.info("No game with ID: {} found",gameId);
+        }
         return userResultTupleDTOList;
     }
 
     @DeleteMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+    public void terminateFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         try {
-            gameControllerService.removeGame(gameId);
+            gameControllerService.setInGamePlayersToOnline(gameId);
         } catch (ResponseStatusException e) {
             log.info("No game with ID: {} found",gameId);
         }
@@ -183,7 +190,7 @@ public class GameController {
     public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Game deletedGame = gameControllerService.searchGame(gameId);
-        gameControllerService.removeGame(gameId);
+        gameControllerService.setInGamePlayersToOnline(gameId);
         webSocketController.informUsersGameDeleted(gameId);
         return DTOMapper.INSTANCE.convertGameEntityToPostDTO(deletedGame);
     }
