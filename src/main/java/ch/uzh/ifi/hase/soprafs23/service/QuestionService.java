@@ -68,11 +68,13 @@ public class QuestionService {
     Collections.shuffle(allAnswers);
     question.setAllAnswers(allAnswers);
     question.setCreationTime(new Date());
+    System.out.println("Question "+correctAnswer+" created");
     return question;
   }
 
     public Question saveQuestion(Question question){
-        return questionRepository.save(question);
+      System.out.println("Question "+question.getCorrectAnswer()+" stored");
+      return questionRepository.save(question);
     }
 
     public void deleteQuestions(Long gameId) {

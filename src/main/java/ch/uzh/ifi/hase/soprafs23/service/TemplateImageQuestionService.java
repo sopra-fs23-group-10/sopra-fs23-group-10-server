@@ -30,7 +30,9 @@ public class TemplateImageQuestionService {
     final SecureRandom secureRandom = new SecureRandom();
 
     long qty = templateImageQuestionRepository.count();
+    System.out.println("Repository count "+qty);
     int idx = secureRandom.nextInt((int)qty);
+    System.out.println("Random index "+idx);
     Page<TemplateImageQuestion> questionPage = templateImageQuestionRepository.findAll(PageRequest.of(idx, 1));
 
     if (questionPage.hasContent()) {

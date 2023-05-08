@@ -107,14 +107,15 @@ public class GameControllerService {
 
   public Question getImageQuestion(Long gameId) {
     Question question = this.getImageQuestionFromApi(gameId);
-    /*
     for (int i = 0; i <= 5; i++) {
       if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
+        System.out.println("Question "+question.getCorrectAnswer()+" already created");
         break;
       }
       question = this.getImageQuestionFromApi(gameId);
+      System.out.println("New Question "+question.getCorrectAnswer()+" created");
     }
-    */
+
     return questionService.saveQuestion(question);
   }
 
