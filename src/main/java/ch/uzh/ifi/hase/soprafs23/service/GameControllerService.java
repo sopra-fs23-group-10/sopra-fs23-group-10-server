@@ -106,6 +106,8 @@ public class GameControllerService {
     }
 
     public Game createGame(Long invitingUserId, Long invitedUserId, QuizType quizType, ModeType modeType) {
+        userService.setInGame(invitingUserId);
+        userService.setInGame(invitedUserId);
         return gameService.createGame(invitingUserId, invitedUserId, quizType, modeType);
     }
 
