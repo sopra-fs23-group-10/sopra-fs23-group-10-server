@@ -76,8 +76,4 @@ public class QuestionService {
       System.out.println("Question "+question.getCorrectAnswer()+" stored");
       return questionRepository.save(question);
     }
-
-    public void deleteQuestions(Long gameId) {
-        questionRepository.deleteAllByGameId(gameId);
-    }
 }

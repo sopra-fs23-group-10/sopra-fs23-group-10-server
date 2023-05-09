@@ -260,10 +260,6 @@ public class UserService {
         this.calculateRanks();
     }
 
-    public long getPoints(long userId) {
-        return userRepository.findUserById(userId).getPoints();
-    }
-
     public long calculateRanks(){
         List<User> users = this.getUsers();
         users.sort(Comparator.comparingLong(User::getPoints).reversed());
