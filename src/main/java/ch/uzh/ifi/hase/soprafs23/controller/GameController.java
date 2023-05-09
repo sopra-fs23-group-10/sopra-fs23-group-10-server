@@ -154,6 +154,7 @@ public class GameController {
         return userResultTupleDTOList;
     }
 
+    //TODO: This method is obsolete. Check calls in Client before deletion.
     @DeleteMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     public void terminateFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
@@ -185,6 +186,7 @@ public class GameController {
         return gameControllerService.getAllUsersOfGame(gameId);
     }
 
+    //TODO: DeleteMapping might be inappropriate here
     @DeleteMapping("/games/{gameId}/deletions")
     @ResponseStatus(HttpStatus.OK)
     public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
