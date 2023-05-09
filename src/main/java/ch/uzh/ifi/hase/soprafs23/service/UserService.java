@@ -82,7 +82,7 @@ public class UserService {
      */
     public List<User> getUsers() {
       List<User> users = this.userRepository.findAll();
-      users.removeIf(user -> Objects.equals(user.getId(), 1));
+      users.removeIf(user -> Objects.equals(user.getId(), 1L));
       return users;
     }
 
