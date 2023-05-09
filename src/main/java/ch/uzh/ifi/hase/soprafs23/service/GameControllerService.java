@@ -264,16 +264,6 @@ public class GameControllerService {
                 (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime())/10))) : 0L;
     }
 
-    public synchronized boolean completelyAnswered(long gameId) {
-        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
-        for (Question question : questions) {
-            if (!answerService.completelyAnswered(question.getQuestionId())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public void deathSwitch(Long userId){
         Long gameId = this.getGameIdOfUser(userId);
         this.setInGamePlayersToOnline(gameId);

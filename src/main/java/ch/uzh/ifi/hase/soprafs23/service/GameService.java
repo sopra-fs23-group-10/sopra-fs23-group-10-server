@@ -50,11 +50,6 @@ public class GameService {
         return game;
     }
 
-    public Boolean gameExists(Long gameId){
-        Game game = gameRepository.findGameByGameId(gameId);
-        return game != null;
-    }
-
     public long getGameIdOfUser(Long userId) {
         Game invitingGame = gameRepository.findGameByInvitingUserId(userId);
         if (invitingGame != null) {
@@ -65,10 +60,6 @@ public class GameService {
             return invitedGame.getGameId();
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Specified user is not in any game.");
-    }
-
-    public void deleteGame(Long gameId) {
-        gameRepository.deleteGameByGameId(gameId);
     }
 
     public synchronized void changeCurrentPlayer(long gameId) {

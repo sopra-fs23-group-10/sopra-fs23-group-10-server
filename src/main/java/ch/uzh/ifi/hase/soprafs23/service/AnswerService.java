@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional
 public class AnswerService {
@@ -23,10 +21,6 @@ public class AnswerService {
         return answerRepository.findAnswerByQuestionIdAndUserId(questionId, userId);
     }
 
-    public List<Answer> searchAnswersByQuestionId(long questionId) {
-        return answerRepository.findAnswersByQuestionId(questionId);
-    }
-
     public void createAnswer(Answer answer) {
         Answer createdAnswer = new Answer();
         createdAnswer.setQuestionId(answer.getQuestionId());
@@ -35,14 +29,5 @@ public class AnswerService {
         createdAnswer.setAnsweredTime(answer.getAnsweredTime());
 
         answerRepository.save(createdAnswer);
-    }
-
-    public void deleteAnswers(long questionId) {
-        answerRepository.deleteAllByQuestionId(questionId);
-    }
-
-    public boolean completelyAnswered(long questionId) {
-        List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
-        return answers.size() >= 2;
     }
 }
