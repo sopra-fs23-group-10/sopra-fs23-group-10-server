@@ -16,11 +16,11 @@ public class Question implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long questionId;
     @Column(nullable = false)
     private long gameId;
-    @Column(nullable = true)
+    @Column
     private Category category;
     @Column(nullable = false)
     private String apiId;

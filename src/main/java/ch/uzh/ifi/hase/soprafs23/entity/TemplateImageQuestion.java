@@ -13,7 +13,7 @@ public class TemplateImageQuestion implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long templateImageQuestionId;
     @Column(nullable = true)
     private String apiId;
