@@ -261,7 +261,7 @@ public class GameControllerService {
 
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
         return answer.getAnswer().equals(question.getCorrectAnswer()) ?
-                (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime())/10))) : 0L;
+                (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime()*1000)/10))) : 0L;
     }
 
     public synchronized boolean completelyAnswered(long gameId) {
