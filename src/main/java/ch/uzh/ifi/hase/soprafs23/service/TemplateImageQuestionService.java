@@ -29,13 +29,7 @@ public class TemplateImageQuestionService {
     final SecureRandom secureRandom = new SecureRandom();
 
     long qty = templateImageQuestionRepository.count();
-    int idx = secureRandom.nextInt((int)qty);
-    Page<TemplateImageQuestion> questionPage = templateImageQuestionRepository.findAll(PageRequest.of(idx, 1));
-
-    if (questionPage.hasContent()) {
-      return questionPage.getContent().get(0);
-    }else {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Question not found");
-    }
+    int idx = secureRandom.nextInt(2,(int)qty+2);
+    return templateImageQuestionRepository.findTemplateImageQuestionBytemplateImageQuestionId(idx);
   }
 }
