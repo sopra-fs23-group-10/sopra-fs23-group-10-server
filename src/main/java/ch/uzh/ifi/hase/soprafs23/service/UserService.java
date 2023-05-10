@@ -82,13 +82,13 @@ public class UserService {
      */
     public List<User> getUsers() {
       List<User> users = this.userRepository.findAll();
-      users.removeIf(user -> Objects.equals(user.getId(), 1L));
+      users.removeIf(user -> Objects.equals(user.getId(), 0L));
       return users;
     }
 
     public List<User> getOnlineUsers() {
         List<User> allUsers = this.getUsers();
-        allUsers.removeIf(user -> Objects.equals(user.getStatus(), UserStatus.OFFLINE));
+        allUsers.removeIf(user -> !Objects.equals(user.getStatus(), UserStatus.ONLINE));
         return allUsers;
     }
 
@@ -258,10 +258,6 @@ public class UserService {
         userRepository.save(invitedUser);
         userRepository.save(invitingUser);
         this.calculateRanks();
-    }
-
-    public long getPoints(long userId) {
-        return userRepository.findUserById(userId).getPoints();
     }
 
     public long calculateRanks(){

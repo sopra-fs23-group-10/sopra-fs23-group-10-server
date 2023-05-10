@@ -44,17 +44,14 @@ public class GameController {
         User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
         User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
 
-        if(invitingUser.getStatus() != UserStatus.ONLINE ||invitedUser.getStatus() != UserStatus.ONLINE){
+        if(invitingUser.getStatus() != UserStatus.ONLINE || (invitedUser.getId() != 0 && invitedUser.getStatus() != UserStatus.ONLINE)){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "One of the users is not online.");
         }
 
         Game game = gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
-        if (game.getInvitedUserId() == 1){
-            Map<Long, Boolean> answer = Collections.singletonMap(game.getGameId(), true);
-            webSocketController.sendInvitationRespond(game.getInvitingUserId(), answer);
-        } else {
+        if (game.getInvitedUserId() != 0){
             webSocketController.inviteUser(game.getInvitedUserId(), createdGameDTO);
         }
         return createdGameDTO;
@@ -154,6 +151,7 @@ public class GameController {
         return userResultTupleDTOList;
     }
 
+    //TODO: This method is obsolete. Check calls in Client before deletion.
     @DeleteMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     public void terminateFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
@@ -185,6 +183,7 @@ public class GameController {
         return gameControllerService.getAllUsersOfGame(gameId);
     }
 
+    //TODO: DeleteMapping might be inappropriate here
     @DeleteMapping("/games/{gameId}/deletions")
     @ResponseStatus(HttpStatus.OK)
     public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {

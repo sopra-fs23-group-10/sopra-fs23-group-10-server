@@ -123,8 +123,11 @@ class UserServiceTest {
       User user2 = new User();
       User user3 = new User();
       user1.setPoints(3);
+      user1.setId(1);
       user2.setPoints(2);
+      user2.setId(2);
       user3.setPoints(1);
+      user3.setId(3);
       List<User> users = Arrays.asList(user1, user2, user3);
 
       given(userRepository.findAll()).willReturn(users);

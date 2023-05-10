@@ -7,8 +7,6 @@ import java.io.Serializable;
 @Table(name = "ANSWER")
 public class Answer implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

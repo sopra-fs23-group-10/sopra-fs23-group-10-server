@@ -436,7 +436,7 @@ class GameControllerServiceTest {
             assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
             assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
             assertEquals(prepTextDuelGame.getInvitedUserId(), correctAnswer.getUserId());
-            assertEquals(500L, userResultTupleDTO.getInvitedPlayerResult());
+            assertEquals(500000L, userResultTupleDTO.getInvitedPlayerResult());
         }
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
@@ -469,7 +469,7 @@ class GameControllerServiceTest {
             assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
             assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
             assertEquals(prepTextDuelGame.getInvitedUserId(), invitedAnswer.getUserId());
-            assertEquals(400L, userResultTupleDTO.getInvitedPlayerResult());
+            assertEquals(400000L, userResultTupleDTO.getInvitedPlayerResult());
         }
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
