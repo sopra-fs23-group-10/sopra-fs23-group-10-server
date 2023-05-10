@@ -1,17 +1,12 @@
 package ch.uzh.ifi.hase.soprafs23.repository;
 
-import ch.uzh.ifi.hase.soprafs23.constant.Category;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.TemplateImageQuestion;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,7 +52,7 @@ class TemplateImageQuestionRepositoryTest {
 
   @Test
   void findGameByInvitingUserId_success() {
-    TemplateImageQuestion found = templateImageQuestionRepository.findTemplateImageQuestionBytemplateImageQuestionId(templateImageQuestion.getTemplateImageQuestionId());
+    TemplateImageQuestion found = templateImageQuestionRepository.findTemplateImageQuestionByTemplateImageQuestionId(templateImageQuestion.getTemplateImageQuestionId());
 
     assertNotNull(found);
     assertEquals(found.getTemplateImageQuestionId(), templateImageQuestion.getTemplateImageQuestionId());
@@ -70,7 +65,7 @@ class TemplateImageQuestionRepositoryTest {
 
   @Test
   void findQuestionByQuestionId_noneFound(){
-    TemplateImageQuestion found = templateImageQuestionRepository.findTemplateImageQuestionBytemplateImageQuestionId(-1L);
+    TemplateImageQuestion found = templateImageQuestionRepository.findTemplateImageQuestionByTemplateImageQuestionId(-1L);
     assertNull(found);
   }
 }

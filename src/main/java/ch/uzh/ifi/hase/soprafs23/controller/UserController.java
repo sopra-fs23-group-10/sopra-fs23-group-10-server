@@ -165,6 +165,6 @@ public class UserController {
     @ResponseBody
     public void sendEmail(@RequestBody UserPostDTO userPostDTO) {
         User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-        userService.sendPasswordEmail(user);
+        userService.sendNewPassword(user);
     }
 }

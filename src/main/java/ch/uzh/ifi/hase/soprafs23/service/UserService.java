@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 /**
@@ -272,16 +273,33 @@ public class UserService {
         return rank;
     }
 
-    public void sendPasswordEmail(User user) {
+    public void sendNewPassword(User user) {
         User emailUser = searchUserByEmail(user.getEmail());
         User usernameUser = searchUserByUsername(user.getUsername());
 
         if (emailUser == null || usernameUser == null) {
             log.error("Either username or email in password reset request does not exist.");
         } else if (emailUser.getUsername().equals(user.getUsername()) && usernameUser.getEmail().equals(user.getEmail())) {
-            mailSenderService.sendPasswordEmail(emailUser);
+            this.setRandomPassword(emailUser.getId());
+            mailSenderService.sendNewPassword(emailUser);
         } else {
             log.error("Provided user for password reset does not match user in database.");
         }
+    }
+
+    public void setRandomPassword(long userId) {
+      final SecureRandom secureRandom = new SecureRandom();
+      char[] allCharacters = "abcdefghijklmnopqrstuvwxyz0123456789/*-+".toCharArray();
+
+      StringBuilder stringBuilder = new StringBuilder();
+
+      for (int i = 0; i < 12; i++) {
+        stringBuilder.append(allCharacters[secureRandom.nextInt(allCharacters.length)]);
+      }
+
+      String generatedPassword = stringBuilder.toString();
+
+      User user = userRepository.findUserById(userId);
+      user.setPassword(generatedPassword);
     }
 }

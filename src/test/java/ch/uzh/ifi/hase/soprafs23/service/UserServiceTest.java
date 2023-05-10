@@ -142,4 +142,12 @@ class UserServiceTest {
       assertEquals(2L, user2.getRank());
       assertEquals(3L, user3.getRank());
     }
+
+  @Test
+  void setRandomlyGeneratedPassword_success() {
+    given(userRepository.findUserById(testUser.getId())).willReturn(testUser);
+    String oldPassword = testUser.getPassword();
+    userService.setRandomPassword(testUser.getId());
+    assertNotEquals(oldPassword, testUser.getPassword());
+  }
 }
