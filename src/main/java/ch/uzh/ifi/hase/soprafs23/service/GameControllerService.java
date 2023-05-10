@@ -141,7 +141,9 @@ public class GameControllerService {
 
     public Game createGame(Long invitingUserId, Long invitedUserId, QuizType quizType, ModeType modeType) {
         userService.setInGame(invitingUserId);
-        userService.setInGame(invitedUserId);
+        if (invitedUserId != 1L) {
+            userService.setInGame(invitedUserId);
+        }
         return gameService.createGame(invitingUserId, invitedUserId, quizType, modeType);
     }
 
@@ -190,6 +192,7 @@ public class GameControllerService {
         return question.getCorrectAnswer();
     }
 
+    //TODO: Is this method needed?
     private UserResultTuple getPointsOfBoth(Game game) {
         UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), game.getInvitingUserId(), game.getInvitedUserId());
         List<Question> questions = questionService.searchQuestionsByGameId(game.getGameId());
@@ -250,6 +253,7 @@ public class GameControllerService {
                         && userService.searchUserById(game.getInvitedUserId()).getStatus().equals(UserStatus.ONLINE));
     }
 
+    //TODO: This method does not work anymore, since games do not get deleted anymore -> multiple games with same player can exist
     public long getGameIdOfUser(Long userId){
         return gameService.getGameIdOfUser(userId);
     }
@@ -264,6 +268,7 @@ public class GameControllerService {
                 (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime()*1000)/10))) : 0L;
     }
 
+    //TODO: Still needed?
     public void deathSwitch(Long userId){
         Long gameId = this.getGameIdOfUser(userId);
         this.setInGamePlayersToOnline(gameId);
