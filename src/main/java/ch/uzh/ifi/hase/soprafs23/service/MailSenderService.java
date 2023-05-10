@@ -15,7 +15,7 @@ import ch.uzh.ifi.hase.soprafs23.entity.User;
 public class MailSenderService {
     private final Logger log = LoggerFactory.getLogger(MailSenderService.class);
     
-    public void sendPasswordEmail(User user) {
+    public void sendNewPassword(User user) {
         try {
             MailjetRequest request;
             MailjetResponse response;
@@ -30,16 +30,17 @@ public class MailSenderService {
                                             .put(new JSONObject()
                                                     .put("Email", user.getEmail())
                                                     .put("Name", user.getUsername())))
-                                    .put(Emailv31.Message.SUBJECT, "Your password has been requested")
+                                    .put(Emailv31.Message.SUBJECT, "Your password has been reset")
                                     .put(Emailv31.Message.TEXTPART, "Hello " + user.getUsername() + "!\n\n" +
-                                            "It seems like you forgot your password. Let us help you out.\n" +
-                                            "Your password is: " + user.getPassword() + "\n\n" +
-                                            "Make sure you don't loose it again!\n\n" +
+                                            "It seems like you forgot your password. Let us help you out.\n\n" +
+                                            "Your new password is: \n\t\t" +
+                                            user.getPassword() + "\n\n" +
+                                            "Please change this password in your settings to one you can remember!\n\n" +
                                             "All the best,\n" +
                                             "Your BrainBusters Team")));
             response = client.post(request);
-            System.out.println(response.getStatus());
-            System.out.println(response.getData());
+            log.info(String.valueOf(response.getStatus()));
+            log.info(String.valueOf(response.getData()));
         } catch (MailjetException e) {
             log.error("MailjetException during request of external API: {}", e.getMessage());
         }
