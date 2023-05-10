@@ -144,7 +144,7 @@ class UserServiceTest {
     }
 
   @Test
-  void setRandomlyGeneratedPassword_success() {
+  void setRandomPassword_success() {
     given(userRepository.findUserById(testUser.getId())).willReturn(testUser);
     String oldPassword = testUser.getPassword();
     userService.setRandomPassword(testUser.getId());
