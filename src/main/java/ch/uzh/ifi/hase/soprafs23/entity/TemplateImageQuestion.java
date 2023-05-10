@@ -1,25 +1,19 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
-import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.converter.StringListConverter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "QUESTION")
-public class Question implements Serializable {
+@Table(name = "IMAGE_QUESTION")
+public class TemplateImageQuestion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long questionId;
-    @Column(nullable = false)
-    private long gameId;
-    @Column
-    private Category category;
-    @Column(nullable = false)
+    private long templateImageQuestionId;
+    @Column()
     private String apiId;
     @Column(nullable = false)
     private String correctAnswer;
@@ -31,17 +25,9 @@ public class Question implements Serializable {
     private List<String> allAnswers;
     @Column(nullable = false)
     private String question;
-    @Column(nullable = false)
-    private Date creationTime;
 
-    public long getQuestionId() {
-        return this.questionId;
-    }
-    public long getGameId() {
-        return this.gameId;
-    }
-    public Category getCategory() {
-        return this.category;
+    public long getTemplateImageQuestionId() {
+        return this.templateImageQuestionId;
     }
     public String getApiId() {
         return this.apiId;
@@ -58,19 +44,9 @@ public class Question implements Serializable {
     public String getQuestion() {
         return this.question;
     }
-    public Date getCreationTime() {
-        return this.creationTime;
-    }
 
-
-    public void setQuestionId(long questionId) {
-        this.questionId = questionId;
-    }
-    public void setGameId(long gameId) {
-        this.gameId = gameId;
-    }
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setTemplateImageQuestionId(long templateImageQuestionId) {
+        this.templateImageQuestionId = templateImageQuestionId;
     }
     public void setApiId(String apiId) {
         this.apiId = apiId;
@@ -86,12 +62,5 @@ public class Question implements Serializable {
     }
     public void setQuestion(String question) {
         this.question = question;
-    }
-    public void setCreationTime(Date lastChange) {
-        this.creationTime = lastChange;
-    }
-
-    public boolean timeRunUp() {
-        return (new Date().getTime() - this.creationTime.getTime())/1000 >= 30;
     }
 }

@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * User Service
@@ -31,6 +29,8 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+
+    private final MailSenderService mailSenderService = new MailSenderService();
 
     @Autowired
     public UserService(@Qualifier("userRepository") UserRepository userRepository) {
@@ -81,18 +81,15 @@ public class UserService {
      * @return List<User>
      */
     public List<User> getUsers() {
-        return this.userRepository.findAll();
+      List<User> users = this.userRepository.findAll();
+      users.removeIf(user -> Objects.equals(user.getId(), 0L));
+      return users;
     }
 
     public List<User> getOnlineUsers() {
-        List<User> allUsers = this.userRepository.findAll();
-        List<User> allOnlineUsers = new ArrayList<>();
-        for (User user : allUsers) {
-            if (user.getStatus() != UserStatus.OFFLINE) {
-                allOnlineUsers.add(user);
-            }
-        }
-        return allOnlineUsers;
+        List<User> allUsers = this.getUsers();
+        allUsers.removeIf(user -> !Objects.equals(user.getStatus(), UserStatus.ONLINE));
+        return allUsers;
     }
 
     /**
@@ -106,9 +103,8 @@ public class UserService {
         newUser.setStatus(UserStatus.ONLINE);
         newUser.setProfilePicture(newUser.getUsername());
         newUser.setPoints(0L);
+        newUser.setRank(this.calculateRanks());
         checkIfUserExists(newUser);
-        // saves the given entity but data is only persisted in the database once
-        // flush() is called
         newUser = userRepository.save(newUser);
         userRepository.flush();
 
@@ -160,6 +156,14 @@ public class UserService {
       return userById;
     }
 
+    private User searchUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    private User searchUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     /**
      * This method searches for an existing username in the repository and validates the provided password.
      *
@@ -191,7 +195,7 @@ public class UserService {
      * @throws org.springframework.web.server.ResponseStatusException
      * @return User userById
      */
-    public User changeUsername(long userId, User userWithAdjustments) {
+    public User changeUsernameAndProfilePic(long userId, User userWithAdjustments) {
         User userById = this.userRepository.findUserById(userId);
 
         if (userById == null) {
@@ -202,6 +206,7 @@ public class UserService {
             checkIfUserExists(userWithAdjustments);
             userById.setUsername(userWithAdjustments.getUsername());
         }
+        userById.setProfilePicture(userWithAdjustments.getProfilePicture());
 
         return userById;
     }
@@ -231,9 +236,10 @@ public class UserService {
         userRepository.flush();
     }
 
-    public void setInGame(User user) {
+    public void setInGame(long userId) {
+        User user = userRepository.findUserById(userId);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User to be in game was not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User cannot be found.");
         }
         user.setStatus(UserStatus.IN_GAME);
     }
@@ -249,9 +255,33 @@ public class UserService {
 
         invitingUser.setPoints(invitingUser.getPoints() + userResultTuple.getInvitingPlayerResult());
         invitedUser.setPoints(invitedUser.getPoints() + userResultTuple.getInvitedPlayerResult());
+        userRepository.save(invitedUser);
+        userRepository.save(invitingUser);
+        this.calculateRanks();
     }
 
-    public long getPoints(long userId) {
-        return userRepository.findUserById(userId).getPoints();
+    public long calculateRanks(){
+        List<User> users = this.getUsers();
+        users.sort(Comparator.comparingLong(User::getPoints).reversed());
+        long rank = 1;
+        for (User user : users) {
+            user.setRank(rank++);
+            userRepository.save(user);
+        }
+        userRepository.flush();
+        return rank;
+    }
+
+    public void sendPasswordEmail(User user) {
+        User emailUser = searchUserByEmail(user.getEmail());
+        User usernameUser = searchUserByUsername(user.getUsername());
+
+        if (emailUser == null || usernameUser == null) {
+            log.error("Either username or email in password reset request does not exist.");
+        } else if (emailUser.getUsername().equals(user.getUsername()) && usernameUser.getEmail().equals(user.getEmail())) {
+            mailSenderService.sendPasswordEmail(emailUser);
+        } else {
+            log.error("Provided user for password reset does not match user in database.");
+        }
     }
 }

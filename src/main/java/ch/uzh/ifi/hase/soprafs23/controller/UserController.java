@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -39,7 +40,7 @@ public class UserController {
         // fetch all users in the internal representation
         List<User> users = userService.getUsers();
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
+        users.sort(Comparator.comparingLong(User::getRank));
 
         // convert each user to the API representation
         for (User user : users) {
@@ -106,7 +107,7 @@ public class UserController {
 
     @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public UserGetDTO putUsername(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token, @RequestBody UserPutDTO userPutDTO) {
+    public UserGetDTO putUser(@PathVariable (name = "userId") long userId, @RequestHeader("token") String token, @RequestBody UserPutDTO userPutDTO) {
         // verify token with userId from path variable to authorise changes
         User userToChange = userService.verifyTokenWithId(token, userId);
 
@@ -118,7 +119,7 @@ public class UserController {
         }
 
         // make changes to user
-        userService.changeUsername(userId, userInput);
+        userService.changeUsernameAndProfilePic(userId, userInput);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(userToChange);
     }
@@ -157,5 +158,13 @@ public class UserController {
 
         // convert user to API user and return (without token)
         return DTOMapper.INSTANCE.convertEntityToUserGetDTONoToken(user);
+    }
+
+    @PostMapping("/reset")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void sendEmail(@RequestBody UserPostDTO userPostDTO) {
+        User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+        userService.sendPasswordEmail(user);
     }
 }

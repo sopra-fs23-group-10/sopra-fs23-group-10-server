@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs23.service;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
@@ -33,7 +35,6 @@ class UserServiceTest {
     testUser = new User();
     testUser.setId(1L);
     testUser.setUsername("testUsername");
-    testUser.setPassword("testPassword");
     testUser.setPassword("testPassword");
     testUser.setPoints(0L);
 
@@ -71,4 +72,74 @@ class UserServiceTest {
     // is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
+
+    @Test
+    void changeUsername_validInputs_success() {
+        // when -> any object is being save in the userRepository -> return the dummy
+        // createdUser
+        User createdUser = userService.createUser(testUser);
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+        given(userRepository.findUserById(testUser.getId())).willReturn(createdUser);
+
+        // then
+        User changeUser = new User();
+        changeUser.setUsername("changedUsername");
+
+        User updatedUser = userService.changeUsernameAndProfilePic(1L, changeUser);
+
+        assertEquals(testUser.getId(), updatedUser.getId());
+        assertEquals(testUser.getUsername(), updatedUser.getUsername());
+        assertEquals(testUser.getPassword(), updatedUser.getPassword());
+        assertEquals(testUser.getEmail(), updatedUser.getEmail());
+        assertNotNull(updatedUser.getToken());
+        assertEquals(UserStatus.ONLINE , updatedUser.getStatus());
+    }
+
+    @Test
+    void changeUsername_validInputs_throwsException404() {
+        // when
+        User changeUser = new User();
+        changeUser.setUsername("changedUsername");
+
+        // The outcome of the method call is asserted,
+        // expecting the method to throw a ResponseStatusException
+        Exception exception = assertThrows(ResponseStatusException.class,
+                () -> userService.changeUsernameAndProfilePic(1L, changeUser));
+
+        // Assert if the right message is thrown with the exception
+        String expectedMessage = "User with specified userID does not exist.";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+
+        // Assert if the right status code is thrown with the exception
+        String expectedStatusCode = "404 NOT FOUND";
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void updateRank_success(){
+
+      User user1 = new User();
+      User user2 = new User();
+      User user3 = new User();
+      user1.setPoints(3);
+      user1.setId(1);
+      user2.setPoints(2);
+      user2.setId(2);
+      user3.setPoints(1);
+      user3.setId(3);
+      List<User> users = Arrays.asList(user1, user2, user3);
+
+      given(userRepository.findAll()).willReturn(users);
+
+      long nextLowestRank = userService.calculateRanks();
+
+      Mockito.verify(userRepository, Mockito.times(3)).save(Mockito.any());
+      Mockito.verify(userRepository, Mockito.times(1)).flush();
+
+      assertEquals(4L, nextLowestRank);
+      assertEquals(1L, user1.getRank());
+      assertEquals(2L, user2.getRank());
+      assertEquals(3L, user3.getRank());
+    }
 }

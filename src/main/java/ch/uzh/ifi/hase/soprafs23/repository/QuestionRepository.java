@@ -9,6 +9,6 @@ import java.util.List;
 @Repository("questionRepository")
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Question findQuestionByQuestionId(long questionId);
+    Boolean existsQuestionByApiIdAndGameId(String apiId, Long gameId);
     List<Question> findAllByGameId(long gameId);
-    void deleteAllByGameId(long gameId);
 }

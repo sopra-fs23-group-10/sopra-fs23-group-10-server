@@ -58,9 +58,10 @@ class UserControllerTest {
         user.setPassword("testPassword");
         user.setPoints(2L);
         user.setEmail("email@email.com");
-        user.setProfilePicture("testUsername");
+        user.setProfilePicture("testProfilePicture");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
+        user.setRank(1L);
     }
 
 // Tests of PostMappings
@@ -378,12 +379,12 @@ class UserControllerTest {
         // given
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("changedUsername");
+        userPutDTO.setProfilePicture("changedProfilePicture");
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
-
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -412,7 +413,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), invalidID)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
         // when
@@ -433,7 +434,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), user.getId())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
         // when
@@ -455,7 +456,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(invalidToken, user.getId())).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
 
         // when
@@ -478,7 +479,7 @@ class UserControllerTest {
 
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
         when(userService.verifyTokenWithId(user.getToken(), offsetId)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authorized."));
 
         // when
@@ -500,7 +501,7 @@ class UserControllerTest {
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
@@ -521,7 +522,7 @@ class UserControllerTest {
         // this mocks the UserService -> we define above what the userService should
         // return when getUsers() is called
         given(userService.verifyTokenWithId(user.getToken(), user.getId())).willReturn(user);
-        given(userService.changeUsername(Mockito.anyLong(), Mockito.any())).willReturn(user);
+        given(userService.changeUsernameAndProfilePic(Mockito.anyLong(), Mockito.any())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/users/" + user.getId())
@@ -533,7 +534,7 @@ class UserControllerTest {
         mockMvc.perform(putRequest).andExpect(status().isBadRequest());
     }
 
-    /*
+
     @Test
     void login_whenValid_thenReturnUserWithToken_200() throws Exception {
         user.setStatus(UserStatus.OFFLINE);
@@ -542,9 +543,7 @@ class UserControllerTest {
         userPostDTO.setUsername(user.getUsername());
         userPostDTO.setPassword(user.getPassword());
 
-        given(userService.checkLoginCredentials(userPostDTO.getUsername(), userPostDTO.getPassword())).willReturn(user);
-        doCallRealMethod().when(userService).setOnline(user.getId());
-
+        given(userService.checkLoginCredentials(user.getUsername(), user.getPassword())).willReturn(user);
 
         MockHttpServletRequestBuilder postRequest = post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -560,7 +559,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.email").doesNotExist());
     }
-     */
+
 
     @Test
     void login_whenEmptyUsername_thenThrowForbidden_403() throws Exception {

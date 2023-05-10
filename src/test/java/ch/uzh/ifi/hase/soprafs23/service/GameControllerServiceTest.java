@@ -5,7 +5,12 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.*;
+import ch.uzh.ifi.hase.soprafs23.entity.Answer;
+import ch.uzh.ifi.hase.soprafs23.entity.Game;
+import ch.uzh.ifi.hase.soprafs23.entity.Question;
+import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
+import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -16,13 +21,13 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class GameControllerServiceTest {
 
     @InjectMocks
+    @Spy
     private GameControllerService gameControllerService;
-
     @Mock
     private UserService userService;
     @Mock
@@ -42,11 +47,12 @@ class GameControllerServiceTest {
 
     private Question createdQuestion;
 
+    private Answer correctAnswer;
+
     private Random random = new Random();
 
     private final List<String> incorrectAnswers = Arrays.asList("Neil Young", "Eric Clapton", "Elton John");
     private final List<String> allAnswers = Arrays.asList("Neil Young", "Bob Dylan", "Eric Clapton", "Elton John");
-
 
     @BeforeEach
     public void setup() {
@@ -86,6 +92,28 @@ class GameControllerServiceTest {
         createdQuestion.setAllAnswers(allAnswers);
         createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
         createdQuestion.setCreationTime(new Date());
+
+        correctAnswer = new Answer();
+        correctAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        correctAnswer.setAnsweredTime(10000L);
+        correctAnswer.setId(createdQuestion.getQuestionId());
+        correctAnswer.setUserId(invitedUser.getId());
+    }
+
+    @Test
+    public void createQuestion_returnsQuestionDTOW_LoopTwiceBecauseAlreadyExistent() throws Exception {
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setCategory(createdQuestion.getCategory());
+        questionDTO.setGameId(workingTextDuelGame.getGameId());
+
+        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        doReturn(createdQuestion).when(gameControllerService).getQuestionFromExternalApi(createdQuestion.getCategory(), createdQuestion.getGameId());
+        given(questionService.existsQuestionByApiIdAndGameId(createdQuestion)).willReturn(true, false);
+
+        gameControllerService.getQuestion(createdQuestion.getCategory(), createdQuestion.getGameId());
+
+        verify(gameControllerService, times(2)).getQuestionFromExternalApi(createdQuestion.getCategory(), createdQuestion.getGameId());
+        verify(questionService, times(1)).saveQuestion(createdQuestion);
     }
 
     /*
@@ -135,32 +163,36 @@ class GameControllerServiceTest {
 
     @Test
     void removeGame_validInput_success() {
-
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
+        given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
 
-        gameControllerService.removeGame(prepTextDuelGame.getGameId());
+        invitedUser.setStatus(UserStatus.IN_GAME);
+        invitingUser.setStatus(UserStatus.IN_GAME);
+
+        gameControllerService.setInGamePlayersToOnline(prepTextDuelGame.getGameId());
 
         verify(gameService).searchGameById(prepTextDuelGame.getGameId());
-        verify(userService).setOnline(invitedUser.getId());
         verify(userService).setOnline(invitingUser.getId());
-        verify(answerService).deleteAnswers(createdQuestion.getQuestionId());
-        verify(questionService).deleteQuestions(prepTextDuelGame.getGameId());
-        verify(gameService).deleteGame(prepTextDuelGame.getGameId());
+        verify(userService).setOnline(invitedUser.getId());
     }
 
 
 
     @Test
     void removeGame_nonValidInput_noChange() {
-        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
+        given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
 
-        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+        invitedUser.setStatus(UserStatus.ONLINE);
+        invitingUser.setStatus(UserStatus.ONLINE);
 
-        gameControllerService.removeGame(prepTextDuelGame.getGameId());
+        gameControllerService.setInGamePlayersToOnline(prepTextDuelGame.getGameId());
 
-        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+        verify(gameService).searchGameById(prepTextDuelGame.getGameId());
+        verify(userService, never()).setOnline(invitingUser.getId());
+        verify(userService, never()).setOnline(invitedUser.getId());
     }
 
 
@@ -380,21 +412,55 @@ class GameControllerServiceTest {
             assertNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
         });
     }
+    */
 
     @Test
-    public void intermediateResults_success() {
+    void intermediateResults_OnlyOneUserAnswered_success() {
         gameControllerService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
-
-        gameControllerService.searchGame(prepTextDuelGame.getGameId()).addQuestion(createdQuestion);
 
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
         given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
+        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(questionService.searchQuestionByQuestionId(prepTextDuelGame.getGameId())).willReturn(createdQuestion);
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitedUserId())).willReturn(correctAnswer);
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitingUserId())).willReturn(null);
 
-        Answer invitingAnswer = new Answer(invitingUser.getId(), createdQuestion.getId(), createdQuestion.getIncorrectAnswers()[1], 200L);
-        Answer invitedAnswer = new Answer(invitedUser.getId(), createdQuestion.getId(), createdQuestion.getCorrectAnswer(), 300L);
+        gameControllerService.answerQuestion(correctAnswer);
+        gameControllerService.intermediateResults(createdQuestion.getGameId());
 
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), invitingAnswer);
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), invitedAnswer);
+        List<UserResultTupleDTO> intermediateResult = gameControllerService.intermediateResults(prepTextDuelGame.getGameId());
+
+        for (UserResultTupleDTO userResultTupleDTO : intermediateResult) {
+            assertEquals(prepTextDuelGame.getGameId(), userResultTupleDTO.getGameId());
+            assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
+            assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
+            assertEquals(prepTextDuelGame.getInvitedUserId(), correctAnswer.getUserId());
+            assertEquals(500000L, userResultTupleDTO.getInvitedPlayerResult());
+        }
+        assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
+    }
+
+    @Test
+    void intermediateResults_success() {
+
+        Answer invitingAnswer = new Answer();
+        invitingAnswer.setUserId(invitingUser.getId());
+        invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
+        invitingAnswer.setAnswer(createdQuestion.getIncorrectAnswers().get(1));
+        invitingAnswer.setAnsweredTime(10000L);
+
+        Answer invitedAnswer = new Answer();
+        invitedAnswer.setUserId(invitedUser.getId());
+        invitedAnswer.setQuestionId(createdQuestion.getQuestionId());
+        invitedAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        invitedAnswer.setAnsweredTime(8000L);
+
+        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitingUserId())). willReturn(invitingAnswer);
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitedUserId())). willReturn(invitedAnswer);
+        given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
 
         List<UserResultTupleDTO> intermediateResult = gameControllerService.intermediateResults(prepTextDuelGame.getGameId());
 
@@ -403,10 +469,35 @@ class GameControllerServiceTest {
             assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
             assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
             assertEquals(prepTextDuelGame.getInvitedUserId(), invitedAnswer.getUserId());
-            assertEquals(350L, userResultTupleDTO.getInvitedPlayerResult());
+            assertEquals(400000L, userResultTupleDTO.getInvitedPlayerResult());
         }
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
 
- */
+    @Test
+    void intermediatePoints_timeDifference_fasterGetsMorePoints() {
+        Answer fasterAnswer = new Answer();
+        fasterAnswer.setUserId(invitingUser.getId());
+        fasterAnswer.setQuestionId(createdQuestion.getQuestionId());
+        fasterAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        fasterAnswer.setAnsweredTime(10000L);
+
+        Answer slowerAnswer = new Answer();
+        slowerAnswer.setUserId(invitedUser.getId());
+        slowerAnswer.setQuestionId(createdQuestion.getQuestionId());
+        slowerAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        slowerAnswer.setAnsweredTime(2000L);
+
+        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+        given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitingUserId())). willReturn(fasterAnswer);
+        given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitedUserId())). willReturn(slowerAnswer);
+        given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
+
+        List<UserResultTupleDTO> intermediateResult = gameControllerService.intermediateResults(prepTextDuelGame.getGameId());
+
+        for (UserResultTupleDTO userResultTupleDTO : intermediateResult) {
+            assertTrue(userResultTupleDTO.getInvitingPlayerResult() > userResultTupleDTO.getInvitedPlayerResult());
+        }
+    }
 }

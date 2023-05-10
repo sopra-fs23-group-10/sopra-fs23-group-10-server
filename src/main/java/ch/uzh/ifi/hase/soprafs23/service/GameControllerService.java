@@ -4,10 +4,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.Answer;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import org.json.JSONArray;
@@ -37,20 +34,24 @@ public class GameControllerService {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final WebSocketService webSocketService;
+    private final TemplateImageQuestionService templateImageQuestionService;
     private final Logger log = LoggerFactory.getLogger(GameControllerService.class);
     private final SecureRandom secureRandom;
 
     @Autowired
-    public GameControllerService(UserService userService, GameService gameService, QuestionService questionService, AnswerService answerService, WebSocketService webSocketService) {
+    public GameControllerService(UserService userService, GameService gameService,
+                                 QuestionService questionService, AnswerService answerService,
+                                 WebSocketService webSocketService,TemplateImageQuestionService templateImageQuestionService) {
         this.userService = userService;
         this.gameService = gameService;
         this.questionService = questionService;
         this.answerService = answerService;
         this.webSocketService = webSocketService;
+        this.templateImageQuestionService = templateImageQuestionService;
         this.secureRandom = new SecureRandom();
     }
 
-    public Question getQuestion(Category category, Long gameId) {
+    protected Question getQuestionFromExternalApi(Category category, Long gameId){
 
         Game game = gameService.searchGameById(gameId);
         userService.searchUserById(game.getInvitedUserId());
@@ -60,7 +61,7 @@ public class GameControllerService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://the-trivia-api.com/api/questions?categories="
                         + category.toString().toLowerCase()
-                        + "&limit=1&difficulty=easy"
+                        + "&limit=1"
                 ))
                 .build();
         HttpResponse<String> response;
@@ -93,25 +94,69 @@ public class GameControllerService {
         }
     }
 
+    public Question getQuestion(Category category, Long gameId) {
+        Question question = this.getQuestionFromExternalApi(category, gameId);
+        for (int i = 0; i <= 5; i++) {
+            if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
+                break;
+            }
+            question = this.getQuestionFromExternalApi(category, gameId);
+        }
+        return questionService.saveQuestion(question);
+    }
+
+  public Question getImageQuestion(Long gameId) {
+    Question question = this.getImageQuestionFromApi(gameId);
+    for (int i = 0; i <= 5; i++) {
+      if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
+        System.out.println("Question "+question.getCorrectAnswer()+" already created");
+        break;
+      }
+      question = this.getImageQuestionFromApi(gameId);
+      System.out.println("New Question "+question.getCorrectAnswer()+" created");
+    }
+
+    return questionService.saveQuestion(question);
+  }
+
+  private Question getImageQuestionFromApi(Long gameId){
+    Game game = gameService.searchGameById(gameId);
+    userService.searchUserById(game.getInvitedUserId());
+    userService.searchUserById(game.getInvitingUserId());
+
+    try{
+      TemplateImageQuestion templateImageQuestion = templateImageQuestionService.getRandomImageQuestion();
+      return questionService.createImageQuestion(game.getGameId(), templateImageQuestion.getApiId(),
+              templateImageQuestion.getCorrectAnswer(), templateImageQuestion.getQuestion(),
+              templateImageQuestion.getIncorrectAnswers(), templateImageQuestion.getAllAnswers());
+    }catch (ResponseStatusException e){
+      log.error("Question not found");
+      return null;
+    }
+  }
+
     public Game searchGame(Long gameId) {
         return gameService.searchGameById(gameId);
     }
 
     public Game createGame(Long invitingUserId, Long invitedUserId, QuizType quizType, ModeType modeType) {
+        userService.setInGame(invitingUserId);
+        if (!invitedUserId.equals(0L)) {
+            userService.setInGame(invitedUserId);
+        }
         return gameService.createGame(invitingUserId, invitedUserId, quizType, modeType);
     }
 
-    public void removeGame(Long gameId) {
+    public void setInGamePlayersToOnline(Long gameId) {
         Game game = gameService.searchGameById(gameId);
-        userService.setOnline(game.getInvitedUserId());
-        userService.setOnline(game.getInvitingUserId());
-
-        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
-        for (Question question : questions) {
-            answerService.deleteAnswers(question.getQuestionId());
+        User invitingUser = userService.searchUserById(game.getInvitingUserId());
+        if (invitingUser != null && invitingUser.getStatus() == UserStatus.IN_GAME) {
+            userService.setOnline(game.getInvitingUserId());
         }
-        questionService.deleteQuestions(gameId);
-        gameService.deleteGame(gameId);
+        User invitedUser = userService.searchUserById(game.getInvitedUserId());
+        if (invitedUser != null && invitedUser.getStatus() == UserStatus.IN_GAME) {
+            userService.setOnline(game.getInvitedUserId());
+        }
     }
 
     public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
@@ -129,7 +174,7 @@ public class GameControllerService {
         return Collections.singletonMap("topics", new ArrayList<>(Arrays.asList(Category.values())));
     }
 
-    public synchronized void answerQuestion(Answer answer) {
+    public synchronized String answerQuestion(Answer answer) {
         if (answer == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.");
         }
@@ -144,8 +189,10 @@ public class GameControllerService {
             answer.setAnswer("WrongAnswer");
         }
         answerService.createAnswer(answer);
+        return question.getCorrectAnswer();
     }
 
+    //TODO: Is this method needed?
     private UserResultTuple getPointsOfBoth(Game game) {
         UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), game.getInvitingUserId(), game.getInvitedUserId());
         List<Question> questions = questionService.searchQuestionsByGameId(game.getGameId());
@@ -206,6 +253,7 @@ public class GameControllerService {
                         && userService.searchUserById(game.getInvitedUserId()).getStatus().equals(UserStatus.ONLINE));
     }
 
+    //TODO: This method does not work anymore, since games do not get deleted anymore -> multiple games with same player can exist
     public long getGameIdOfUser(Long userId){
         return gameService.getGameIdOfUser(userId);
     }
@@ -217,22 +265,13 @@ public class GameControllerService {
 
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
         return answer.getAnswer().equals(question.getCorrectAnswer()) ?
-                (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime())/10))) : 0L;
+                (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime()*1000)/10))) : 0L;
     }
 
-    public synchronized boolean completelyAnswered(long gameId) {
-        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
-        for (Question question : questions) {
-            if (!answerService.completelyAnswered(question.getQuestionId())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
+    //TODO: Still needed?
     public void deathSwitch(Long userId){
         Long gameId = this.getGameIdOfUser(userId);
-        this.removeGame(gameId);
+        this.setInGamePlayersToOnline(gameId);
         this.webSocketService.sendMessageToClients("/games/"+gameId, "Game was deleted since one of the players left the game");
     }
 }

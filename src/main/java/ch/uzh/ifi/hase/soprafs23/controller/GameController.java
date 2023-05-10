@@ -9,7 +9,7 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
-import ch.uzh.ifi.hase.soprafs23.service.GameService;
+import ch.uzh.ifi.hase.soprafs23.service.QuestionService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +25,14 @@ public class GameController {
     private final GameControllerService gameControllerService;
     private final UserService userService;
     private final WebSocketController webSocketController;
+    private final QuestionService questionService;
     private final Logger log = LoggerFactory.getLogger(GameController.class);
 
-    GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
+    GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController, QuestionService questionService) {
         this.gameControllerService = gameControllerService;
         this.userService = userService;
         this.webSocketController = webSocketController;
+        this.questionService = questionService;
     }
 
     @PostMapping("/game/creation")
@@ -42,15 +44,16 @@ public class GameController {
         User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
         User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
 
-        if(invitingUser.getStatus() != UserStatus.ONLINE ||invitedUser.getStatus() != UserStatus.ONLINE){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The invited user or you is not online");
+        if(invitingUser.getStatus() != UserStatus.ONLINE || (invitedUser.getId() != 0 && invitedUser.getStatus() != UserStatus.ONLINE)){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "One of the users is not online.");
         }
 
         Game game = gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
-
-        webSocketController.inviteUser(game.getInvitedUserId(), createdGameDTO);
+        if (game.getInvitedUserId() != 0){
+            webSocketController.inviteUser(game.getInvitedUserId(), createdGameDTO);
+        }
         return createdGameDTO;
     }
 
@@ -64,9 +67,11 @@ public class GameController {
         Game game = gameControllerService.searchGame(gameId);
 
         if(Boolean.FALSE.equals(response)) {
-            userService.setOnline(game.getInvitedUserId());
-            userService.setOnline(game.getInvitingUserId());
-            gameControllerService.removeGame(gameId);
+            try {
+                gameControllerService.setInGamePlayersToOnline(gameId);
+            } catch (ResponseStatusException e) {
+                log.info("No game with ID: {} found",gameId);
+            }
         }
 
         Map<Long, Boolean> answer = Collections.singletonMap(gameId, response);
@@ -96,17 +101,30 @@ public class GameController {
     @ResponseBody
     public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
         userService.verifyToken(token);
-        QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(gameControllerService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId()));
+        Question question = gameControllerService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId());
+        QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
         webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
         return questionDTOReturn;
     }
 
+  @PostMapping("/games/images")
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  public QuestionDTO createImageQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
+    userService.verifyToken(token);
+    Question question = gameControllerService.getImageQuestion(questionDTO.getGameId());
+    QuestionDTO questionDTOReturn = DTOMapper.INSTANCE.convertQuestionEntityToDTO(question);
+    webSocketController.questionToUsers(questionDTO.getGameId(),questionDTOReturn);
+    return questionDTOReturn;
+  }
+
     @PutMapping("/game/question/{gameId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void answerQuestion(@PathVariable long gameId, @RequestBody AnswerDTO answerDTO, @RequestHeader("token") String token) {
+    @ResponseBody
+    public Map<String, String> answerQuestion(@PathVariable long gameId, @RequestBody AnswerDTO answerDTO, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(answerDTO);
-        gameControllerService.answerQuestion(answer);
+        return Collections.singletonMap("correctAnswer", gameControllerService.answerQuestion(answer));
     }
 
     @GetMapping("game/online/{gameId}")
@@ -125,15 +143,21 @@ public class GameController {
         List<UserResultTupleDTO> userResultTupleDTOList = gameControllerService.getEndResult(gameId);
 
         webSocketController.resultToUser(gameId, userResultTupleDTOList);
+        try {
+            gameControllerService.setInGamePlayersToOnline(gameId);
+        } catch (ResponseStatusException e) {
+            log.info("No game with ID: {} found",gameId);
+        }
         return userResultTupleDTOList;
     }
 
+    //TODO: This method is obsolete. Check calls in Client before deletion.
     @DeleteMapping("/game/finish/{gameId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+    public void terminateFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         try {
-            gameControllerService.removeGame(gameId);
+            gameControllerService.setInGamePlayersToOnline(gameId);
         } catch (ResponseStatusException e) {
             log.info("No game with ID: {} found",gameId);
         }
@@ -159,12 +183,13 @@ public class GameController {
         return gameControllerService.getAllUsersOfGame(gameId);
     }
 
+    //TODO: DeleteMapping might be inappropriate here
     @DeleteMapping("/games/{gameId}/deletions")
     @ResponseStatus(HttpStatus.OK)
     public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
         userService.verifyToken(token);
         Game deletedGame = gameControllerService.searchGame(gameId);
-        gameControllerService.removeGame(gameId);
+        gameControllerService.setInGamePlayersToOnline(gameId);
         webSocketController.informUsersGameDeleted(gameId);
         return DTOMapper.INSTANCE.convertGameEntityToPostDTO(deletedGame);
     }

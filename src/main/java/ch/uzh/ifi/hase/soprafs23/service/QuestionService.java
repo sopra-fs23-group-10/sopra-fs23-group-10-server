@@ -33,6 +33,10 @@ public class QuestionService {
         return question;
     }
 
+    public Boolean existsQuestionByApiIdAndGameId(Question question) {
+        return questionRepository.existsQuestionByApiIdAndGameId(question.getApiId(), question.getGameId());
+    }
+
     public List<Question> searchQuestionsByGameId(long gameId) {
         return questionRepository.findAllByGameId(gameId);
     }
@@ -50,10 +54,26 @@ public class QuestionService {
         Collections.shuffle(allAnswers);
         question.setAllAnswers(allAnswers);
         question.setCreationTime(new Date());
-        return questionRepository.save(question);
+        return question;
     }
 
-    public void deleteQuestions(Long gameId) {
-        questionRepository.deleteAllByGameId(gameId);
+  public Question createImageQuestion(long templateImageQuestionId, String apiId, String correctAnswer, String questionString, List<String> incorrectAnswers,List<String> allAnswers) {
+    Question question = new Question();
+    question.setGameId(templateImageQuestionId);
+    question.setQuestion(questionString);
+    question.setApiId(apiId);
+    question.setCorrectAnswer(correctAnswer);
+    question.setIncorrectAnswers(incorrectAnswers);
+
+    Collections.shuffle(allAnswers);
+    question.setAllAnswers(allAnswers);
+    question.setCreationTime(new Date());
+    System.out.println("Question "+correctAnswer+" created");
+    return question;
+  }
+
+    public Question saveQuestion(Question question){
+      System.out.println("Question "+question.getCorrectAnswer()+" stored");
+      return questionRepository.save(question);
     }
 }

@@ -20,10 +20,8 @@ import java.io.Serializable;
 @Table(name = "PLAYER")
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(nullable = false, unique = true)
     private String username;
@@ -41,6 +39,8 @@ public class User implements Serializable {
     private String profilePicture;
     @Column(nullable = false)
     private boolean backgroundMusic;
+    @Column(nullable = false)
+    private long rank;
 
     public long getId() {
         return this.id;
@@ -104,4 +104,7 @@ public class User implements Serializable {
     public void setBackgroundMusic(boolean backgroundMusic) {
         this.backgroundMusic = backgroundMusic;
     }
+
+    public long getRank(){return this.rank;}
+    public void setRank(long rank){ this.rank = rank;}
 }

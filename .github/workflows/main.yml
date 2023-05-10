@@ -49,6 +49,8 @@ jobs:
           SP_DS_UR: ${{ secrets.SP_DS_UR }}
           SP_DS_UN: ${{ secrets.SP_DS_UN }}
           SP_DS_PW: ${{ secrets.SP_DS_PW }}
+          MJ_API: ${{ secrets.MJ_API }}
+          MJ_S: ${{ secrets.MJ_S }}
         with:
           app_yaml_path: "app.yaml"
       - name: Deploy to App Engine
@@ -56,7 +58,7 @@ jobs:
         uses: google-github-actions/deploy-appengine@v0.2.0
         with:
           deliverables: app.yaml
-          version: v2
+          version: v3
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
