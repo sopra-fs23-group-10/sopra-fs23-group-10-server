@@ -88,7 +88,7 @@ public class UserService {
 
     public List<User> getOnlineUsers() {
         List<User> allUsers = this.getUsers();
-        allUsers.removeIf(user -> Objects.equals(user.getStatus(), UserStatus.OFFLINE));
+        allUsers.removeIf(user -> !Objects.equals(user.getStatus(), UserStatus.ONLINE));
         return allUsers;
     }
 
