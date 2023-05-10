@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository("templateImageQuestionRepository")
 public interface TemplateImageQuestionRepository extends JpaRepository<TemplateImageQuestion, Long> {
 
-  TemplateImageQuestion findTemplateImageQuestionBytemplateImageQuestionId(long templateImageQuestionId);
+  TemplateImageQuestion findTemplateImageQuestionByTemplateImageQuestionId(long templateImageQuestionId);
 }
