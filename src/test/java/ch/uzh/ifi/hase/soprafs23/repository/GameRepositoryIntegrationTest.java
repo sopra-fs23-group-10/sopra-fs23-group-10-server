@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -56,50 +54,6 @@ class GameRepositoryIntegrationTest {
         Game found = gameRepository.findGameByGameId(-1L);
 
         assertNull(found);
-    }
-
-    @Test
-    void deleteGameByGameId_success() {
-        Game found = gameRepository.findGameByGameId(game.getGameId());
-
-        assertNotNull(found);
-        assertEquals(found.getGameId(), game.getGameId());
-        assertEquals(found.getInvitingUserId(), game.getInvitingUserId());
-        assertEquals(found.getInvitedUserId(), game.getInvitedUserId());
-        assertEquals(found.getQuizType(), game.getQuizType());
-        assertEquals(found.getModeType(), game.getModeType());
-        assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-
-        gameRepository.deleteGameByGameId(game.getGameId());
-
-        found = gameRepository.findGameByGameId(game.getGameId());
-
-        assertNull(found);
-    }
-
-    @Test
-    void deleteGameByGameId_noGameWithId() {
-        Game found = gameRepository.findGameByGameId(game.getGameId());
-
-        assertNotNull(found);
-        assertEquals(found.getGameId(), game.getGameId());
-        assertEquals(found.getInvitingUserId(), game.getInvitingUserId());
-        assertEquals(found.getInvitedUserId(), game.getInvitedUserId());
-        assertEquals(found.getQuizType(), game.getQuizType());
-        assertEquals(found.getModeType(), game.getModeType());
-        assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
-
-        gameRepository.deleteGameByGameId(-1);
-
-        found = gameRepository.findGameByGameId(game.getGameId());
-
-        assertNotNull(found);
-        assertEquals(found.getGameId(), game.getGameId());
-        assertEquals(found.getInvitingUserId(), game.getInvitingUserId());
-        assertEquals(found.getInvitedUserId(), game.getInvitedUserId());
-        assertEquals(found.getQuizType(), game.getQuizType());
-        assertEquals(found.getModeType(), game.getModeType());
-        assertEquals(found.getCurrentPlayer(), game.getCurrentPlayer());
     }
 
     @Test

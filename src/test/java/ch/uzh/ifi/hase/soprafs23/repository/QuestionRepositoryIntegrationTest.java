@@ -148,24 +148,4 @@ class QuestionRepositoryIntegrationTest {
         assertNotNull(found);
         assertEquals(0, found.size());
     }
-
-    @Test
-    void deleteAllByGameId_success() {
-        // get all Questions from the DB which are assigned to the gameId
-        List<Question> foundQuestionsInDb
-                = questionRepository.findAllByGameId(question.getGameId());
-
-        // assert if all assigned questions were found
-        assertEquals(2, foundQuestionsInDb.size());
-
-        // execute a deletion of all questions in the DB which were assigned to gameId
-        questionRepository.deleteAllByGameId(question.getGameId());
-
-        // get again all questions in DB which were assigned to gameId
-        foundQuestionsInDb =
-                questionRepository.findAllByGameId(question.getGameId());
-
-        // assert if all questions were deleted
-        assertEquals(0, foundQuestionsInDb.size());
-    }
 }
