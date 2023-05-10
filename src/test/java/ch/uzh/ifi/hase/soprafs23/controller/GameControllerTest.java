@@ -73,6 +73,7 @@ class GameControllerTest {
 
     private User invitingUser;
     private Question question;
+    private Question imageQuestion;
     private Game game;
 
     @BeforeEach
@@ -103,6 +104,20 @@ class GameControllerTest {
         question.setIncorrectAnswers(List.of(incorrectAnswers));
         question.setCorrectAnswer("me");
         question.setCreationTime(new Date());
+
+
+
+      // set up valid imageQuestion
+      imageQuestion = new Question();
+      imageQuestion.setQuestionId(70L);
+      imageQuestion.setApiId("6243Aet3vQ");
+      imageQuestion.setQuestion("Who wrote this test?");
+      String[] imageAnswers = {"me", "you", "allOfUs", "WhoKnows?"};
+      imageQuestion.setAllAnswers(List.of(imageAnswers));
+      String[] incorrectImageAnswers = {"you", "allOfUs", "WhoKnows?"};
+      imageQuestion.setIncorrectAnswers(List.of(incorrectImageAnswers));
+      imageQuestion.setCorrectAnswer("me");
+      imageQuestion.setCreationTime(new Date());
     }
 
     @Test
@@ -559,6 +574,47 @@ class GameControllerTest {
         mockMvc.perform(deleteRequest)
                 .andExpect(status().isOk());
     }
+
+  @Test
+  void createImageQuestion_thenQuestionCreated_201() throws Exception {
+    QuestionDTO questionDTO = new QuestionDTO();
+    questionDTO.setGameId(game.getGameId());
+
+    given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+    given(gameControllerService.getImageQuestion(questionDTO.getGameId())).willReturn(imageQuestion);
+
+
+    MockHttpServletRequestBuilder postRequest = post("/games/images")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(questionDTO))
+            .header("token", "helloToken");
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
+            .andExpect(jsonPath("$.questionId", is((int) imageQuestion.getQuestionId())))
+            .andExpect(jsonPath("$.correctAnswer").value(nullValue()))
+            .andExpect(jsonPath("$.incorrectAnswers").value(nullValue()))
+            .andExpect(jsonPath("$.allAnswers", containsInAnyOrder("me", "you", "allOfUs", "WhoKnows?")))
+            .andExpect(jsonPath("$.question", is(imageQuestion.getQuestion())));
+  }
+
+  @Test
+  void createImageQuestion_invalidToken_throwsUnauthorized_401() throws Exception {
+    QuestionDTO questionDTO = new QuestionDTO();
+    questionDTO.setGameId(game.getGameId());
+
+    given(userService.verifyToken(Mockito.any())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
+    given(gameControllerService.getImageQuestion(questionDTO.getGameId())).willReturn(imageQuestion);
+
+
+    MockHttpServletRequestBuilder postRequest = post("/games/images")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(questionDTO))
+            .header("token", "helloToken");
+
+    mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+  }
 
     
     /*
