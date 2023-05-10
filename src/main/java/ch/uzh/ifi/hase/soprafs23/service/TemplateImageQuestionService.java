@@ -1,6 +1,5 @@
 package ch.uzh.ifi.hase.soprafs23.service;
 
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.entity.TemplateImageQuestion;
 import ch.uzh.ifi.hase.soprafs23.repository.TemplateImageQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,7 @@ public class TemplateImageQuestionService {
     final SecureRandom secureRandom = new SecureRandom();
 
     long qty = templateImageQuestionRepository.count();
-    System.out.println("Repository count "+qty);
     int idx = secureRandom.nextInt((int)qty);
-    System.out.println("Random index "+idx);
     Page<TemplateImageQuestion> questionPage = templateImageQuestionRepository.findAll(PageRequest.of(idx, 1));
 
     if (questionPage.hasContent()) {
