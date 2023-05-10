@@ -141,7 +141,7 @@ public class GameControllerService {
 
     public Game createGame(Long invitingUserId, Long invitedUserId, QuizType quizType, ModeType modeType) {
         userService.setInGame(invitingUserId);
-        if (invitedUserId != 1L) {
+        if (!invitedUserId.equals(0L)) {
             userService.setInGame(invitedUserId);
         }
         return gameService.createGame(invitingUserId, invitedUserId, quizType, modeType);

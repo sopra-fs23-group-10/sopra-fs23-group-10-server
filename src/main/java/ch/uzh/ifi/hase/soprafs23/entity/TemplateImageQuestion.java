@@ -10,12 +10,10 @@ import java.util.List;
 @Table(name = "IMAGE_QUESTION")
 public class TemplateImageQuestion implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long templateImageQuestionId;
-    @Column(nullable = true)
+    @Column()
     private String apiId;
     @Column(nullable = false)
     private String correctAnswer;

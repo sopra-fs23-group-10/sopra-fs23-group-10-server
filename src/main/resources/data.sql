@@ -11,7 +11,7 @@ INSERT INTO player (
   rank
   )
 
-VALUES (1, false, 'singleton@singleton.ch', 'lsd2jf$-q5wfead$nsk234r$f4hasd', 0, 'singleton', 0, 'ee763d2b-b89b-426b-9e36-72b995bef822', 'singletonUser',  9999);
+VALUES (0, false, 'singleton@singleton.ch', 'lsd2jf$-q5wfead$nsk234r$f4hasd', 0, 'singleton', 0, 'ee763d2b-b89b-426b-9e36-72b995bef822', 'singletonUser',  9999);
 
 INSERT INTO image_question (
   template_image_question_id,

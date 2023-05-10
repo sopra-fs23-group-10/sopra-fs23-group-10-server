@@ -51,10 +51,7 @@ public class GameController {
         Game game = gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), requestedGameDTO.getQuizType(), requestedGameDTO.getModeType());
 
         GameDTO createdGameDTO = DTOMapper.INSTANCE.convertGameEntityToPostDTO(game);
-        if (game.getInvitedUserId() == 1){
-            Map<Long, Boolean> answer = Collections.singletonMap(game.getGameId(), true);
-            webSocketController.sendInvitationRespond(game.getInvitingUserId(), answer);
-        } else {
+        if (game.getInvitedUserId() != 0){
             webSocketController.inviteUser(game.getInvitedUserId(), createdGameDTO);
         }
         return createdGameDTO;
