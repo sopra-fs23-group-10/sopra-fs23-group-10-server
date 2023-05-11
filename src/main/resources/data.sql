@@ -29,7 +29,7 @@ VALUES
   (5, 'Beach,Cave,Forest,Harbor', 'Ho2Ni4I', 'Beach', 'Cave,Forest,Harbor', 'Where are you at?'),
   (6, 'Brown Bear,Racoon,Bigfoot,Ape', 'RLcpM4K', 'Brown Bear', 'Ape,Racoon,Bigfoot', 'What animal is hidden in the image?'),
   (7, 'Alligator,Car,Skyline,Dinosaur', 'UBDjXWB', 'Alligator', 'Car,Skyline,Dinosaur', 'What object is hidden in the image?'),
-  (8, 'Mars,Jupyter,Neptune,Venus', 'gQJGMqm', 'Mars', 'Venus,Jupyter,Neptune', 'What planet is hidden in the image?'),
+  (8, 'Mars,Jupyter,Neptune,Venus', 'kfjHRvR', 'Mars', 'Venus,Jupyter,Neptune', 'What planet is hidden in the image?'), -> fucked
   (9, 'Bird,Chipmunk,Rabbit,Weasel', 'oA2709v', 'Bird', 'Chipmunk,Rabbit,Weasel', 'What animal is hidden in the image?'),
   (10, 'Tokyo,Paris,London,Singapore', 'zV0qTkp', 'Tokyo', 'Paris,London,Singapore', 'What city is hidden in the image?'),
   (11, 'Kilimanjaro,Everest,Matterhorn,Mont Blanc', 'V2DBESE', 'Kilimanjaro', 'Everest,Matterhorn,Mont Blanc', 'What mountain is hidden in the image?'),
