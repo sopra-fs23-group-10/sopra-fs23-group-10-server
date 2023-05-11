@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs23.service;
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.entity.Question;
 import ch.uzh.ifi.hase.soprafs23.repository.QuestionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,9 @@ import java.util.List;
 @Service
 @Transactional
 public class QuestionService {
+
+  private final Logger log = LoggerFactory.getLogger(QuestionService.class);
+
   private final QuestionRepository questionRepository;
 
   @Autowired
@@ -68,12 +73,12 @@ public class QuestionService {
     Collections.shuffle(allAnswers);
     question.setAllAnswers(allAnswers);
     question.setCreationTime(new Date());
-    System.out.println("Question "+correctAnswer+" created");
+    log.info("Question " + correctAnswer + " created");
     return question;
   }
 
   public Question saveQuestion(Question question){
-    System.out.println("Question "+question.getCorrectAnswer()+" stored");
+    log.info("Question " + question.getCorrectAnswer() + " stored");
     return questionRepository.save(question);
   }
 }
