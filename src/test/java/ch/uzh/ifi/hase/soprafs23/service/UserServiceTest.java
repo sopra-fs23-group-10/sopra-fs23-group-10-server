@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
@@ -25,6 +26,9 @@ class UserServiceTest {
 
   @InjectMocks
   private UserService userService;
+
+  @Mock
+  private MailSenderService mailSenderService;
 
   private User testUser;
 
@@ -97,7 +101,7 @@ class UserServiceTest {
     User createdUser = userService.createUser(testUser);
 
     // then
-    Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+    verify(userRepository, times(1)).save(Mockito.any());
 
     assertEquals(testUser.getId(), createdUser.getId());
     assertEquals(testUser.getUsername(), createdUser.getUsername());
@@ -183,7 +187,7 @@ class UserServiceTest {
   void checkLoginCredentials_wrongUsername_throwsException() {
     testUser.setStatus(UserStatus.ONLINE);
 
-    given(userRepository.findByUsername(testUser.getUsername())).willReturn(testUser);
+    given(userRepository.findByUsername(Mockito.any())).willReturn(null);
 
     Exception exception = assertThrows(ResponseStatusException.class, () -> userService.checkLoginCredentials("someNonExistingUser", testUser.getPassword()));
 
@@ -200,7 +204,7 @@ class UserServiceTest {
         // when -> any object is being save in the userRepository -> return the dummy
         // createdUser
         User createdUser = userService.createUser(testUser);
-        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+        verify(userRepository, times(1)).save(Mockito.any());
         given(userRepository.findUserById(testUser.getId())).willReturn(createdUser);
 
         // then
@@ -254,6 +258,19 @@ class UserServiceTest {
     assertThrows(ResponseStatusException.class, () -> userService.setInGame(testUser.getId()));
   }
 
+  @Test
+  void sendNewPassword_success() {
+    given(userRepository.findByEmail(testUser.getEmail())).willReturn(testUser);
+    given(userRepository.findUserById(testUser.getId())).willReturn(testUser);
+    doNothing().when(mailSenderService).sendNewPassword(testUser);
+
+    String oldPassword = testUser.getPassword();
+
+    userService.sendNewPassword(testUser);
+
+    assertNotEquals(oldPassword, testUser.getPassword());
+  }
+
     @Test
     void updateRank_success(){
 
@@ -272,8 +289,8 @@ class UserServiceTest {
 
       long nextLowestRank = userService.calculateRanks();
 
-      Mockito.verify(userRepository, Mockito.times(3)).save(Mockito.any());
-      Mockito.verify(userRepository, Mockito.times(1)).flush();
+      verify(userRepository, times(3)).save(Mockito.any());
+      verify(userRepository, times(1)).flush();
 
       assertEquals(4L, nextLowestRank);
       assertEquals(1L, user1.getRank());
