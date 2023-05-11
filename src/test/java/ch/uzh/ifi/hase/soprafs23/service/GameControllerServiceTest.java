@@ -520,7 +520,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-  void getEndResult_success() {
+    void getEndResult_success() {
       Answer invitingAnswer = new Answer();
       invitingAnswer.setUserId(invitingUser.getId());
       invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
@@ -549,4 +549,15 @@ class GameControllerServiceTest {
         assertEquals(400000L, userResultTupleDTO.getInvitedPlayerResult());
       }
     }
+
+  @Test
+  void getAllUsersOfGame_success() {
+      given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+      
+      UserResultTupleDTO userResultTupleDTO = gameControllerService.getAllUsersOfGame(prepTextDuelGame.getGameId());
+
+      assertEquals(prepTextDuelGame.getGameId(), userResultTupleDTO.getGameId());
+      assertEquals(prepTextDuelGame.getInvitingUserId(), userResultTupleDTO.getInvitingPlayerId());
+      assertEquals(prepTextDuelGame.getInvitedUserId(), userResultTupleDTO.getInvitedPlayerId());
+  }
 }
