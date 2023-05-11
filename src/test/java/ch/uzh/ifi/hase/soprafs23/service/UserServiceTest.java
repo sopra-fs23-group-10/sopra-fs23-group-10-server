@@ -129,6 +129,72 @@ class UserServiceTest {
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
 
+  @Test
+  void checkLoginCredentials_success() {
+    testUser.setStatus(UserStatus.OFFLINE);
+
+    given(userRepository.findByUsername(testUser.getUsername())).willReturn(testUser);
+
+    User returnedUser = userService.checkLoginCredentials(testUser.getUsername(), testUser.getPassword());
+
+    assertNotNull(returnedUser);
+    assertEquals(testUser.getId(), returnedUser.getId());
+    assertEquals(testUser.getUsername(), returnedUser.getUsername());
+    assertEquals(testUser.getPassword(), returnedUser.getPassword());
+    assertEquals(testUser.getEmail(), returnedUser.getEmail());
+    assertEquals(testUser.getToken(), returnedUser.getToken());
+    assertEquals(testUser.getStatus(), returnedUser.getStatus());
+    assertEquals(testUser.getPoints(), returnedUser.getPoints());
+  }
+
+  @Test
+  void checkLoginCredentials_alreadyOnline_throwsException() {
+    testUser.setStatus(UserStatus.ONLINE);
+
+    given(userRepository.findByUsername(testUser.getUsername())).willReturn(testUser);
+
+    Exception exception = assertThrows(ResponseStatusException.class, () -> userService.checkLoginCredentials(testUser.getUsername(), testUser.getPassword()));
+
+    String expectedMessage = "User is already logged in.";
+    String actualMessage = exception.getMessage();
+    assertTrue(actualMessage.contains(expectedMessage));
+
+    String expectedStatusCode = "403 FORBIDDEN";
+    assertTrue(actualMessage.contains(expectedMessage));
+  }
+
+  @Test
+  void checkLoginCredentials_wrongPassword_throwsException() {
+    testUser.setStatus(UserStatus.ONLINE);
+
+    given(userRepository.findByUsername(testUser.getUsername())).willReturn(testUser);
+
+    Exception exception = assertThrows(ResponseStatusException.class, () -> userService.checkLoginCredentials(testUser.getUsername(), "wroooooooong"));
+
+    String expectedMessage = "Wrong password.";
+    String actualMessage = exception.getMessage();
+    assertTrue(actualMessage.contains(expectedMessage));
+
+    String expectedStatusCode = "409 NOT ACCEPTABLE";
+    assertTrue(actualMessage.contains(expectedMessage));
+  }
+
+  @Test
+  void checkLoginCredentials_wrongUsername_throwsException() {
+    testUser.setStatus(UserStatus.ONLINE);
+
+    given(userRepository.findByUsername(testUser.getUsername())).willReturn(testUser);
+
+    Exception exception = assertThrows(ResponseStatusException.class, () -> userService.checkLoginCredentials("someNonExistingUser", testUser.getPassword()));
+
+    String expectedMessage = "Username does not exist.";
+    String actualMessage = exception.getMessage();
+    assertTrue(actualMessage.contains(expectedMessage));
+
+    String expectedStatusCode = "404 NOT FOUND";
+    assertTrue(actualMessage.contains(expectedMessage));
+  }
+
     @Test
     void changeUsername_validInputs_success() {
         // when -> any object is being save in the userRepository -> return the dummy
