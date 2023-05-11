@@ -157,14 +157,6 @@ public class UserService {
     return userById;
   }
 
-  private User searchUserByUsername(String username) {
-      return userRepository.findByUsername(username);
-  }
-
-  private User searchUserByEmail(String email) {
-      return userRepository.findByEmail(email);
-  }
-
   /**
    * This method searches for an existing username in the repository and validates the provided password.
    *
@@ -274,7 +266,7 @@ public class UserService {
   }
 
   public void sendNewPassword(User user) {
-    User emailUser = searchUserByEmail(user.getEmail());
+    User emailUser = userRepository.findByEmail(user.getEmail());
 
     if (emailUser == null) {
       log.error("Email in password reset request does not exist.");
