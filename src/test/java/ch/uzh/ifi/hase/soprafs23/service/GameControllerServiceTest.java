@@ -518,4 +518,35 @@ class GameControllerServiceTest {
             assertTrue(userResultTupleDTO.getInvitingPlayerResult() > userResultTupleDTO.getInvitedPlayerResult());
         }
     }
+
+    @Test
+  void getEndResult_success() {
+      Answer invitingAnswer = new Answer();
+      invitingAnswer.setUserId(invitingUser.getId());
+      invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
+      invitingAnswer.setAnswer(createdQuestion.getIncorrectAnswers().get(1));
+      invitingAnswer.setAnsweredTime(10000L);
+
+      Answer invitedAnswer = new Answer();
+      invitedAnswer.setUserId(invitedUser.getId());
+      invitedAnswer.setQuestionId(createdQuestion.getQuestionId());
+      invitedAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+      invitedAnswer.setAnsweredTime(8000L);
+
+      given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+      given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
+      given(questionService.searchQuestionsByGameId(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+      given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitingUserId())).willReturn(invitingAnswer);
+      given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), prepTextDuelGame.getInvitedUserId())).willReturn(invitedAnswer);
+      given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+
+      List<UserResultTupleDTO> userResultTupleDTOList = gameControllerService.getEndResult(prepTextDuelGame.getGameId());
+      for (UserResultTupleDTO userResultTupleDTO : userResultTupleDTOList) {
+        assertEquals(prepTextDuelGame.getGameId(), userResultTupleDTO.getGameId());
+        assertEquals(invitingAnswer.getUserId(), userResultTupleDTO.getInvitingPlayerId());
+        assertEquals(invitedAnswer.getUserId(), userResultTupleDTO.getInvitedPlayerId());
+        assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
+        assertEquals(400000L, userResultTupleDTO.getInvitedPlayerResult());
+      }
+    }
 }
