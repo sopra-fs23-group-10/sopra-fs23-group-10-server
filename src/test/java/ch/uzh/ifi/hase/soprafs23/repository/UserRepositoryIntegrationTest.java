@@ -44,7 +44,7 @@ class UserRepositoryIntegrationTest {
     assertEquals(found.getEmail(), user.getEmail());
     assertEquals(found.getPoints(), user.getPoints());
     assertEquals(found.getProfilePicture(), user.getProfilePicture());
-    assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
+    assertEquals(found.isBackgroundMusic(), user.isBackgroundMusic());
     assertEquals(found.getId(), user.getId());
     assertEquals(found.getToken(), user.getToken());
       assertEquals(found.getRank(), user.getRank());
@@ -103,7 +103,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getEmail(), user.getEmail());
         assertEquals(found.getPoints(), user.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
-        assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
+        assertEquals(found.isBackgroundMusic(), user.isBackgroundMusic());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getRank(), user.getRank());
@@ -162,7 +162,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getEmail(), user.getEmail());
         assertEquals(found.getPoints(), user.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
-        assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
+        assertEquals(found.isBackgroundMusic(), user.isBackgroundMusic());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());
@@ -226,7 +226,7 @@ class UserRepositoryIntegrationTest {
         assertEquals(found.getEmail(), user.getEmail());
         assertEquals(4L, found.getPoints());
         assertEquals(found.getProfilePicture(), user.getProfilePicture());
-        assertEquals(found.getBackgroundMusic(), user.getBackgroundMusic());
+        assertEquals(found.isBackgroundMusic(), user.isBackgroundMusic());
         assertEquals(found.getId(), user.getId());
         assertEquals(found.getToken(), user.getToken());
         assertEquals(found.getStatus(), user.getStatus());

@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +18,8 @@ import java.io.Serializable;
  * the primary key
  */
 
+@Setter
+@Getter
 @Entity
 @Table(name = "PLAYER")
 public class User implements Serializable {
@@ -41,70 +45,4 @@ public class User implements Serializable {
     private boolean backgroundMusic;
     @Column(nullable = false)
     private long rank;
-
-    public long getId() {
-        return this.id;
-    }
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public long getPoints() {
-        return points;
-    }
-    public void setPoints(long points) {
-        this.points = points;
-    }
-
-    public UserStatus getStatus() {
-        return this.status;
-    }
-    public void setStatus(UserStatus status) {
-        this.status = status;
-    }
-
-    public String getToken() {
-        return this.token;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public boolean getBackgroundMusic() {
-        return backgroundMusic;
-    }
-    public void setBackgroundMusic(boolean backgroundMusic) {
-        this.backgroundMusic = backgroundMusic;
-    }
-
-    public long getRank(){return this.rank;}
-    public void setRank(long rank){ this.rank = rank;}
 }

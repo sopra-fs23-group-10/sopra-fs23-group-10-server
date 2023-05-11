@@ -278,7 +278,7 @@ class GameControllerTest {
         AnswerDTO answerDTO = new AnswerDTO();
         answerDTO.setUserId(invitingUser.getId());
         answerDTO.setQuestionId(question.getQuestionId());
-        answerDTO.setAnswer(question.getCorrectAnswer());
+        answerDTO.setAnswerString(question.getCorrectAnswer());
         answerDTO.setAnsweredTime(112L);
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
@@ -314,7 +314,7 @@ class GameControllerTest {
         AnswerDTO answerDTO = new AnswerDTO();
         answerDTO.setUserId(invitingUser.getId());
         answerDTO.setQuestionId(question.getQuestionId());
-        answerDTO.setAnswer(question.getAllAnswers().get(2));
+        answerDTO.setAnswerString(question.getAllAnswers().get(2));
         answerDTO.setAnsweredTime(112L);
 
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
@@ -529,7 +529,7 @@ class GameControllerTest {
         AnswerDTO answerDTO = new AnswerDTO();
         answerDTO.setUserId(invitingUser.getId());
         answerDTO.setQuestionId(question.getQuestionId());
-        answerDTO.setAnswer(question.getCorrectAnswer());
+        answerDTO.setAnswerString(question.getCorrectAnswer());
         answerDTO.setAnsweredTime(112L);
 
         question.setCreationTime(new Date(new Date().getTime() - 30000));
@@ -656,12 +656,12 @@ class GameControllerTest {
         Answer answerTuple1 = new Answer();
         answerTuple1.setUserId(user1.getId());
         answerTuple1.setQuestionId(question.getQuestionId());
-        answerTuple1.setAnswer("True");
+        answerTuple1.setAnswerString("True");
         answerTuple1.setAnsweredTime(1L);
         Answer answerTuple2 = new Answer();
         answerTuple2.setUserId(user2.getId());
         answerTuple2.setQuestionId(question.getQuestionId());
-        answerTuple2.setAnswer("False");
+        answerTuple2.setAnswerString("False");
         answerTuple2.setAnsweredTime(1L);
         UserResultTuple userResultTuple = gameControllerService.getPointsOfBoth(game.getGameId());
         // set up userService to throw the exception

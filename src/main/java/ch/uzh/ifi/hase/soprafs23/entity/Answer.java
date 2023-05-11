@@ -23,5 +23,4 @@ public class Answer implements Serializable {
     private String answer;
     @Column(nullable = false)
     private long answeredTime;
-
 }

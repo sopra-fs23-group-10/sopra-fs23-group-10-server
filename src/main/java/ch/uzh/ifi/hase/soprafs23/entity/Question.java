@@ -2,96 +2,43 @@ package ch.uzh.ifi.hase.soprafs23.entity;
 
 import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.converter.StringListConverter;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "QUESTION")
 public class Question implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long questionId;
-    @Column(nullable = false)
-    private long gameId;
-    @Column
-    private Category category;
-    @Column(nullable = false)
-    private String apiId;
-    @Column(nullable = false)
-    private String correctAnswer;
-    @Column(nullable = false)
-    @Convert(converter = StringListConverter.class)
-    private List<String> incorrectAnswers;
-    @Column(nullable = false)
-    @Convert(converter = StringListConverter.class)
-    private List<String> allAnswers;
-    @Column(nullable = false)
-    private String question;
-    @Column(nullable = false)
-    private Date creationTime;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long questionId;
+  @Column(nullable = false)
+  private long gameId;
+  @Column
+  private Category category;
+  @Column(nullable = false)
+  private String apiId;
+  @Column(nullable = false)
+  private String correctAnswer;
+  @Column(nullable = false)
+  @Convert(converter = StringListConverter.class)
+  private List<String> incorrectAnswers;
+  @Column(nullable = false)
+  @Convert(converter = StringListConverter.class)
+  private List<String> allAnswers;
+  @Column(nullable = false)
+  private String question;
+  @Column(nullable = false)
+  private Date creationTime;
 
-    public long getQuestionId() {
-        return this.questionId;
-    }
-    public long getGameId() {
-        return this.gameId;
-    }
-    public Category getCategory() {
-        return this.category;
-    }
-    public String getApiId() {
-        return this.apiId;
-    }
-    public String getCorrectAnswer() {
-        return this.correctAnswer;
-    }
-    public List<String> getIncorrectAnswers() {
-        return this.incorrectAnswers;
-    }
-    public List<String> getAllAnswers() {
-        return this.allAnswers;
-    }
-    public String getQuestion() {
-        return this.question;
-    }
-    public Date getCreationTime() {
-        return this.creationTime;
-    }
-
-
-    public void setQuestionId(long questionId) {
-        this.questionId = questionId;
-    }
-    public void setGameId(long gameId) {
-        this.gameId = gameId;
-    }
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-    public void setApiId(String apiId) {
-        this.apiId = apiId;
-    }
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
-    }
-    public void setIncorrectAnswers(List<String> incorrectAnswers) {
-        this.incorrectAnswers = incorrectAnswers;
-    }
-    public void setAllAnswers(List<String> allAnswers) {
-        this.allAnswers = allAnswers;
-    }
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-    public void setCreationTime(Date lastChange) {
-        this.creationTime = lastChange;
-    }
-
-    public boolean timeRunUp() {
+  public boolean timeRunUp() {
         return (new Date().getTime() - this.creationTime.getTime())/1000 >= 30;
     }
 }

@@ -78,6 +78,7 @@ public interface DTOMapper {
     @Mapping(target = "currentPlayer", ignore = true)
     Game convertGamePostDTOtoEntity(GameDTO gameDTO);
 
+    /*
     @Mapping(source = "category", target = "category")
     @Mapping(source = "questionId", target = "questionId")
     @Mapping(source = "apiId", target = "apiId")
@@ -86,6 +87,7 @@ public interface DTOMapper {
     @Mapping(source = "incorrectAnswers", target = "incorrectAnswers")
     @Mapping(target = "creationTime", ignore = true)
     Question convertQuestionDTOtoEntity(QuestionDTO questionDTO);
+     */
 
     @Mapping(source = "category", target = "category")
     @Mapping(source = "questionId", target = "questionId")
@@ -98,16 +100,18 @@ public interface DTOMapper {
 
     @Mapping(source = "userId", target = "userId")
     @Mapping(source = "questionId", target = "questionId")
-    @Mapping(source = "answer", target = "answer")
+    @Mapping(source = "answerString", target = "answer")
     @Mapping(source = "answeredTime", target = "answeredTime")
     @Mapping(target = "id", ignore = true)
     Answer convertUserAnswerDTOtoEntity(AnswerDTO answerDTO);
 
+    /*
     @Mapping(source = "userId", target = "userId")
     @Mapping(source = "questionId", target = "questionId")
-    @Mapping(source = "answer", target = "answer")
+    @Mapping(source = "answer", target = "answerString")
     @Mapping(source = "answeredTime", target = "answeredTime")
     AnswerDTO convertUserAnswerEntitytoDTO(Answer answer);
+     */
 
     @Mapping(source = "gameId", target = "gameId")
     @Mapping(source = "invitingPlayerId", target = "invitingPlayerId")
