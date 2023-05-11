@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs23.service;
 
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.entity.UserResultTuple;
 import ch.uzh.ifi.hase.soprafs23.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -250,6 +251,25 @@ class UserServiceTest {
   }
 
   @Test
+  void updatePoints_success() {
+    User anotherUser = new User();
+    anotherUser.setId(69L);
+    anotherUser.setPoints(100L);
+
+    UserResultTuple userResultTuple = new UserResultTuple(1L, testUser.getId(), anotherUser.getId());
+    userResultTuple.setInvitingPlayerResult(200);
+    userResultTuple.setInvitedPlayerResult(1000);
+
+    given(userRepository.findUserById(testUser.getId())).willReturn(testUser);
+    given(userRepository.findUserById(anotherUser.getId())).willReturn(anotherUser);
+
+    userService.updatePoints(userResultTuple);
+
+    assertEquals(200, testUser.getPoints());
+    assertEquals(1100, anotherUser.getPoints());
+  }
+
+  @Test
   void sendNewPassword_success() {
     given(userRepository.findByEmail(testUser.getEmail())).willReturn(testUser);
     given(userRepository.findUserById(testUser.getId())).willReturn(testUser);
@@ -260,6 +280,17 @@ class UserServiceTest {
     userService.sendNewPassword(testUser);
 
     assertNotEquals(oldPassword, testUser.getPassword());
+  }
+
+  @Test
+  void sendNewPassword_noEmail_throwsException() {
+    given(userRepository.findByEmail(Mockito.any())).willReturn(null);
+    given(userRepository.findUserById(testUser.getId())).willReturn(testUser);
+    doNothing().when(mailSenderService).sendNewPassword(testUser);
+
+    String oldPassword = testUser.getPassword();
+    userService.sendNewPassword(testUser);
+    assertEquals(oldPassword, testUser.getPassword());
   }
 
     @Test
