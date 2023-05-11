@@ -36,6 +36,9 @@ class UserServiceTest {
     testUser.setId(1L);
     testUser.setUsername("testUsername");
     testUser.setPassword("testPassword");
+    testUser.setEmail("email@email.me");
+    testUser.setToken("token");
+    testUser.setStatus(UserStatus.ONLINE);
     testUser.setPoints(0L);
 
     // when -> any object is being saved in the userRepository -> return the dummy
@@ -71,6 +74,18 @@ class UserServiceTest {
     // then -> attempt to create second user with same user -> check that an error
     // is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+  }
+
+  @Test
+  void verifyTokenWithId_nonMatchingId_throws() {
+    User nonmatchingUser = new User();
+    nonmatchingUser.setId(-112);
+    nonmatchingUser.setToken("anotherToken");
+
+    given(userRepository.findUserByToken(testUser.getToken())).willReturn(testUser);
+    given(userRepository.findUserById(nonmatchingUser.getId())).willReturn(nonmatchingUser);
+
+    assertThrows(ResponseStatusException.class, () -> userService.verifyTokenWithId(testUser.getToken(), nonmatchingUser.getId()));
   }
 
     @Test

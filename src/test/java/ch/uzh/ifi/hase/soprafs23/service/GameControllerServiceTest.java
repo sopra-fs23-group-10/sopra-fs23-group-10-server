@@ -129,14 +129,6 @@ class GameControllerServiceTest {
         verify(questionService, times(1)).saveQuestion(createdQuestion);
     }
 
-    /*
-    @AfterEach
-    public void resetGameMap() throws Exception {
-        Field instance = GameMap.class.getDeclaredField("instance");
-        instance.setAccessible(true);
-        instance.set(null, null);
-    }*/
-
     @Test
     void searchGame_validInput_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
