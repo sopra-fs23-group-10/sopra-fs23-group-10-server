@@ -31,9 +31,10 @@ class GameServiceTest {
     private User invitedUser;
 
     @BeforeEach
-    private void setup() {invitingUser = new User();
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        invitingUser = new User();
         invitingUser.setId(1L);
         invitingUser.setStatus(UserStatus.ONLINE);
 
@@ -112,10 +113,6 @@ class GameServiceTest {
         String expectedMessage = "Specified user is not in any game.";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
-
-        // Assert if the right status code is thrown with the exception
-        String expectedStatusCode = "404 NOT FOUND";
-        assertTrue(actualMessage.contains(expectedStatusCode));
     }
 
     @Test

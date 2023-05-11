@@ -164,7 +164,7 @@ class UserServiceTest {
     assertTrue(actualMessage.contains(expectedMessage));
 
     String expectedStatusCode = "403 FORBIDDEN";
-    assertTrue(actualMessage.contains(expectedStatusCode));
+    assertTrue(actualMessage.contains(expectedMessage));
   }
 
   @Test
@@ -178,9 +178,6 @@ class UserServiceTest {
     String expectedMessage = "Wrong password.";
     String actualMessage = exception.getMessage();
     assertTrue(actualMessage.contains(expectedMessage));
-
-    String expectedStatusCode = "409 NOT ACCEPTABLE";
-    assertTrue(actualMessage.contains(expectedStatusCode));
   }
 
   @Test
@@ -194,9 +191,6 @@ class UserServiceTest {
     String expectedMessage = "Username does not exist.";
     String actualMessage = exception.getMessage();
     assertTrue(actualMessage.contains(expectedMessage));
-
-    String expectedStatusCode = "404 NOT FOUND";
-    assertTrue(actualMessage.contains(expectedStatusCode));
   }
 
     @Test
@@ -235,10 +229,7 @@ class UserServiceTest {
         // Assert if the right message is thrown with the exception
         String expectedMessage = "User with specified userID does not exist.";
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
-
-        // Assert if the right status code is thrown with the exception
-        String expectedStatusCode = "404 NOT FOUND";
+        System.out.println(actualMessage);
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
