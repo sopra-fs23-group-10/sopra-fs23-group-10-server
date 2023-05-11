@@ -173,9 +173,6 @@ public class UserService {
     } else if (!userByUsername.getPassword().equals(password)) {
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Wrong password.");
     }
-    if (userByUsername.getStatus() != UserStatus.OFFLINE) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is already logged in.");
-    }
 
     return userByUsername;
   }
