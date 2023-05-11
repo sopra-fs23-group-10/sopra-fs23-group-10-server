@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,6 +57,37 @@ class UserServiceTest {
     given(userRepository.findUserById(nonmatchingUser.getId())).willReturn(nonmatchingUser);
 
     assertThrows(ResponseStatusException.class, () -> userService.verifyTokenWithId(testUser.getToken(), nonmatchingUser.getId()));
+  }
+
+  @Test
+  void getOnlineUsers_success() {
+    User anotherUser = new User();
+    anotherUser.setStatus(UserStatus.IN_GAME);
+    anotherUser.setId(-112L);
+    anotherUser.setToken("anotherToken");
+
+    User thirdUser = new User();
+    anotherUser.setStatus(UserStatus.OFFLINE);
+    anotherUser.setId(-2L);
+    anotherUser.setToken("hehehe_another_token");
+
+    List<User> userList = new ArrayList<>();
+    userList.add(testUser);
+    userList.add(anotherUser);
+    userList.add(thirdUser);
+
+    given(userRepository.findAll()).willReturn(userList);
+
+    List<User> returnedUsers = userService.getOnlineUsers();
+
+    assertEquals(1, returnedUsers.size());
+    assertEquals(testUser.getId(), returnedUsers.get(0).getId());
+    assertEquals(testUser.getUsername(), returnedUsers.get(0).getUsername());
+    assertEquals(testUser.getPassword(), returnedUsers.get(0).getPassword());
+    assertEquals(testUser.getEmail(), returnedUsers.get(0).getEmail());
+    assertEquals(testUser.getToken(), returnedUsers.get(0).getToken());
+    assertEquals(testUser.getStatus(), returnedUsers.get(0).getStatus());
+    assertEquals(testUser.getPoints(), returnedUsers.get(0).getPoints());
   }
 
   @Test
