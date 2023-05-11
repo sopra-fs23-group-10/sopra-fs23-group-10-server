@@ -553,11 +553,25 @@ class GameControllerServiceTest {
   @Test
   void getAllUsersOfGame_success() {
       given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-      
+
       UserResultTupleDTO userResultTupleDTO = gameControllerService.getAllUsersOfGame(prepTextDuelGame.getGameId());
 
       assertEquals(prepTextDuelGame.getGameId(), userResultTupleDTO.getGameId());
       assertEquals(prepTextDuelGame.getInvitingUserId(), userResultTupleDTO.getInvitingPlayerId());
       assertEquals(prepTextDuelGame.getInvitedUserId(), userResultTupleDTO.getInvitedPlayerId());
+  }
+
+  @Test
+  void allUsersConnected_bothConnected_returnsTrue() {
+      invitingUser.setStatus(UserStatus.ONLINE);
+      invitedUser.setStatus(UserStatus.ONLINE);
+
+      given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+      given(userService.searchUserById(invitedUser.getId())).willReturn(invitedUser);
+      given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
+
+      Map<String, Boolean> returnedMap = gameControllerService.allUsersConnected(prepTextDuelGame.getGameId());
+
+      assertTrue(returnedMap.get("status"));
   }
 }
