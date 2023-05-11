@@ -47,6 +47,18 @@ class UserServiceTest {
   }
 
   @Test
+  void verifyTokenWithId_nonMatchingId_throws() {
+    User nonmatchingUser = new User();
+    nonmatchingUser.setId(-112);
+    nonmatchingUser.setToken("anotherToken");
+
+    given(userRepository.findUserByToken(testUser.getToken())).willReturn(testUser);
+    given(userRepository.findUserById(nonmatchingUser.getId())).willReturn(nonmatchingUser);
+
+    assertThrows(ResponseStatusException.class, () -> userService.verifyTokenWithId(testUser.getToken(), nonmatchingUser.getId()));
+  }
+
+  @Test
   void createUser_validInputs_success() {
     // when -> any object is being save in the userRepository -> return the dummy
     // testUser
@@ -77,15 +89,12 @@ class UserServiceTest {
   }
 
   @Test
-  void verifyTokenWithId_nonMatchingId_throws() {
-    User nonmatchingUser = new User();
-    nonmatchingUser.setId(-112);
-    nonmatchingUser.setToken("anotherToken");
+  void createUser_duplicateEmail_throwsException() {
+    userService.createUser(testUser);
 
-    given(userRepository.findUserByToken(testUser.getToken())).willReturn(testUser);
-    given(userRepository.findUserById(nonmatchingUser.getId())).willReturn(nonmatchingUser);
+    Mockito.when(userRepository.findByEmail(Mockito.any())).thenReturn(testUser);
 
-    assertThrows(ResponseStatusException.class, () -> userService.verifyTokenWithId(testUser.getToken(), nonmatchingUser.getId()));
+    assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
   }
 
     @Test
