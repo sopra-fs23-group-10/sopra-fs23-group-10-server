@@ -14,8 +14,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
@@ -117,7 +115,7 @@ class GameServiceTest {
 
         // Assert if the right status code is thrown with the exception
         String expectedStatusCode = "404 NOT FOUND";
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertTrue(actualMessage.contains(expectedStatusCode));
     }
 
     @Test

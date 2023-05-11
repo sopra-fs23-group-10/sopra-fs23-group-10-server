@@ -160,7 +160,7 @@ class UserServiceTest {
     assertTrue(actualMessage.contains(expectedMessage));
 
     String expectedStatusCode = "403 FORBIDDEN";
-    assertTrue(actualMessage.contains(expectedMessage));
+    assertTrue(actualMessage.contains(expectedStatusCode));
   }
 
   @Test
@@ -176,7 +176,7 @@ class UserServiceTest {
     assertTrue(actualMessage.contains(expectedMessage));
 
     String expectedStatusCode = "409 NOT ACCEPTABLE";
-    assertTrue(actualMessage.contains(expectedMessage));
+    assertTrue(actualMessage.contains(expectedStatusCode));
   }
 
   @Test
@@ -192,7 +192,7 @@ class UserServiceTest {
     assertTrue(actualMessage.contains(expectedMessage));
 
     String expectedStatusCode = "404 NOT FOUND";
-    assertTrue(actualMessage.contains(expectedMessage));
+    assertTrue(actualMessage.contains(expectedStatusCode));
   }
 
     @Test
@@ -237,6 +237,22 @@ class UserServiceTest {
         String expectedStatusCode = "404 NOT FOUND";
         assertTrue(actualMessage.contains(expectedMessage));
     }
+
+  @Test
+  void setInGame_success() {
+    given(userRepository.findUserById(testUser.getId())).willReturn(testUser);
+
+    assertEquals(UserStatus.ONLINE, testUser.getStatus());
+    userService.setInGame(testUser.getId());
+    assertEquals(UserStatus.IN_GAME, testUser.getStatus());
+  }
+
+  @Test
+  void setInGame_userNotFound_throws() {
+    given(userRepository.findUserById(testUser.getId())).willReturn(null);
+
+    assertThrows(ResponseStatusException.class, () -> userService.setInGame(testUser.getId()));
+  }
 
     @Test
     void updateRank_success(){
