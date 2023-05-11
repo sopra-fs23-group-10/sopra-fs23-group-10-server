@@ -20,7 +20,6 @@ public class TemplateImageQuestionService {
     this.templateImageQuestionRepository = templateImageQuestionRepository;
   }
 
-
   public TemplateImageQuestion getRandomImageQuestion() {
     final SecureRandom secureRandom = new SecureRandom();
 

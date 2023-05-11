@@ -29,16 +29,7 @@ public class GameService {
         game.setQuizType(quizType);
         game.setModeType(modeType);
         game.setCurrentPlayer(invitedUserId);
-
-        //if (gameRepository.findGameByInvitingUserId(game.getInvitingUserId()) != null ||gameRepository.findGameByInvitedUserId(game.getInvitingUserId()) != null) {
-        //    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Inviting user is already in a game.");
-        //}
-        //if (gameRepository.findGameByInvitingUserId(game.getInvitedUserId()) != null || gameRepository.findGameByInvitedUserId(game.getInvitedUserId()) != null) {
-        //    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invited user is already in a game.");
-        //}
-
         game = gameRepository.save(game);
-
         return game;
     }
 

@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("answerRepository")
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
+
     Answer findAnswerByQuestionIdAndUserId(long questionId, long userId);
 }
