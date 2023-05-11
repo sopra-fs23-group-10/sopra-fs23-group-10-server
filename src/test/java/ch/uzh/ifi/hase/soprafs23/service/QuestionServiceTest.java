@@ -79,4 +79,24 @@ class QuestionServiceTest {
     given(questionRepository.existsQuestionByApiIdAndGameId(createdQuestion.getApiId(), prepGame.getGameId())).willReturn(true);
     assertTrue(questionService.existsQuestionByApiIdAndGameId(createdQuestion));
   }
+
+  @Test
+  void searchQuestionsByGameId_success() {
+    given(questionRepository.findAllByGameId(prepGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
+    
+    List<Question> returnedQuestions = questionService.searchQuestionsByGameId(prepGame.getGameId());
+
+    assertEquals(1, returnedQuestions.size());
+    for (Question question : returnedQuestions) {
+      assertEquals(createdQuestion.getGameId(), question.getGameId());
+      assertEquals(createdQuestion.getQuestionId(), question.getQuestionId());
+      assertEquals(createdQuestion.getCategory(), question.getCategory());
+      assertEquals(createdQuestion.getApiId(), question.getApiId());
+      assertEquals(createdQuestion.getCorrectAnswer(), question.getCorrectAnswer());
+      assertEquals(createdQuestion.getIncorrectAnswers(), question.getIncorrectAnswers());
+      assertEquals(createdQuestion.getAllAnswers(), question.getAllAnswers());
+      assertEquals(createdQuestion.getQuestion(), question.getQuestion());
+      assertEquals(createdQuestion.getCreationTime(), question.getCreationTime());
+    }
+  }
 }
