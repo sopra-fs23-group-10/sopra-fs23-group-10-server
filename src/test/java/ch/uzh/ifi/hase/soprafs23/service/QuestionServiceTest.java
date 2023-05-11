@@ -83,7 +83,7 @@ class QuestionServiceTest {
   @Test
   void searchQuestionsByGameId_success() {
     given(questionRepository.findAllByGameId(prepGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
-    
+
     List<Question> returnedQuestions = questionService.searchQuestionsByGameId(prepGame.getGameId());
 
     assertEquals(1, returnedQuestions.size());
@@ -98,5 +98,20 @@ class QuestionServiceTest {
       assertEquals(createdQuestion.getQuestion(), question.getQuestion());
       assertEquals(createdQuestion.getCreationTime(), question.getCreationTime());
     }
+  }
+
+  @Test
+  void createQuestion_success() {
+    Question returnedQuestion = questionService.createQuestion(createdQuestion.getGameId(),createdQuestion.getApiId(), createdQuestion.getCategory(), createdQuestion.getCorrectAnswer(), createdQuestion.getQuestion(), createdQuestion.getIncorrectAnswers());
+
+    assertEquals(createdQuestion.getGameId(), returnedQuestion.getGameId());
+    assertEquals(createdQuestion.getCategory(), returnedQuestion.getCategory());
+    assertEquals(createdQuestion.getApiId(), returnedQuestion.getApiId());
+    assertEquals(createdQuestion.getCorrectAnswer(), returnedQuestion.getCorrectAnswer());
+    assertEquals(createdQuestion.getIncorrectAnswers(), returnedQuestion.getIncorrectAnswers());
+    assertEquals(createdQuestion.getAllAnswers().size(), returnedQuestion.getAllAnswers().size());
+    assertTrue(returnedQuestion.getAllAnswers().containsAll(createdQuestion.getAllAnswers()));
+    assertEquals(createdQuestion.getQuestion(), returnedQuestion.getQuestion());
+    assertEquals(createdQuestion.getCreationTime().toString(), returnedQuestion.getCreationTime().toString());
   }
 }
