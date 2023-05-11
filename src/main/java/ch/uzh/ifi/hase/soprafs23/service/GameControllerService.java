@@ -109,11 +109,11 @@ public class GameControllerService {
     Question question = this.getImageQuestionFromApi(gameId);
     for (int i = 0; i <= 5; i++) {
       if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
-        System.out.println("Question "+question.getCorrectAnswer()+" already created");
+        log.info("Question " + question.getCorrectAnswer() + " already created");
         break;
       }
       question = this.getImageQuestionFromApi(gameId);
-      System.out.println("New Question "+question.getCorrectAnswer()+" created");
+      log.info("New Question " + question.getCorrectAnswer() + " created");
     }
 
     return questionService.saveQuestion(question);
