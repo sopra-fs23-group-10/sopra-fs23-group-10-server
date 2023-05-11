@@ -275,15 +275,12 @@ public class UserService {
 
   public void sendNewPassword(User user) {
     User emailUser = searchUserByEmail(user.getEmail());
-    User usernameUser = searchUserByUsername(user.getUsername());
 
-    if (emailUser == null || usernameUser == null) {
-      log.error("Either username or email in password reset request does not exist.");
-    } else if (emailUser.getUsername().equals(user.getUsername()) && usernameUser.getEmail().equals(user.getEmail())) {
+    if (emailUser == null) {
+      log.error("Email in password reset request does not exist.");
+    } else {
       this.setRandomPassword(emailUser.getId());
       mailSenderService.sendNewPassword(emailUser);
-    } else {
-      log.error("Provided user for password reset does not match user in database.");
     }
   }
 

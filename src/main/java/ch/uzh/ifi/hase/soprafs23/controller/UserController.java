@@ -163,7 +163,7 @@ public class UserController {
     @PostMapping("/reset")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void sendEmail(@RequestBody UserPostDTO userPostDTO) {
+    public void sendNewPassword(@RequestBody UserPostDTO userPostDTO) {
         User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
         userService.sendNewPassword(user);
     }
