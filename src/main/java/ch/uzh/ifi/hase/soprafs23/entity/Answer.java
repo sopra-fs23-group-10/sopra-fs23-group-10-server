@@ -1,10 +1,15 @@
 package ch.uzh.ifi.hase.soprafs23.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Setter
 @Entity
 @Table(name = "ANSWER")
+@Getter
 public class Answer implements Serializable {
 
     @Id
@@ -19,35 +24,4 @@ public class Answer implements Serializable {
     @Column(nullable = false)
     private long answeredTime;
 
-    public long getId() {
-        return this.id;
-    }
-    public long getQuestionId() {
-        return this.questionId;
-    }
-    public long getUserId() {
-        return this.userId;
-    }
-    public String getAnswer() {
-        return this.answer;
-    }
-    public long getAnsweredTime() {
-        return this.answeredTime;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-    public void setQuestionId(long questionId) {
-        this.questionId = questionId;
-    }
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-    public void setAnsweredTime(long answeredTime) {
-        this.answeredTime = answeredTime;
-    }
 }
