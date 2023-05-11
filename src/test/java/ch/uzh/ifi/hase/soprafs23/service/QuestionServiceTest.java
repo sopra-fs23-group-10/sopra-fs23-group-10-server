@@ -73,4 +73,10 @@ class QuestionServiceTest {
     assertEquals(createdQuestion.getQuestion(), found.getQuestion());
     assertEquals(createdQuestion.getCreationTime(), found.getCreationTime());
   }
+
+  @Test
+  void existsQuestionByApiIdAndGameId_success() {
+    given(questionRepository.existsQuestionByApiIdAndGameId(createdQuestion.getApiId(), prepGame.getGameId())).willReturn(true);
+    assertTrue(questionService.existsQuestionByApiIdAndGameId(createdQuestion));
+  }
 }
