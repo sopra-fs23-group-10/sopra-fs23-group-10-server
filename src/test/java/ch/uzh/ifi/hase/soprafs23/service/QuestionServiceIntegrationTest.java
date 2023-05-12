@@ -16,8 +16,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @WebAppConfiguration
 @SpringBootTest
@@ -70,5 +69,16 @@ public class QuestionServiceIntegrationTest {
   @Test
   void searchQuestionByQuestionId_noneFound_throwsException() {
     assertThrows(ResponseStatusException.class,() -> questionService.searchQuestionByQuestionId(1648L));
+  }
+
+  @Test
+  void existsQuestionByApiIdAndGameId_true() {
+    Question savedQuestion = questionRepository.save(prepQuestion);
+    assertTrue(questionService.existsQuestionByApiIdAndGameId(savedQuestion));
+  }
+
+  @Test
+  void existsQuestionByApiIdAndGameId_false() {
+    assertFalse(questionService.existsQuestionByApiIdAndGameId(prepQuestion));
   }
 }
