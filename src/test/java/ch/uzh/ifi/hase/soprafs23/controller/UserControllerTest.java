@@ -27,8 +27,7 @@ import static java.lang.String.format;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -678,6 +677,20 @@ class UserControllerTest {
                 .header("token", user.getToken());
         // then
         mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void sendNewPassword_validInput_success() throws Exception {
+      UserPostDTO userPostDTO = new UserPostDTO();
+      userPostDTO.setEmail("email_of_a_very_forgetful_person@ohno.iforgot");
+
+      MockHttpServletRequestBuilder postRequest = post("/reset")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(asJsonString(userPostDTO));
+
+      mockMvc.perform(postRequest).andExpect(status().isOk());
+
+      verify(userService).sendNewPassword(Mockito.any(User.class));
     }
 
   private String asJsonString(final Object object) {
