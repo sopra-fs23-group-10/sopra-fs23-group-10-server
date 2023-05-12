@@ -56,4 +56,15 @@ public class AnswerServiceIntegrationTest {
     Answer foundAnswer = answerService.searchAnswerByQuestionIdAndUserId(prepAnswer.getQuestionId(), prepAnswer.getUserId());
     assertNull(foundAnswer);
   }
+
+  @Test
+  void createAnswer_success() {
+    answerService.createAnswer(prepAnswer);
+    Answer foundAnswer = answerRepository.findAnswerByQuestionIdAndUserId(prepAnswer.getQuestionId(), prepAnswer.getUserId());
+    
+    assertEquals(prepAnswer.getQuestionId(), foundAnswer.getQuestionId());
+    assertEquals(prepAnswer.getUserId(), foundAnswer.getUserId());
+    assertEquals(prepAnswer.getAnswer(), foundAnswer.getAnswer());
+    assertEquals(prepAnswer.getAnsweredTime(), foundAnswer.getAnsweredTime());
+  }
 }
