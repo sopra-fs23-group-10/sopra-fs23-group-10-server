@@ -120,4 +120,20 @@ public class QuestionServiceIntegrationTest {
     assertEquals(prepQuestion.getAllAnswers().size(), createdQuestion.getAllAnswers().size());
     assertEquals(prepQuestion.getQuestion(), createdQuestion.getQuestion());
   }
+
+  @Test
+  void saveQuestion_success() {
+    Question savedQuestion = questionService.saveQuestion(prepQuestion);
+
+    assertEquals(1L, savedQuestion.getQuestionId());
+    assertEquals(prepQuestion.getGameId(), savedQuestion.getGameId());
+    assertEquals(prepQuestion.getQuestionId(), savedQuestion.getQuestionId());
+    assertEquals(prepQuestion.getCategory(), savedQuestion.getCategory());
+    assertEquals(prepQuestion.getApiId(), savedQuestion.getApiId());
+    assertEquals(prepQuestion.getCorrectAnswer(), savedQuestion.getCorrectAnswer());
+    assertEquals(prepQuestion.getIncorrectAnswers(), savedQuestion.getIncorrectAnswers());
+    assertEquals(prepQuestion.getAllAnswers(), savedQuestion.getAllAnswers());
+    assertEquals(prepQuestion.getQuestion(), savedQuestion.getQuestion());
+    assertEquals(prepQuestion.getCreationTime(), savedQuestion.getCreationTime());
+  }
 }
