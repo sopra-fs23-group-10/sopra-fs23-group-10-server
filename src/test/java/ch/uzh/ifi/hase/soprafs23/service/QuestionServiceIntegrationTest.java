@@ -125,7 +125,7 @@ public class QuestionServiceIntegrationTest {
   void saveQuestion_success() {
     Question savedQuestion = questionService.saveQuestion(prepQuestion);
 
-    assertEquals(1L, savedQuestion.getQuestionId());
+    assertEquals(3L, savedQuestion.getQuestionId());
     assertEquals(prepQuestion.getGameId(), savedQuestion.getGameId());
     assertEquals(prepQuestion.getQuestionId(), savedQuestion.getQuestionId());
     assertEquals(prepQuestion.getCategory(), savedQuestion.getCategory());

@@ -61,7 +61,7 @@ public class AnswerServiceIntegrationTest {
   void createAnswer_success() {
     answerService.createAnswer(prepAnswer);
     Answer foundAnswer = answerRepository.findAnswerByQuestionIdAndUserId(prepAnswer.getQuestionId(), prepAnswer.getUserId());
-    
+
     assertEquals(prepAnswer.getQuestionId(), foundAnswer.getQuestionId());
     assertEquals(prepAnswer.getUserId(), foundAnswer.getUserId());
     assertEquals(prepAnswer.getAnswer(), foundAnswer.getAnswer());
