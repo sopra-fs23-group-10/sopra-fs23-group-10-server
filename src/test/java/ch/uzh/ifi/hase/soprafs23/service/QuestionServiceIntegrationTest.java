@@ -81,4 +81,29 @@ public class QuestionServiceIntegrationTest {
   void existsQuestionByApiIdAndGameId_false() {
     assertFalse(questionService.existsQuestionByApiIdAndGameId(prepQuestion));
   }
+
+  @Test
+  void searchQuestionsByGameId_success() {
+    Question savedQuestion = questionRepository.save(prepQuestion);
+
+    List<Question> foundQuestions = questionService.searchQuestionsByGameId(savedQuestion.getGameId());
+
+    for (Question foundQuestion : foundQuestions) {
+      assertEquals(savedQuestion.getGameId(), foundQuestion.getGameId());
+      assertEquals(savedQuestion.getQuestionId(), foundQuestion.getQuestionId());
+      assertEquals(savedQuestion.getCategory(), foundQuestion.getCategory());
+      assertEquals(savedQuestion.getApiId(), foundQuestion.getApiId());
+      assertEquals(savedQuestion.getCorrectAnswer(), foundQuestion.getCorrectAnswer());
+      assertEquals(savedQuestion.getIncorrectAnswers(), foundQuestion.getIncorrectAnswers());
+      assertEquals(savedQuestion.getAllAnswers(), foundQuestion.getAllAnswers());
+      assertEquals(savedQuestion.getQuestion(), foundQuestion.getQuestion());
+      assertEquals(savedQuestion.getCreationTime(), foundQuestion.getCreationTime());
+    }
+  }
+
+  @Test
+  void searchQuestionsByGameId_noneFound_success() {
+    List<Question> foundQuestions = questionService.searchQuestionsByGameId(prepQuestion.getGameId());
+    assertEquals(0, foundQuestions.size());
+  }
 }
