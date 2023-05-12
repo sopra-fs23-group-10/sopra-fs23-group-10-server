@@ -35,8 +35,7 @@ import java.util.*;
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -175,6 +174,26 @@ class GameControllerTest {
 
         mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void respondInvitation_trueResponse_200() throws Exception {
+      User invitedUser = new User();
+      invitedUser.setId(45L);
+      invitedUser.setToken("invitingToken");
+      game.setInvitedUserId(invitedUser.getId());
+
+      given(userService.verifyToken(invitedUser.getToken())).willReturn(invitedUser);
+      given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
+
+      MockHttpServletRequestBuilder postRequest = post("/game/invitation/" + game.getGameId())
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(String.valueOf(true))
+              .header("token", invitedUser.getToken());
+
+      mockMvc.perform(postRequest)
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$." + game.getGameId(), is(true)));
+  }
 
     @Test
     void createQuestion_thenQuestionCreated_201() throws Exception {

@@ -123,7 +123,7 @@ public class GameController {
       return Collections.singletonMap("correctAnswer", gameControllerService.answerQuestion(answer));
   }
 
-  @GetMapping("game/online/{gameId}")
+  @GetMapping("/game/online/{gameId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
