@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 class AnswerServiceTest {
 
@@ -58,6 +59,8 @@ class AnswerServiceTest {
   }
 
   @Test
-  void createAnswer() {
+  void createAnswer_success() {
+    answerService.createAnswer(prepAnswer);
+    verify(answerRepository).save(Mockito.any(Answer.class));
   }
 }
