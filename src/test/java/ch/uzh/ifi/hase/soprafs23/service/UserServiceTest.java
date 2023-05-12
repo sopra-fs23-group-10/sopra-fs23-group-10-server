@@ -231,7 +231,6 @@ class UserServiceTest {
         // Assert if the right message is thrown with the exception
         String expectedMessage = "User with specified userID does not exist.";
         String actualMessage = exception.getMessage();
-        System.out.println(actualMessage);
         assertTrue(actualMessage.contains(expectedMessage));
     }
 

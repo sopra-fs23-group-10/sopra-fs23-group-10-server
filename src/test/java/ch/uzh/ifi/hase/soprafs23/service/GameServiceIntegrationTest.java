@@ -53,15 +53,16 @@ public class GameServiceIntegrationTest {
 
   @Test
   void searchGameById_success() {
-    gameRepository.save(prepGame);
+    Game savedGame = gameRepository.save(prepGame);
 
-    Game foundGame = gameService.searchGameById(1L);
+    Game foundGame = gameService.searchGameById(savedGame.getGameId());
 
-    assertEquals(prepGame.getInvitingUserId(), foundGame.getInvitingUserId());
-    assertEquals(prepGame.getInvitedUserId(), foundGame.getInvitedUserId());
-    assertEquals(prepGame.getQuizType(), foundGame.getQuizType());
-    assertEquals(prepGame.getModeType(), foundGame.getModeType());
-    assertEquals(prepGame.getCurrentPlayer(), foundGame.getCurrentPlayer());
+    assertEquals(savedGame.getGameId(), foundGame.getGameId());
+    assertEquals(savedGame.getInvitingUserId(), foundGame.getInvitingUserId());
+    assertEquals(savedGame.getInvitedUserId(), foundGame.getInvitedUserId());
+    assertEquals(savedGame.getQuizType(), foundGame.getQuizType());
+    assertEquals(savedGame.getModeType(), foundGame.getModeType());
+    assertEquals(savedGame.getCurrentPlayer(), foundGame.getCurrentPlayer());
   }
 
   @Test
@@ -71,26 +72,37 @@ public class GameServiceIntegrationTest {
 
   @Test
   void getGameIdOfUser_invitingUserId_success() {
-    gameRepository.save(prepGame);
+    Game savedGame = gameRepository.save(prepGame);
 
     Long foundGameId = gameService.getGameIdOfUser(prepGame.getInvitingUserId());
 
     assertNotNull(foundGameId);
-    assertEquals(1L, foundGameId);
+    assertEquals(savedGame.getGameId(), foundGameId);
   }
 
   @Test
   void getGameIdOfUser_invitedUserId_success() {
-    gameRepository.save(prepGame);
+    Game savedGame = gameRepository.save(prepGame);
 
     Long foundGameId = gameService.getGameIdOfUser(prepGame.getInvitedUserId());
 
     assertNotNull(foundGameId);
-    assertEquals(1L, foundGameId);
+    assertEquals(savedGame.getGameId(), foundGameId);
   }
 
   @Test
   void getGameIdOfUser_notFound_throwsException() {
     assertThrows(ResponseStatusException.class, () -> gameService.getGameIdOfUser(prepGame.getInvitedUserId()));
   }
+
+  /*
+  @Test
+  void changeCurrentPlayer_success() {
+    Game savedGame = gameRepository.save(prepGame);
+
+    assertEquals(prepGame.getInvitedUserId(), savedGame.getCurrentPlayer());
+    gameService.changeCurrentPlayer(savedGame.getGameId());
+    assertEquals(prepGame.getInvitingUserId(), savedGame.getCurrentPlayer());
+  }
+  */
 }
