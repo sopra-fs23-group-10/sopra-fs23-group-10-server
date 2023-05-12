@@ -11,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.ResponseStatusException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @WebAppConfiguration
 @SpringBootTest
@@ -61,5 +62,35 @@ public class GameServiceIntegrationTest {
     assertEquals(prepGame.getQuizType(), foundGame.getQuizType());
     assertEquals(prepGame.getModeType(), foundGame.getModeType());
     assertEquals(prepGame.getCurrentPlayer(), foundGame.getCurrentPlayer());
+  }
+
+  @Test
+  void searchGameById_notFound_throwsException() {
+    assertThrows(ResponseStatusException.class, () -> gameService.searchGameById(1L));
+  }
+
+  @Test
+  void getGameIdOfUser_invitingUserId_success() {
+    gameRepository.save(prepGame);
+
+    Long foundGameId = gameService.getGameIdOfUser(prepGame.getInvitingUserId());
+
+    assertNotNull(foundGameId);
+    assertEquals(1L, foundGameId);
+  }
+
+  @Test
+  void getGameIdOfUser_invitedUserId_success() {
+    gameRepository.save(prepGame);
+
+    Long foundGameId = gameService.getGameIdOfUser(prepGame.getInvitedUserId());
+
+    assertNotNull(foundGameId);
+    assertEquals(1L, foundGameId);
+  }
+
+  @Test
+  void getGameIdOfUser_notFound_throwsException() {
+    assertThrows(ResponseStatusException.class, () -> gameService.getGameIdOfUser(prepGame.getInvitedUserId()));
   }
 }
