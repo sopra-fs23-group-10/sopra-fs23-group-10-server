@@ -25,26 +25,41 @@ public class GameServiceIntegrationTest {
   @Autowired
   private GameService gameService;
 
+  private Game prepGame;
+
   @BeforeEach
   public void setup() {
     gameRepository.deleteAll();
+
+    prepGame = new Game();
+    prepGame.setInvitingUserId(11L);
+    prepGame.setInvitedUserId(12L);
+    prepGame.setQuizType(QuizType.TEXT);
+    prepGame.setModeType(ModeType.DUEL);
+    prepGame.setCurrentPlayer(prepGame.getInvitedUserId());
   }
 
   @Test
   void createGame_success() {
-    Game newGame = new Game();
-    newGame.setInvitingUserId(11L);
-    newGame.setInvitedUserId(12L);
-    newGame.setQuizType(QuizType.TEXT);
-    newGame.setModeType(ModeType.DUEL);
-    newGame.setCurrentPlayer(newGame.getInvitedUserId());
+    Game createdGame = gameService.createGame(prepGame.getInvitingUserId(), prepGame.getInvitedUserId(), prepGame.getQuizType(), prepGame.getModeType());
 
-    Game createdGame = gameService.createGame(newGame.getInvitingUserId(), newGame.getInvitedUserId(), newGame.getQuizType(), newGame.getModeType());
+    assertEquals(prepGame.getInvitingUserId(), createdGame.getInvitingUserId());
+    assertEquals(prepGame.getInvitedUserId(), createdGame.getInvitedUserId());
+    assertEquals(prepGame.getQuizType(), createdGame.getQuizType());
+    assertEquals(prepGame.getModeType(), createdGame.getModeType());
+    assertEquals(prepGame.getCurrentPlayer(), createdGame.getCurrentPlayer());
+  }
 
-    assertEquals(newGame.getInvitingUserId(), createdGame.getInvitingUserId());
-    assertEquals(newGame.getInvitedUserId(), createdGame.getInvitedUserId());
-    assertEquals(newGame.getQuizType(), createdGame.getQuizType());
-    assertEquals(newGame.getModeType(), createdGame.getModeType());
-    assertEquals(newGame.getCurrentPlayer(), createdGame.getCurrentPlayer());
+  @Test
+  void searchGameById_success() {
+    gameRepository.save(prepGame);
+
+    Game foundGame = gameService.searchGameById(1L);
+
+    assertEquals(prepGame.getInvitingUserId(), foundGame.getInvitingUserId());
+    assertEquals(prepGame.getInvitedUserId(), foundGame.getInvitedUserId());
+    assertEquals(prepGame.getQuizType(), foundGame.getQuizType());
+    assertEquals(prepGame.getModeType(), foundGame.getModeType());
+    assertEquals(prepGame.getCurrentPlayer(), foundGame.getCurrentPlayer());
   }
 }
