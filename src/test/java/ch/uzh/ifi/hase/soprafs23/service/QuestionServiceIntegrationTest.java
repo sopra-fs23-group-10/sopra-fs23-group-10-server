@@ -106,4 +106,18 @@ public class QuestionServiceIntegrationTest {
     List<Question> foundQuestions = questionService.searchQuestionsByGameId(prepQuestion.getGameId());
     assertEquals(0, foundQuestions.size());
   }
+
+  @Test
+  void createQuestion_success() {
+    Question createdQuestion = questionService.createQuestion(prepQuestion.getGameId(), prepQuestion.getApiId(), prepQuestion.getCategory(), prepQuestion.getCorrectAnswer(), prepQuestion.getQuestion(), prepQuestion.getIncorrectAnswers());
+
+    assertEquals(prepQuestion.getGameId(), createdQuestion.getGameId());
+    assertEquals(prepQuestion.getCategory(), createdQuestion.getCategory());
+    assertEquals(prepQuestion.getApiId(), createdQuestion.getApiId());
+    assertEquals(prepQuestion.getCorrectAnswer(), createdQuestion.getCorrectAnswer());
+    assertEquals(prepQuestion.getIncorrectAnswers(), createdQuestion.getIncorrectAnswers());
+    assertTrue(createdQuestion.getAllAnswers().containsAll(prepQuestion.getAllAnswers()));
+    assertEquals(prepQuestion.getAllAnswers().size(), createdQuestion.getAllAnswers().size());
+    assertEquals(prepQuestion.getQuestion(), createdQuestion.getQuestion());
+  }
 }
