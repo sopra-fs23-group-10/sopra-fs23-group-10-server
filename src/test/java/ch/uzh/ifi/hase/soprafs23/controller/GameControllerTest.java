@@ -35,8 +35,7 @@ import java.util.*;
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -584,6 +583,31 @@ class GameControllerTest {
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(putRequest).andExpect(status().isCreated());
+    }
+
+    @Test
+    void getAllUsers_validInput_success_200() throws Exception {
+      UserResultTupleDTO userResultTupleDTO = new UserResultTupleDTO();
+      userResultTupleDTO.setGameId(game.getGameId());
+      userResultTupleDTO.setInvitingPlayerId(game.getInvitingUserId());
+      userResultTupleDTO.setInvitedPlayerId(game.getInvitedUserId());
+      userResultTupleDTO.setInvitingPlayerResult(4000L);
+      userResultTupleDTO.setInvitedPlayerResult(8000L);
+
+      given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+      given(gameControllerService.getAllUsersOfGame(game.getGameId())).willReturn(userResultTupleDTO);
+
+      MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/users")
+              .contentType(MediaType.APPLICATION_JSON)
+              .header("token", invitingUser.getToken());
+
+      mockMvc.perform(getRequest)
+              .andExpect(status().isOk())
+              .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
+              .andExpect(jsonPath("$.invitingPlayerId", is((int) game.getInvitingUserId())))
+              .andExpect(jsonPath("$.invitedPlayerId", is((int) game.getInvitedUserId())))
+              .andExpect(jsonPath("$.invitingPlayerResult", is(4000)))
+              .andExpect(jsonPath("$.invitedPlayerResult", is(8000)));
     }
 
     @Test
