@@ -107,7 +107,7 @@ public class GameControllerService {
 
   public Question getImageQuestion(Long gameId) {
     Question question = this.getImageQuestionFromApi(gameId);
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 6; i++) {
       if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
         break;
       }
