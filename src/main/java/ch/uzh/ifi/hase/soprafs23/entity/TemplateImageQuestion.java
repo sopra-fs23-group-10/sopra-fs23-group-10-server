@@ -17,7 +17,7 @@ public class TemplateImageQuestion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long templateImageQuestionId;
-    @Column()
+    @Column(nullable = false)
     private String apiId;
     @Column(nullable = false)
     private String correctAnswer;

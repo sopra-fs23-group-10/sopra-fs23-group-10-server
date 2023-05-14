@@ -22,9 +22,8 @@ public class TemplateImageQuestionService {
 
   public TemplateImageQuestion getRandomImageQuestion() {
     final SecureRandom secureRandom = new SecureRandom();
-
     long qty = templateImageQuestionRepository.count();
-    int idx = secureRandom.nextInt(2,(int) qty + 2);
-    return templateImageQuestionRepository.findTemplateImageQuestionByTemplateImageQuestionId(idx);
+    int id = secureRandom.nextInt(2,(int) qty + 1);
+    return templateImageQuestionRepository.findTemplateImageQuestionByTemplateImageQuestionId(id);
   }
 }
