@@ -36,7 +36,7 @@ VALUES
   (12, 'Dog,Cat,Donkey,Goat', 'AAJc1Rh', 'Donkey', 'Cat,Dog,Goat', 'What kind of animal is hidden in the image?'),
   (13, 'Space Rocket,Candle,Firework,Cigarette', 'hChUSOF', 'Space Rocket', 'Candle,Firework,Cigarette', 'What object is hidden in the image?'),
   (14, 'Beetle,Rhinoceros,Dinosaur,Spider', 'WtgPUUQ', 'Beetle', 'Rhinoceros,Dinosaur,Spider', 'What kind of animal is hidden in the image?'),
-  (15, 'Our Sun,Human Cell,Frog Egg,Tennis Ball', 'B3QJiiA', 'Sun', 'Human Cell,Frog Egg,Tennis Ball', 'What object is hidden in the image?'),
+  (15, 'Sun,Human Cell,Frog Egg,Tennis Ball', 'B3QJiiA', 'Sun', 'Human Cell,Frog Egg,Tennis Ball', 'What object is hidden in the image?'),
   (16, 'Bud Spencer & Terrence Hill,Dumb and Dumber,Laurel & Hardy,Cheeck & Chong', '3XXSb62', 'Bud Spencer & Terrence Hill', 'Dumb and Dumber,Laurel & Hardy,Cheeck & Chong', 'Who are the legends in the photograph?'),
   (17, 'Albert Einstein,Hendrik Lorentz,Max Planck,Niels Bohr', 'YrBRqnp', 'Albert Einstein', 'Hendrik Lorentz,Max Planck,Niels Bohr', 'Who is the guy making fun of the paparazzi?'),
   (18, 'Black Hole,Galaxy,Nebula,Star', 'TzZtugJ', 'Black Hole', 'Galaxy,Nebula,Star', 'What object was captured in this awesome image?'),
