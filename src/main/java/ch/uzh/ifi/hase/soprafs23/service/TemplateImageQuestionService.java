@@ -14,16 +14,21 @@ import java.security.SecureRandom;
 public class TemplateImageQuestionService {
 
   private final TemplateImageQuestionRepository templateImageQuestionRepository;
-
+  private final SecureRandom secureRandom = new SecureRandom();
   @Autowired
   public TemplateImageQuestionService(@Qualifier("templateImageQuestionRepository") TemplateImageQuestionRepository templateImageQuestionRepository) {
     this.templateImageQuestionRepository = templateImageQuestionRepository;
   }
 
   public TemplateImageQuestion getRandomImageQuestion() {
-    final SecureRandom secureRandom = new SecureRandom();
     long qty = templateImageQuestionRepository.count();
-    int id = secureRandom.nextInt(2,(int) qty + 1);
+    int id = getRandomInt((int)qty+1);
+
     return templateImageQuestionRepository.findTemplateImageQuestionByTemplateImageQuestionId(id);
+  }
+
+  private int getRandomInt(int max){
+    int min = 2;
+    return min + secureRandom.nextInt(max - min + 1);
   }
 }

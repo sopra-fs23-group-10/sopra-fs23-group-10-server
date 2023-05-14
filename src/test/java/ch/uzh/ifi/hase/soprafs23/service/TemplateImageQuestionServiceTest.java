@@ -39,7 +39,7 @@ public class TemplateImageQuestionServiceTest {
     oneQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
 
     given(templateImageQuestionRepository.count()).willReturn(1L);
-    given(templateImageQuestionRepository.findTemplateImageQuestionByTemplateImageQuestionId(2)).willReturn(oneQuestion);
+    given(templateImageQuestionRepository.findTemplateImageQuestionByTemplateImageQuestionId(2L)).willReturn(oneQuestion);
 
     TemplateImageQuestion returned = templateImageQuestionService.getRandomImageQuestion();
 
