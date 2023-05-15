@@ -560,17 +560,8 @@ class GameControllerTest {
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
     }
 
-    private String asJsonString(final Object object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    format("The request body could not be created.%s", e.toString()));
-        }
-    }
-
     @Test
-    void answerQuestion_whenAnswerToLate_thenFail_Forbidden() throws Exception {
+    void answerQuestion_whenAnswerToLate_thenReturnCorrectAnswer() throws Exception {
         AnswerDTO answerDTO = new AnswerDTO();
         answerDTO.setUserId(invitingUser.getId());
         answerDTO.setQuestionId(question.getQuestionId());
@@ -580,13 +571,18 @@ class GameControllerTest {
         question.setCreationTime(new Date(new Date().getTime() - 30000));
 
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+        given(gameControllerService.answerQuestion(Mockito.any(Answer.class))).willReturn(question.getCorrectAnswer());
 
         MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(answerDTO))
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(putRequest).andExpect(status().isCreated());
+        mockMvc.perform(putRequest)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.correctAnswer", is(question.getCorrectAnswer())));
+
+        verify(gameControllerService).answerQuestion(Mockito.any(Answer.class));
     }
 
     @Test
@@ -630,7 +626,7 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
                 .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
 
-        verify(webSocketController, times(1)).informUsersGameDeleted(game.getGameId());
+        verify(webSocketController).informUsersGameDeleted(game.getGameId());
     }
 
     @Test
@@ -684,5 +680,18 @@ class GameControllerTest {
             .header("token", "helloToken");
 
     mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+  }
+
+
+
+
+
+  private String asJsonString(final Object object) {
+    try {
+      return new ObjectMapper().writeValueAsString(object);
+    } catch (JsonProcessingException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+              format("The request body could not be created.%s", e.toString()));
+    }
   }
 }
