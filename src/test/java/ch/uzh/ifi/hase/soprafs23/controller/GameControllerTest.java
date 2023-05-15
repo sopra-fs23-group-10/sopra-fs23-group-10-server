@@ -182,6 +182,71 @@ class GameControllerTest {
     }
 
   @Test
+  void createGame_userNotOnline_throwsConflict_409() throws Exception {
+    User invitedUser = new User();
+    invitedUser.setId(game.getInvitedUserId());
+    invitedUser.setStatus(UserStatus.IN_GAME);
+
+    invitingUser.setStatus(UserStatus.ONLINE);
+
+    GameDTO gameDTO = new GameDTO();
+    gameDTO.setInvitingUserId(game.getInvitingUserId());
+    gameDTO.setInvitedUserId(game.getInvitedUserId());
+    gameDTO.setQuizType(QuizType.TEXT);
+    gameDTO.setModeType(ModeType.DUEL);
+
+    given(userService.searchUserById(gameDTO.getInvitedUserId())).willReturn(invitedUser);
+    given(userService.searchUserById(gameDTO.getInvitingUserId())).willReturn(invitingUser);
+    given(gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType())).willReturn(game);
+
+    MockHttpServletRequestBuilder postRequest = post("/games")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(gameDTO))
+            .header("token", invitingUser.getToken());
+
+    mockMvc.perform(postRequest).andExpect(status().isConflict());
+
+    verify(gameControllerService, never()).createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType());
+    verify(webSocketController, never()).inviteUser(eq(game.getInvitedUserId()), Mockito.any(GameDTO.class));
+  }
+
+  @Test
+  void createGame_userNotOnlineButHasIdZero_thenGameReturned_201() throws Exception {
+    User invitedUser = new User();
+    invitedUser.setId(0L);
+    invitedUser.setStatus(UserStatus.IN_GAME);
+
+    game.setInvitedUserId(invitedUser.getId());
+    invitingUser.setStatus(UserStatus.ONLINE);
+
+    GameDTO gameDTO = new GameDTO();
+    gameDTO.setInvitingUserId(game.getInvitingUserId());
+    gameDTO.setInvitedUserId(game.getInvitedUserId());
+    gameDTO.setQuizType(QuizType.TEXT);
+    gameDTO.setModeType(ModeType.DUEL);
+
+    given(userService.searchUserById(gameDTO.getInvitedUserId())).willReturn(invitedUser);
+    given(userService.searchUserById(gameDTO.getInvitingUserId())).willReturn(invitingUser);
+    given(gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType())).willReturn(game);
+
+    MockHttpServletRequestBuilder postRequest = post("/games")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(gameDTO))
+            .header("token", invitingUser.getToken());
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
+            .andExpect(jsonPath("$.invitedUserId", is((int) game.getInvitedUserId())))
+            .andExpect(jsonPath("$.invitingUserId", is((int) game.getInvitingUserId())))
+            .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
+            .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
+
+    verify(gameControllerService).createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType());
+    verify(webSocketController, never()).inviteUser(eq(invitedUser.getId()), Mockito.any(GameDTO.class));
+  }
+
+  @Test
   void respondInvitation_trueResponse_200() throws Exception {
     User invitedUser = new User();
     invitedUser.setId(45L);
