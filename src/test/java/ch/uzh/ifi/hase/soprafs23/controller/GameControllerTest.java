@@ -616,7 +616,6 @@ class GameControllerTest {
 
     @Test
     void terminateGame_success() throws Exception {
-        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
 
         MockHttpServletRequestBuilder postRequest = post("/games/" + game.getGameId() + "/termination")
@@ -630,19 +629,20 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.invitingUserId", is((int) game.getInvitingUserId())))
                 .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
                 .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
+
+        verify(webSocketController, times(1)).informUsersGameDeleted(game.getGameId());
     }
 
     @Test
-    void finishGame_success() throws Exception {
-        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
-        given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
-
+    void terminateFinishedGame_success() throws Exception {
         MockHttpServletRequestBuilder deleteRequest = delete("/games/" + game.getGameId() + "/finish")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(deleteRequest)
                 .andExpect(status().isOk());
+
+        verify(gameControllerService, times(1)).setInGamePlayersToOnline(game.getGameId());
     }
 
   @Test
@@ -685,72 +685,4 @@ class GameControllerTest {
 
     mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
   }
-
-    
-    /*
-        @Test
-    public void finishGame_whenPointsUpdated_thenUserResultTupleDTO_200() throws Exception {
-        // given
-        gameRepository
-        Game game = new Game(1L, 1L, 2L, QuizType.TEXT, ModeType.DUEL);
-        games.put(game.getGameId(), game);
-        //inviting User
-        User user1 = new User();
-        user1.setId(1L);
-        user1.setUsername("testUsername");
-        user1.setPassword("testPassword");
-        user1.setPoints(3L);
-        user1.setEmail("email@email.com");
-        user1.setProfilePicture("testUsername");
-        user1.setToken("1");
-        user1.setStatus(UserStatus.IN_GAME);
-        //invited User
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setUsername("test");
-        user2.setPassword("testPW");
-        user2.setPoints(3L);
-        user2.setEmail("test@test.com");
-        user2.setProfilePicture("test");
-        user2.setToken("2");
-        user2.setStatus(UserStatus.IN_GAME);
-        Question question = new Question();
-        question.setCategory(Category.ARTS_LITERATURE);
-        question.setApiId("1");
-        question.setCorrectAnswer("True");
-        List<String> incorrectAnswer = new ArrayList<String>(List.of("False"));
-        question.setIncorrectAnswers(incorrectAnswer);
-        List<String> allAnswer = new ArrayList<String>(List.of("False", "True"));
-        question.setAllAnswers(allAnswer);
-        question.setQuestionString("Is the sky blue?");
-        Answer answerTuple1 = new Answer();
-        answerTuple1.setUserId(user1.getId());
-        answerTuple1.setQuestionId(question.getQuestionId());
-        answerTuple1.setAnswerString("True");
-        answerTuple1.setAnsweredTime(1L);
-        Answer answerTuple2 = new Answer();
-        answerTuple2.setUserId(user2.getId());
-        answerTuple2.setQuestionId(question.getQuestionId());
-        answerTuple2.setAnswerString("False");
-        answerTuple2.setAnsweredTime(1L);
-        UserResultTuple userResultTuple = gameControllerService.getPointsOfBoth(game.getGameId());
-        // set up userService to throw the exception
-        given(userService.verifyToken(user1.getToken())).willReturn(user1);
-        given(userService.verifyToken(user2.getToken())).willReturn(user2);
-        given(userService.getPoints(Mockito.any())).willReturn(3L);
-        //given(webSocketController.endResultToUser(Mockito.any(), Mockito.any()));
-        // when/then -> build the post request
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/"+game.getGameId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(""));
-        // then
-        mockMvc.perform(deleteRequest).andExpect(status().isOk())
-                .andExpect(jsonPath("$.gameId", is(game.getGameId())))
-                .andExpect(jsonPath("$.invitingPlayerId", is(user1.getId())))
-                .andExpect(jsonPath("$.invitingPlayerResult", is(user1.getPoints()+ userResultTuple.getInvitingPlayerResult())))
-                .andExpect(jsonPath("$.invitedPlayerId", is(user2.getId())))
-                .andExpect(jsonPath("$.invitedPlayerResult", is(user2.getPoints()+ userResultTuple.getInvitedPlayerResult())));
-    }
-     */
-
 }
