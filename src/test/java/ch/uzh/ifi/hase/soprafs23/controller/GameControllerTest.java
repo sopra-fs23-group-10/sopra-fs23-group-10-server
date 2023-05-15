@@ -95,7 +95,7 @@ class GameControllerTest {
         question = new Question();
         question.setQuestionId(69L);
         question.setApiId("62433573cfaae40c129614a9");
-        question.setQuestion("Who wrote this test?");
+        question.setQuestionString("Who wrote this test?");
         question.setCategory(Category.GENERAL_KNOWLEDGE);
         String[] answers = {"me", "you", "allOfUs", "WhoKnows?"};
         question.setAllAnswers(List.of(answers));
@@ -110,7 +110,7 @@ class GameControllerTest {
       imageQuestion = new Question();
       imageQuestion.setQuestionId(70L);
       imageQuestion.setApiId("6243Aet3vQ");
-      imageQuestion.setQuestion("Who wrote this test?");
+      imageQuestion.setQuestionString("Who wrote this test?");
       String[] imageAnswers = {"me", "you", "allOfUs", "WhoKnows?"};
       imageQuestion.setAllAnswers(List.of(imageAnswers));
       String[] incorrectImageAnswers = {"you", "allOfUs", "WhoKnows?"};
@@ -240,7 +240,7 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.correctAnswer").value(nullValue()))
                 .andExpect(jsonPath("$.incorrectAnswers").value(nullValue()))
                 .andExpect(jsonPath("$.allAnswers", containsInAnyOrder("me", "you", "allOfUs", "WhoKnows?")))
-                .andExpect(jsonPath("$.question", is(question.getQuestion())));
+                .andExpect(jsonPath("$.question", is(question.getQuestionString())));
     }
 
     @Test
@@ -662,7 +662,7 @@ class GameControllerTest {
             .andExpect(jsonPath("$.correctAnswer").value(nullValue()))
             .andExpect(jsonPath("$.incorrectAnswers").value(nullValue()))
             .andExpect(jsonPath("$.allAnswers", containsInAnyOrder("me", "you", "allOfUs", "WhoKnows?")))
-            .andExpect(jsonPath("$.question", is(imageQuestion.getQuestion())));
+            .andExpect(jsonPath("$.question", is(imageQuestion.getQuestionString())));
   }
 
   @Test
@@ -718,7 +718,7 @@ class GameControllerTest {
         question.setIncorrectAnswers(incorrectAnswer);
         List<String> allAnswer = new ArrayList<String>(List.of("False", "True"));
         question.setAllAnswers(allAnswer);
-        question.setQuestion("Is the sky blue?");
+        question.setQuestionString("Is the sky blue?");
         Answer answerTuple1 = new Answer();
         answerTuple1.setUserId(user1.getId());
         answerTuple1.setQuestionId(question.getQuestionId());

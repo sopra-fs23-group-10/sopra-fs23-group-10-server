@@ -50,7 +50,7 @@ VALUES
   (26, 'Cabin Cruiser,Galley,Ferry,Bow Rider', '9JkHXb9', 'Bow Rider', 'Cabin Cruiser,Galley,Ferry', 'What kind of boat type is in the image?'),
   (27, 'Cabriolet,SUV,Limousine,Coupe', 'eAhl2LC', 'Coupe', 'Cabriolet,SUV,Limousine', 'What is the design of the car in the picture?'),
   (28, 'Spiderman,Thor,Ironman,Captain America', 'KEfW1tG', 'Captain America', 'Spiderman,Thor,Ironman', 'What marvel character is in the picture?'),
-  (29, 'Friends,Modern Family,Suits,The Office', 'tphNbfC', 'The Office', 'Friends,Modern Family,Suits', 'In which TV series does this picture occur?'),
+  (29, 'Friends,Modern Family,Suits,The Office', 'tphNbfC', 'The Office', 'Friends,Modern Family,Suits', 'From which TV series is this struggling guy?'),
   (30, 'New York,London,Zurich,Tokyo', 'AjybU6j', 'Tokyo', 'New York,London,Zurich', 'In which city is this picture taken?'),
   (31, 'Hong Kong Park,Park Guell,Djurgarden,Central Park', 'cvyMf0E', 'Central Park', 'Hong Kong Park,Park Guell,Djurgarden', 'How is this park called?'),
   (32, 'Antoni Gaudi,Frank Gehry,Le Corbusier,Frank Lloyd Wright', 'MNgvhvE', 'Frank Lloyd Wright', 'Antoni Gaudi,Frank Gehry,Le Corbusier', 'Who was the architect of this house?'),

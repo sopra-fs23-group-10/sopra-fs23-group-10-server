@@ -20,7 +20,7 @@ public class Answer implements Serializable {
     @Column(nullable = false)
     private long userId;
     @Column(nullable = false)
-    private String answer;
+    private String answerString;
     @Column(nullable = false)
     private long answeredTime;
 }

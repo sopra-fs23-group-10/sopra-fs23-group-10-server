@@ -49,7 +49,7 @@ public class QuestionService {
   public Question createQuestion(long gameId, String apiId, Category category, String correctAnswer, String questionString, List<String> incorrectAnswers) {
     Question question = new Question();
     question.setGameId(gameId);
-    question.setQuestion(questionString);
+    question.setQuestionString(questionString);
     question.setCategory(category);
     question.setApiId(apiId);
     question.setCorrectAnswer(correctAnswer);
@@ -65,7 +65,7 @@ public class QuestionService {
   public Question createImageQuestion(long templateImageQuestionId, String apiId, String correctAnswer, String questionString, List<String> incorrectAnswers,List<String> allAnswers) {
     Question question = new Question();
     question.setGameId(templateImageQuestionId);
-    question.setQuestion(questionString);
+    question.setQuestionString(questionString);
     question.setApiId(apiId);
     question.setCorrectAnswer(correctAnswer);
     question.setIncorrectAnswers(incorrectAnswers);

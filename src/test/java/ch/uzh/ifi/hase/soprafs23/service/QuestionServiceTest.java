@@ -53,7 +53,7 @@ class QuestionServiceTest {
     createdQuestion.setCorrectAnswer("Bob Dylan");
     createdQuestion.setIncorrectAnswers(incorrectAnswers);
     createdQuestion.setAllAnswers(allAnswers);
-    createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
+    createdQuestion.setQuestionString("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
     createdQuestion.setCreationTime(new Date());
   }
 
@@ -70,7 +70,7 @@ class QuestionServiceTest {
     assertEquals(createdQuestion.getCorrectAnswer(), found.getCorrectAnswer());
     assertEquals(createdQuestion.getIncorrectAnswers(), found.getIncorrectAnswers());
     assertEquals(createdQuestion.getAllAnswers(), found.getAllAnswers());
-    assertEquals(createdQuestion.getQuestion(), found.getQuestion());
+    assertEquals(createdQuestion.getQuestionString(), found.getQuestionString());
     assertEquals(createdQuestion.getCreationTime(), found.getCreationTime());
   }
 
@@ -95,14 +95,14 @@ class QuestionServiceTest {
       assertEquals(createdQuestion.getCorrectAnswer(), question.getCorrectAnswer());
       assertEquals(createdQuestion.getIncorrectAnswers(), question.getIncorrectAnswers());
       assertEquals(createdQuestion.getAllAnswers(), question.getAllAnswers());
-      assertEquals(createdQuestion.getQuestion(), question.getQuestion());
+      assertEquals(createdQuestion.getQuestionString(), question.getQuestionString());
       assertEquals(createdQuestion.getCreationTime(), question.getCreationTime());
     }
   }
 
   @Test
   void createQuestion_success() {
-    Question returnedQuestion = questionService.createQuestion(createdQuestion.getGameId(),createdQuestion.getApiId(), createdQuestion.getCategory(), createdQuestion.getCorrectAnswer(), createdQuestion.getQuestion(), createdQuestion.getIncorrectAnswers());
+    Question returnedQuestion = questionService.createQuestion(createdQuestion.getGameId(),createdQuestion.getApiId(), createdQuestion.getCategory(), createdQuestion.getCorrectAnswer(), createdQuestion.getQuestionString(), createdQuestion.getIncorrectAnswers());
 
     assertEquals(createdQuestion.getGameId(), returnedQuestion.getGameId());
     assertEquals(createdQuestion.getCategory(), returnedQuestion.getCategory());
@@ -111,7 +111,7 @@ class QuestionServiceTest {
     assertEquals(createdQuestion.getIncorrectAnswers(), returnedQuestion.getIncorrectAnswers());
     assertEquals(createdQuestion.getAllAnswers().size(), returnedQuestion.getAllAnswers().size());
     assertTrue(returnedQuestion.getAllAnswers().containsAll(createdQuestion.getAllAnswers()));
-    assertEquals(createdQuestion.getQuestion(), returnedQuestion.getQuestion());
+    assertEquals(createdQuestion.getQuestionString(), returnedQuestion.getQuestionString());
     assertEquals(createdQuestion.getCreationTime().toString(), returnedQuestion.getCreationTime().toString());
   }
 }

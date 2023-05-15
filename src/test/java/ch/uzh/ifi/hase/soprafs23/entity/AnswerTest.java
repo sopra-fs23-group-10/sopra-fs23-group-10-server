@@ -12,7 +12,7 @@ class AnswerTest {
     @BeforeEach
     void setup() {
         answer = new Answer();
-        answer.setAnswer("answer");
+        answer.setAnswerString("answer");
         answer.setAnsweredTime(0L);
         answer.setId(1L);
         answer.setQuestionId(2L);
@@ -34,9 +34,9 @@ class AnswerTest {
 
     @Test
     void getAndSetAnswer_thenSet() {
-        assertEquals("answer", answer.getAnswer());
-        answer.setAnswer("differentAnswer");
-        assertEquals("differentAnswer", answer.getAnswer());
+        assertEquals("answer", answer.getAnswerString());
+        answer.setAnswerString("differentAnswer");
+        assertEquals("differentAnswer", answer.getAnswerString());
     }
 
     @Test

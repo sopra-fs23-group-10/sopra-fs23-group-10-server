@@ -25,7 +25,7 @@ public class AnswerService {
         Answer createdAnswer = new Answer();
         createdAnswer.setQuestionId(answer.getQuestionId());
         createdAnswer.setUserId(answer.getUserId());
-        createdAnswer.setAnswer(answer.getAnswer());
+        createdAnswer.setAnswerString(answer.getAnswerString());
         createdAnswer.setAnsweredTime(answer.getAnsweredTime());
 
         answerRepository.save(createdAnswer);

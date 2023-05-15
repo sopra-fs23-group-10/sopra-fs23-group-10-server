@@ -31,7 +31,7 @@ class AnswerServiceTest {
     prepAnswer.setId(1L);
     prepAnswer.setQuestionId(5L);
     prepAnswer.setUserId(45L);
-    prepAnswer.setAnswer("someAnswer");
+    prepAnswer.setAnswerString("someAnswer");
     prepAnswer.setAnsweredTime(15);
   }
 
@@ -44,7 +44,7 @@ class AnswerServiceTest {
     assertEquals(prepAnswer.getId(), found.getId());
     assertEquals(prepAnswer.getQuestionId(), found.getQuestionId());
     assertEquals(prepAnswer.getUserId(), found.getUserId());
-    assertEquals(prepAnswer.getAnswer(), found.getAnswer());
+    assertEquals(prepAnswer.getAnswerString(), found.getAnswerString());
     assertEquals(prepAnswer.getAnsweredTime(), found.getAnsweredTime());
   }
 

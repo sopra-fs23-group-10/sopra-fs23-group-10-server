@@ -70,7 +70,7 @@ public interface DTOMapper {
     @Mapping(source = "category", target = "category")
     @Mapping(source = "questionId", target = "questionId")
     @Mapping(source = "apiId", target = "apiId")
-    @Mapping(source = "question", target = "question")
+    @Mapping(source = "questionString", target = "question")
     @Mapping(source = "allAnswers", target = "allAnswers")
     @Mapping(target = "correctAnswer", ignore = true)
     @Mapping(target = "incorrectAnswers", ignore = true)
@@ -78,7 +78,7 @@ public interface DTOMapper {
 
     @Mapping(source = "userId", target = "userId")
     @Mapping(source = "questionId", target = "questionId")
-    @Mapping(source = "answerString", target = "answer")
+    @Mapping(source = "answerString", target = "answerString")
     @Mapping(source = "answeredTime", target = "answeredTime")
     @Mapping(target = "id", ignore = true)
     Answer convertUserAnswerDTOtoEntity(AnswerDTO answerDTO);

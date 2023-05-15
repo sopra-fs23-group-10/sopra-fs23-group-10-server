@@ -132,7 +132,7 @@ class DTOMapperTest {
         question.setQuestionId(1L);
         question.setCategory(Category.MUSIC);
         question.setApiId("questionId");
-        question.setQuestion("Who do music?");
+        question.setQuestionString("Who do music?");
         question.setAllAnswers(java.util.Arrays.asList("Wlarbenborb", "Herbert Cheese", "Frank Sinotra", "John Lennon"));
         question.setCorrectAnswer("John Lennon");
         question.setIncorrectAnswers(java.util.Arrays.asList("Wlarbenborb", "Herbert Cheese", "Frank Sinotra"));
@@ -141,7 +141,7 @@ class DTOMapperTest {
 
         assertEquals(question.getApiId(), questionDTO.getApiId());
         assertEquals(question.getCategory(), questionDTO.getCategory());
-        assertEquals(question.getQuestion(), questionDTO.getQuestion());
+        assertEquals(question.getQuestionString(), questionDTO.getQuestion());
         assertEquals(question.getAllAnswers(), questionDTO.getAllAnswers());
         assertNull(questionDTO.getCorrectAnswer());
         assertNull(questionDTO.getIncorrectAnswers());

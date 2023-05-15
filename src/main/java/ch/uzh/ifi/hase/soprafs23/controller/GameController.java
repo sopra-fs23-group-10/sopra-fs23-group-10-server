@@ -25,7 +25,7 @@ public class GameController {
   private final UserService userService;
   private final WebSocketController webSocketController;
   private final Logger log = LoggerFactory.getLogger(GameController.class);
-  private final String noGameFound = "No game with ID: {} found";
+  private final static String NO_GAME_FOUND = "No game with ID: {} found";
 
   GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
     this.gameControllerService = gameControllerService;
@@ -67,7 +67,7 @@ public class GameController {
           try {
               gameControllerService.setInGamePlayersToOnline(gameId);
           } catch (ResponseStatusException e) {
-              log.info(noGameFound,gameId);
+              log.info(NO_GAME_FOUND,gameId);
           }
       }
 
@@ -81,7 +81,7 @@ public class GameController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Map<String, List<Category>> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
-      User requestingUser = userService.verifyToken(token);
+      userService.verifyToken(token);
       return gameControllerService.getRandomTopics(gameId);
   }
 
@@ -143,7 +143,7 @@ public class GameController {
       try {
           gameControllerService.setInGamePlayersToOnline(gameId);
       } catch (ResponseStatusException e) {
-          log.info(noGameFound,gameId);
+          log.info(NO_GAME_FOUND,gameId);
       }
       return userResultTupleDTOList;
   }
@@ -155,7 +155,7 @@ public class GameController {
       try {
           gameControllerService.setInGamePlayersToOnline(gameId);
       } catch (ResponseStatusException e) {
-          log.info(noGameFound,gameId);
+          log.info(NO_GAME_FOUND,gameId);
       }
   }
 

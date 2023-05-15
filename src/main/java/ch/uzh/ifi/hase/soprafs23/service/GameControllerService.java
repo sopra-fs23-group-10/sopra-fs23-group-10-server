@@ -183,7 +183,7 @@ public class GameControllerService {
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
 
         if (question.timeRunUp()) {
-            answer.setAnswer("WrongAnswer");
+            answer.setAnswerString("WrongAnswer");
         }
         answerService.createAnswer(answer);
         return question.getCorrectAnswer();
@@ -255,7 +255,7 @@ public class GameControllerService {
           return 0L;
         }
         Question question = questionService.searchQuestionByQuestionId(answer.getQuestionId());
-        return answer.getAnswer().equals(question.getCorrectAnswer()) ?
+        return answer.getAnswerString().equals(question.getCorrectAnswer()) ?
                 (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime()*1000)/10))) : 0L;
     }
 }

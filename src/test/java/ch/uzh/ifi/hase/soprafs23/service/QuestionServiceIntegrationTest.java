@@ -44,7 +44,7 @@ public class QuestionServiceIntegrationTest {
     prepQuestion.setCorrectAnswer("Bob Dylan");
     prepQuestion.setIncorrectAnswers(incorrectAnswers);
     prepQuestion.setAllAnswers(allAnswers);
-    prepQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
+    prepQuestion.setQuestionString("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
     prepQuestion.setCreationTime(new Date());
   }
 
@@ -62,7 +62,7 @@ public class QuestionServiceIntegrationTest {
     assertEquals(savedQuestion.getCorrectAnswer(), foundQuestion.getCorrectAnswer());
     assertEquals(savedQuestion.getIncorrectAnswers(), foundQuestion.getIncorrectAnswers());
     assertEquals(savedQuestion.getAllAnswers(), foundQuestion.getAllAnswers());
-    assertEquals(savedQuestion.getQuestion(), foundQuestion.getQuestion());
+    assertEquals(savedQuestion.getQuestionString(), foundQuestion.getQuestionString());
     assertEquals(savedQuestion.getCreationTime(), foundQuestion.getCreationTime());
   }
 
@@ -96,7 +96,7 @@ public class QuestionServiceIntegrationTest {
       assertEquals(savedQuestion.getCorrectAnswer(), foundQuestion.getCorrectAnswer());
       assertEquals(savedQuestion.getIncorrectAnswers(), foundQuestion.getIncorrectAnswers());
       assertEquals(savedQuestion.getAllAnswers(), foundQuestion.getAllAnswers());
-      assertEquals(savedQuestion.getQuestion(), foundQuestion.getQuestion());
+      assertEquals(savedQuestion.getQuestionString(), foundQuestion.getQuestionString());
       assertEquals(savedQuestion.getCreationTime(), foundQuestion.getCreationTime());
     }
   }
@@ -109,7 +109,7 @@ public class QuestionServiceIntegrationTest {
 
   @Test
   void createQuestion_success() {
-    Question createdQuestion = questionService.createQuestion(prepQuestion.getGameId(), prepQuestion.getApiId(), prepQuestion.getCategory(), prepQuestion.getCorrectAnswer(), prepQuestion.getQuestion(), prepQuestion.getIncorrectAnswers());
+    Question createdQuestion = questionService.createQuestion(prepQuestion.getGameId(), prepQuestion.getApiId(), prepQuestion.getCategory(), prepQuestion.getCorrectAnswer(), prepQuestion.getQuestionString(), prepQuestion.getIncorrectAnswers());
 
     assertEquals(prepQuestion.getGameId(), createdQuestion.getGameId());
     assertEquals(prepQuestion.getCategory(), createdQuestion.getCategory());
@@ -118,7 +118,7 @@ public class QuestionServiceIntegrationTest {
     assertEquals(prepQuestion.getIncorrectAnswers(), createdQuestion.getIncorrectAnswers());
     assertTrue(createdQuestion.getAllAnswers().containsAll(prepQuestion.getAllAnswers()));
     assertEquals(prepQuestion.getAllAnswers().size(), createdQuestion.getAllAnswers().size());
-    assertEquals(prepQuestion.getQuestion(), createdQuestion.getQuestion());
+    assertEquals(prepQuestion.getQuestionString(), createdQuestion.getQuestionString());
   }
 
   @Test
@@ -133,7 +133,7 @@ public class QuestionServiceIntegrationTest {
     assertEquals(prepQuestion.getCorrectAnswer(), savedQuestion.getCorrectAnswer());
     assertEquals(prepQuestion.getIncorrectAnswers(), savedQuestion.getIncorrectAnswers());
     assertEquals(prepQuestion.getAllAnswers(), savedQuestion.getAllAnswers());
-    assertEquals(prepQuestion.getQuestion(), savedQuestion.getQuestion());
+    assertEquals(prepQuestion.getQuestionString(), savedQuestion.getQuestionString());
     assertEquals(prepQuestion.getCreationTime(), savedQuestion.getCreationTime());
   }
 }

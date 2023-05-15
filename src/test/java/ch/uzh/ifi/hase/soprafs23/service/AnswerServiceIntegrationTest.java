@@ -33,7 +33,7 @@ public class AnswerServiceIntegrationTest {
     prepAnswer = new Answer();
     prepAnswer.setQuestionId(5L);
     prepAnswer.setUserId(45L);
-    prepAnswer.setAnswer("someAnswer");
+    prepAnswer.setAnswerString("someAnswer");
     prepAnswer.setAnsweredTime(15);
   }
 
@@ -46,7 +46,7 @@ public class AnswerServiceIntegrationTest {
     assertEquals(savedAnswer.getId(), foundAnswer.getId());
     assertEquals(savedAnswer.getQuestionId(), foundAnswer.getQuestionId());
     assertEquals(savedAnswer.getUserId(), foundAnswer.getUserId());
-    assertEquals(savedAnswer.getAnswer(), foundAnswer.getAnswer());
+    assertEquals(savedAnswer.getAnswerString(), foundAnswer.getAnswerString());
     assertEquals(savedAnswer.getAnsweredTime(), foundAnswer.getAnsweredTime());
   }
 
@@ -64,7 +64,7 @@ public class AnswerServiceIntegrationTest {
 
     assertEquals(prepAnswer.getQuestionId(), foundAnswer.getQuestionId());
     assertEquals(prepAnswer.getUserId(), foundAnswer.getUserId());
-    assertEquals(prepAnswer.getAnswer(), foundAnswer.getAnswer());
+    assertEquals(prepAnswer.getAnswerString(), foundAnswer.getAnswerString());
     assertEquals(prepAnswer.getAnsweredTime(), foundAnswer.getAnsweredTime());
   }
 }

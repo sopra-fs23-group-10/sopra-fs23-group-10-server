@@ -52,7 +52,7 @@ class QuestionRepositoryIntegrationTest {
         question.setIncorrectAnswers(incorrectAnswers);
         question.setAllAnswers(allAnswers);
         question.setCreationTime(new Date());
-        question.setQuestion(
+        question.setQuestionString(
                 "Which musician has famously performed over 3,000 shows" +
                 " in their 'Never Ending Tour'?"
         );
@@ -80,7 +80,7 @@ class QuestionRepositoryIntegrationTest {
         anotherQuestion.setIncorrectAnswers(incorrectAnswers);
         anotherQuestion.setAllAnswers(allAnswers);
         anotherQuestion.setCreationTime(new Date());
-        anotherQuestion.setQuestion("Who wrote this test?");
+        anotherQuestion.setQuestionString("Who wrote this test?");
 
         // store second question in DB
         entityManager.persist(anotherQuestion);
@@ -99,7 +99,7 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(question.getCorrectAnswer(), found.getCorrectAnswer());
         assertEquals(question.getIncorrectAnswers(), found.getIncorrectAnswers());
         assertEquals(question.getAllAnswers(), found.getAllAnswers());
-        assertEquals(question.getQuestion(), found.getQuestion());
+        assertEquals(question.getQuestionString(), found.getQuestionString());
         assertEquals(question.getCreationTime(), found.getCreationTime());
     }
 
@@ -125,7 +125,7 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(question.getCorrectAnswer(), found.get(0).getCorrectAnswer());
         assertEquals(question.getIncorrectAnswers(), found.get(0).getIncorrectAnswers());
         assertEquals(question.getAllAnswers(), found.get(0).getAllAnswers());
-        assertEquals(question.getQuestion(), found.get(0).getQuestion());
+        assertEquals(question.getQuestionString(), found.get(0).getQuestionString());
         assertEquals(question.getCreationTime(), found.get(0).getCreationTime());
 
 
@@ -136,7 +136,7 @@ class QuestionRepositoryIntegrationTest {
         assertEquals(anotherQuestion.getCorrectAnswer(), found.get(1).getCorrectAnswer());
         assertEquals(anotherQuestion.getIncorrectAnswers(), found.get(1).getIncorrectAnswers());
         assertEquals(anotherQuestion.getAllAnswers(), found.get(1).getAllAnswers());
-        assertEquals(anotherQuestion.getQuestion(), found.get(1).getQuestion());
+        assertEquals(anotherQuestion.getQuestionString(), found.get(1).getQuestionString());
         assertEquals(anotherQuestion.getCreationTime(), found.get(1).getCreationTime());
 
     }

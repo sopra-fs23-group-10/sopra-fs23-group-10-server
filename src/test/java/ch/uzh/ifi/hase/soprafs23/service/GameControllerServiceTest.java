@@ -103,11 +103,11 @@ class GameControllerServiceTest {
         createdQuestion.setCorrectAnswer("Bob Dylan");
         createdQuestion.setIncorrectAnswers(incorrectAnswers);
         createdQuestion.setAllAnswers(allAnswers);
-        createdQuestion.setQuestion("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
+        createdQuestion.setQuestionString("Which musician has famously performed over 3,000 shows in their 'Never Ending Tour'?");
         createdQuestion.setCreationTime(new Date());
 
         correctAnswer = new Answer();
-        correctAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        correctAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
         correctAnswer.setAnsweredTime(10000L);
         correctAnswer.setId(createdQuestion.getQuestionId());
         correctAnswer.setUserId(invitedUser.getId());
@@ -307,7 +307,7 @@ class GameControllerServiceTest {
         when(userService.searchUserById(Mockito.any())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
 
         assertThrows(ResponseStatusException.class, () -> {
-            gameControllerService.getQuestion(Category.MUSIC, prepTextDuelGame.getGameId());
+            gameControllerService.getQuestionString(Category.MUSIC, prepTextDuelGame.getGameId());
         });
     }
 
@@ -361,7 +361,7 @@ class GameControllerServiceTest {
         given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
 
         Answer answer = new Answer();
-        answer.setAnswer("CorrectAnswer");
+        answer.setAnswerString("CorrectAnswer");
         answer.setAnsweredTime(3L);
         answer.setQuestionId(1L);
         answer.setUserId(3L);
@@ -369,7 +369,7 @@ class GameControllerServiceTest {
         createdQuestion.setCreationTime(new Date(createdQuestion.getCreationTime().getTime() - 31000));
 
         gameControllerService.answerQuestion(answer);
-        assertEquals( "WrongAnswer",answer.getAnswer());
+        assertEquals( "WrongAnswer",answer.getAnswerString());
     }
 
     @Test
@@ -378,13 +378,13 @@ class GameControllerServiceTest {
         given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
 
         Answer answer = new Answer();
-        answer.setAnswer("CorrectAnswer");
+        answer.setAnswerString("CorrectAnswer");
         answer.setAnsweredTime(3L);
         answer.setQuestionId(1L);
         answer.setUserId(3L);
 
         gameControllerService.answerQuestion(answer);
-        assertEquals("CorrectAnswer",answer.getAnswer());
+        assertEquals("CorrectAnswer",answer.getAnswerString());
     }
 /*
     @Test
@@ -428,7 +428,7 @@ class GameControllerServiceTest {
       Answer invitingAnswer = new Answer();
       invitingAnswer.setUserId(invitingUser.getId());
       invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
-      invitingAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+      invitingAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
       invitingAnswer.setAnsweredTime(10L);
 
       given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
@@ -457,13 +457,13 @@ class GameControllerServiceTest {
         Answer invitingAnswer = new Answer();
         invitingAnswer.setUserId(invitingUser.getId());
         invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
-        invitingAnswer.setAnswer(createdQuestion.getIncorrectAnswers().get(1));
+        invitingAnswer.setAnswerString(createdQuestion.getIncorrectAnswers().get(1));
         invitingAnswer.setAnsweredTime(10000L);
 
         Answer invitedAnswer = new Answer();
         invitedAnswer.setUserId(invitedUser.getId());
         invitedAnswer.setQuestionId(createdQuestion.getQuestionId());
-        invitedAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        invitedAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
         invitedAnswer.setAnsweredTime(8000L);
 
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
@@ -489,13 +489,13 @@ class GameControllerServiceTest {
         Answer fasterAnswer = new Answer();
         fasterAnswer.setUserId(invitingUser.getId());
         fasterAnswer.setQuestionId(createdQuestion.getQuestionId());
-        fasterAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        fasterAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
         fasterAnswer.setAnsweredTime(10000L);
 
         Answer slowerAnswer = new Answer();
         slowerAnswer.setUserId(invitedUser.getId());
         slowerAnswer.setQuestionId(createdQuestion.getQuestionId());
-        slowerAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        slowerAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
         slowerAnswer.setAnsweredTime(2000L);
 
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
@@ -516,13 +516,13 @@ class GameControllerServiceTest {
       Answer invitingAnswer = new Answer();
       invitingAnswer.setUserId(invitingUser.getId());
       invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
-      invitingAnswer.setAnswer(createdQuestion.getIncorrectAnswers().get(1));
+      invitingAnswer.setAnswerString(createdQuestion.getIncorrectAnswers().get(1));
       invitingAnswer.setAnsweredTime(10000L);
 
       Answer invitedAnswer = new Answer();
       invitedAnswer.setUserId(invitedUser.getId());
       invitedAnswer.setQuestionId(createdQuestion.getQuestionId());
-      invitedAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+      invitedAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
       invitedAnswer.setAnsweredTime(8000L);
 
       given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);

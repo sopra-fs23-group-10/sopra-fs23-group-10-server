@@ -34,7 +34,7 @@ public class Question implements Serializable {
   @Convert(converter = StringListConverter.class)
   private List<String> allAnswers;
   @Column(nullable = false)
-  private String question;
+  private String questionString;
   @Column(nullable = false)
   private Date creationTime;
 
