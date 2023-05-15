@@ -33,7 +33,6 @@ public class GameControllerService {
     private final GameService gameService;
     private final QuestionService questionService;
     private final AnswerService answerService;
-    private final WebSocketService webSocketService;
     private final TemplateImageQuestionService templateImageQuestionService;
     private final Logger log = LoggerFactory.getLogger(GameControllerService.class);
     private final SecureRandom secureRandom;
@@ -41,12 +40,11 @@ public class GameControllerService {
     @Autowired
     public GameControllerService(UserService userService, GameService gameService,
                                  QuestionService questionService, AnswerService answerService,
-                                 WebSocketService webSocketService,TemplateImageQuestionService templateImageQuestionService) {
+                                 TemplateImageQuestionService templateImageQuestionService) {
         this.userService = userService;
         this.gameService = gameService;
         this.questionService = questionService;
         this.answerService = answerService;
-        this.webSocketService = webSocketService;
         this.templateImageQuestionService = templateImageQuestionService;
         this.secureRandom = new SecureRandom();
     }
@@ -157,7 +155,7 @@ public class GameControllerService {
         }
     }
 
-    public Map<String, List<Category>> getRandomTopics(Long gameId, Long requestingUserId) {
+    public Map<String, List<Category>> getRandomTopics(Long gameId) {
         List<Category> randomTopics = new ArrayList<>(Arrays.asList(Category.values()));
         while (randomTopics.size() > 3) {
             randomTopics.remove(secureRandom.nextInt(randomTopics.size()));
@@ -191,7 +189,6 @@ public class GameControllerService {
         return question.getCorrectAnswer();
     }
 
-    //TODO: Is this method needed?
     private UserResultTuple getPointsOfBoth(Game game) {
         UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), game.getInvitingUserId(), game.getInvitedUserId());
         List<Question> questions = questionService.searchQuestionsByGameId(game.getGameId());

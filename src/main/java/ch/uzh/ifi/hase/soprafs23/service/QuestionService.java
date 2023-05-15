@@ -73,12 +73,12 @@ public class QuestionService {
     Collections.shuffle(allAnswers);
     question.setAllAnswers(allAnswers);
     question.setCreationTime(new Date());
-    log.info("Question " + correctAnswer + " created");
+    log.info("Question {} created", correctAnswer);
     return question;
   }
 
   public Question saveQuestion(Question question){
-    log.info("Question " + question.getCorrectAnswer() + " stored");
+    log.info("Question {} stored", question.getCorrectAnswer());
     return questionRepository.save(question);
   }
 }

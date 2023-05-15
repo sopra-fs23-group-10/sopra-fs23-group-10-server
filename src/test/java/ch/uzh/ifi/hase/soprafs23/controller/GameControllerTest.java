@@ -269,7 +269,7 @@ class GameControllerTest {
         categories.add(Category.GENERAL_KNOWLEDGE);
 
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
-        given(gameControllerService.getRandomTopics(0L, invitingUser.getId())).willReturn(Collections.singletonMap("topics", categories));
+        given(gameControllerService.getRandomTopics(0L)).willReturn(Collections.singletonMap("topics", categories));
 
         MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getGameId())
                 .contentType(MediaType.APPLICATION_JSON)

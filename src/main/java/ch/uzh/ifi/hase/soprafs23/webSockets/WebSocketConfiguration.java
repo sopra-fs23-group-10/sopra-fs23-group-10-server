@@ -1,4 +1,4 @@
-package ch.uzh.ifi.hase.soprafs23.WebSockets;
+package ch.uzh.ifi.hase.soprafs23.webSockets;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

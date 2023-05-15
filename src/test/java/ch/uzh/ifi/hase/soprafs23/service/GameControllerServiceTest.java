@@ -222,7 +222,7 @@ class GameControllerServiceTest {
     void getRandomTopics_once_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
-        Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
+        Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId());
         prepTextDuelGame.setCurrentPlayer(invitingUser.getId());
         List<Category> topicsList = topicsMap.get("topics");
 
@@ -237,13 +237,13 @@ class GameControllerServiceTest {
         int counterInviting = 0;
 
         for (int i = 0; i < 5; i++) {
-            Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
+            Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId());
             prepTextDuelGame.setCurrentPlayer(invitingUser.getId());
             List<Category> topicsList = topicsMap.get("topics");
             assertEquals(3, topicsList.size());
             counterInvited += 1;
 
-            topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitingUserId());
+            topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId());
             prepTextDuelGame.setCurrentPlayer(invitedUser.getId());
             topicsList = topicsMap.get("topics");
             assertEquals(3, topicsList.size());

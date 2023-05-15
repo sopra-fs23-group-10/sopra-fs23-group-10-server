@@ -19,6 +19,8 @@ public class MailSenderService {
       try {
         MailjetRequest request;
         MailjetResponse response;
+        String statusString;
+        String dataString;
         MailjetClient client = new MailjetClient(ClientOptions.builder().apiKey(System.getenv("MJ_API")).apiSecretKey(System.getenv("MJ_S")).build());
         request = new MailjetRequest(Emailv31.resource)
           .property(Emailv31.MESSAGES, new JSONArray()
@@ -39,8 +41,10 @@ public class MailSenderService {
                 "All the best,\n" +
                 "Your BrainBusters Team")));
         response = client.post(request);
-        log.info(String.valueOf(response.getStatus()));
-        log.info(String.valueOf(response.getData()));
+        statusString = String.valueOf(response.getStatus());
+        dataString = String.valueOf(response.getData());
+        log.info(statusString);
+        log.info(dataString);
     } catch (MailjetException e) {
         log.error("MailjetException during request of external API: {}", e.getMessage());
     }

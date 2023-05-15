@@ -25,6 +25,7 @@ public class GameController {
   private final UserService userService;
   private final WebSocketController webSocketController;
   private final Logger log = LoggerFactory.getLogger(GameController.class);
+  private final String noGameFound = "No game with ID: {} found";
 
   GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
     this.gameControllerService = gameControllerService;
@@ -66,7 +67,7 @@ public class GameController {
           try {
               gameControllerService.setInGamePlayersToOnline(gameId);
           } catch (ResponseStatusException e) {
-              log.info("No game with ID: {} found",gameId);
+              log.info(noGameFound,gameId);
           }
       }
 
@@ -81,7 +82,7 @@ public class GameController {
   @ResponseBody
   public Map<String, List<Category>> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
       User requestingUser = userService.verifyToken(token);
-      return gameControllerService.getRandomTopics(gameId, requestingUser.getId());
+      return gameControllerService.getRandomTopics(gameId);
   }
 
   @GetMapping("/game/topics/all")
@@ -142,7 +143,7 @@ public class GameController {
       try {
           gameControllerService.setInGamePlayersToOnline(gameId);
       } catch (ResponseStatusException e) {
-          log.info("No game with ID: {} found",gameId);
+          log.info(noGameFound,gameId);
       }
       return userResultTupleDTOList;
   }
@@ -154,7 +155,7 @@ public class GameController {
       try {
           gameControllerService.setInGamePlayersToOnline(gameId);
       } catch (ResponseStatusException e) {
-          log.info("No game with ID: {} found",gameId);
+          log.info(noGameFound,gameId);
       }
   }
 
@@ -178,7 +179,6 @@ public class GameController {
       return gameControllerService.getAllUsersOfGame(gameId);
   }
 
-  //TODO: DeleteMapping might be inappropriate here
   @DeleteMapping("/games/{gameId}/deletions")
   @ResponseStatus(HttpStatus.OK)
   public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
