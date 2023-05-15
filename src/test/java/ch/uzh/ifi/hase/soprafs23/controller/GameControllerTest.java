@@ -195,6 +195,9 @@ class GameControllerTest {
     mockMvc.perform(postRequest)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$." + game.getGameId(), is(true)));
+
+    verify(webSocketController).sendInvitationRespond(eq(game.getInvitedUserId()), any());
+    verify(webSocketController).sendInvitationRespond(eq(game.getInvitingUserId()), any());
   }
 
   @Test
