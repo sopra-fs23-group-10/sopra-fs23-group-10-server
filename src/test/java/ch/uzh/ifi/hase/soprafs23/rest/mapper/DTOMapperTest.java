@@ -162,46 +162,6 @@ class DTOMapperTest {
         assertEquals(userResultTuple.getInvitedPlayerId(), userResultTupleDTO.getInvitedPlayerId());
         assertEquals(userResultTuple.getInvitedPlayerResult(), userResultTupleDTO.getInvitedPlayerResult());
     }
-/*
-    @Test
-    void testUserAnswerTuple_fromEntityToDTO_success() {
-        // create UserPutDTO
-        Answer answer = new Answer();
-        answer.setQuestionId(1L);
-        answer.setUserId(15L);
-        answer.setAnswer("somethingSomething");
-        answer.setAnsweredTime(154L);
-
-        // MAP -> Create user
-        AnswerDTO userAnswerTupleDTO = DTOMapper.INSTANCE.convertUserAnswerEntitytoDTO(answer);
-
-        // check content
-        assertEquals(answer.getUserId(), userAnswerTupleDTO.getUserId());
-        assertEquals(answer.getQuestionId(), userAnswerTupleDTO.getQuestionId());
-        assertEquals(answer.getAnswer(), userAnswerTupleDTO.getAnswer());
-        assertEquals(answer.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
-    }
-
-    @Test
-    void testUserAnswerTupleDTO_fromDTOToEntity_success() {
-        // create UserPutDTO
-        AnswerDTO userAnswerTupleDTO = new AnswerDTO();
-        userAnswerTupleDTO.setUserId(1L);
-        userAnswerTupleDTO.setQuestionId("1");
-        userAnswerTupleDTO.setAnswer("True");
-        userAnswerTupleDTO.setAnsweredTime(10L);
-
-        // MAP -> Create user
-        Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(userAnswerTupleDTO);
-
-        // check content
-        assertEquals(answer.getUserId(), userAnswerTupleDTO.getUserId());
-        assertEquals(answer.getQuestionId(), userAnswerTupleDTO.getQuestionId());
-        assertEquals(answer.getAnswer(), userAnswerTupleDTO.getAnswer());
-        assertEquals(answer.getAnsweredTime(), userAnswerTupleDTO.getAnsweredTime());
-    }
-
- */
 
     @Test
     void testUserResultTuple_fromEntity_toDTO_success() {

@@ -144,7 +144,7 @@ public class GameController {
       try {
           gameControllerService.setInGamePlayersToOnline(gameId);
       } catch (ResponseStatusException e) {
-          log.info(NO_GAME_FOUND,gameId);
+          log.info(NO_GAME_FOUND, gameId);
       }
       return userResultTupleDTOList;
   }

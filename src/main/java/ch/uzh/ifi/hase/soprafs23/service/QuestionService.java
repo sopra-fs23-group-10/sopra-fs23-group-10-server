@@ -62,9 +62,9 @@ public class QuestionService {
     return question;
   }
 
-  public Question createImageQuestion(long templateImageQuestionId, String apiId, String correctAnswer, String questionString, List<String> incorrectAnswers,List<String> allAnswers) {
+  public Question createImageQuestion(long gameId, String apiId, String correctAnswer, String questionString, List<String> incorrectAnswers,List<String> allAnswers) {
     Question question = new Question();
-    question.setGameId(templateImageQuestionId);
+    question.setGameId(gameId);
     question.setQuestionString(questionString);
     question.setApiId(apiId);
     question.setCorrectAnswer(correctAnswer);

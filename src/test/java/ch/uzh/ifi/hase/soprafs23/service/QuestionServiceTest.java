@@ -114,4 +114,27 @@ class QuestionServiceTest {
     assertEquals(createdQuestion.getQuestionString(), returnedQuestion.getQuestionString());
     assertEquals(createdQuestion.getCreationTime().toString(), returnedQuestion.getCreationTime().toString());
   }
+
+  @Test
+  void createImageQuestion_success() {
+    Question imageQuestion = new Question();
+    imageQuestion.setQuestionId(123L);
+    imageQuestion.setApiId("apiIdForSomeStupidImageQuestion");
+    imageQuestion.setCorrectAnswer("dark");
+    imageQuestion.setIncorrectAnswers(Arrays.asList("bright", "money", "sexy"));
+    imageQuestion.setAllAnswers(Arrays.asList("frog", "money", "dark", "sexy"));
+    imageQuestion.setQuestionString("What does your future look like?");
+
+    Question createdQuestion = questionService.createImageQuestion(prepGame.getGameId(), imageQuestion.getApiId(), imageQuestion.getCorrectAnswer(), imageQuestion.getQuestionString(), imageQuestion.getIncorrectAnswers(), imageQuestion.getAllAnswers());
+
+    assertEquals(prepGame.getGameId(), createdQuestion.getGameId());
+    assertEquals(imageQuestion.getQuestionString(), createdQuestion.getQuestionString());
+    assertEquals(imageQuestion.getApiId(), createdQuestion.getApiId());
+    assertEquals(imageQuestion.getCorrectAnswer(), createdQuestion.getCorrectAnswer());
+    assertEquals(imageQuestion.getIncorrectAnswers().size(), createdQuestion.getIncorrectAnswers().size());
+    assertTrue(createdQuestion.getIncorrectAnswers().containsAll(imageQuestion.getIncorrectAnswers()));
+    assertEquals(imageQuestion.getAllAnswers().size(), createdQuestion.getAllAnswers().size());
+    assertTrue(createdQuestion.getAllAnswers().containsAll(imageQuestion.getAllAnswers()));
+    assertNotNull(createdQuestion.getCreationTime());
+  }
 }

@@ -5,10 +5,7 @@ import ch.uzh.ifi.hase.soprafs23.constant.Category;
 import ch.uzh.ifi.hase.soprafs23.constant.ModeType;
 import ch.uzh.ifi.hase.soprafs23.constant.QuizType;
 import ch.uzh.ifi.hase.soprafs23.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs23.entity.Answer;
-import ch.uzh.ifi.hase.soprafs23.entity.Game;
-import ch.uzh.ifi.hase.soprafs23.entity.Question;
-import ch.uzh.ifi.hase.soprafs23.entity.User;
+import ch.uzh.ifi.hase.soprafs23.entity.*;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +33,8 @@ class GameControllerServiceTest {
     private QuestionService questionService;
     @Mock
     private AnswerService answerService;
+    @Mock
+    private TemplateImageQuestionService templateImageQuestionService;
 
     @Captor
   ArgumentCaptor<Long> gameIdCaptor;
@@ -61,8 +60,6 @@ class GameControllerServiceTest {
     private Question createdQuestion;
 
     private Answer correctAnswer;
-
-    private Random random = new Random();
 
     private final List<String> incorrectAnswers = Arrays.asList("Neil Young", "Eric Clapton", "Elton John");
     private final List<String> allAnswers = Arrays.asList("Neil Young", "Bob Dylan", "Eric Clapton", "Elton John");
@@ -252,20 +249,6 @@ class GameControllerServiceTest {
         assertEquals(counterInvited, counterInviting);
     }
 
-    /*
-    @Test
-    void getRandomTopics_requestedTwice_throwsException() {
-        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-
-        Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
-        prepTextDuelGame.setCurrentPlayer(invitingUser.getId());
-        List<Category> topicsList = topicsMap.get("topics");
-
-        assertEquals(3, topicsList.size());
-        assertThrows(ResponseStatusException.class, () -> gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId()));
-    }
-*/
-
     @Test
     void getQuestionFromExternalApi_validInput_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
@@ -286,7 +269,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void getQuestionFromExternalAPI_checkTopics_success() {
+    void getQuestionFromExternalAPI_checkTopics_success() {
       given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
       given(questionService.createQuestion(Mockito.any(Long.class), Mockito.any(String.class), Mockito.any(Category.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(List.class))).willReturn(new Question());
 
@@ -304,7 +287,7 @@ class GameControllerServiceTest {
     }
 
     @Test
-    public void getQuestion_everythingValid_success() {
+    void getQuestion_everythingValid_success() {
       doReturn(createdQuestion).when(gameControllerService).getQuestionFromExternalApi(Category.MUSIC, prepTextDuelGame.getGameId());
       given(questionService.existsQuestionByApiIdAndGameId(createdQuestion)).willReturn(true);
       given(questionService.saveQuestion(createdQuestion)).willReturn(createdQuestion);
@@ -322,8 +305,114 @@ class GameControllerServiceTest {
       assertTrue(returned.getAllAnswers().containsAll(createdQuestion.getAllAnswers()));
     }
 
+  @Test
+  void getImageQuestion_success() {
+    prepTextDuelGame.setQuizType(QuizType.IMAGE);
+
+    TemplateImageQuestion imageQuestion = new TemplateImageQuestion();
+    imageQuestion.setTemplateImageQuestionId(123L);
+    imageQuestion.setApiId("apiIdForSomeStupidImageQuestion");
+    imageQuestion.setCorrectAnswer("dark");
+    imageQuestion.setIncorrectAnswers(Arrays.asList("bright", "money", "sexy"));
+    imageQuestion.setAllAnswers(Arrays.asList("frog", "money", "dark", "sexy"));
+    imageQuestion.setQuestion("What does your future look like?");
+
+    Question transformedQuestion = new Question();
+    transformedQuestion.setQuestionId(234L);
+    transformedQuestion.setGameId(prepTextDuelGame.getGameId());
+    transformedQuestion.setApiId(imageQuestion.getApiId());
+    transformedQuestion.setCorrectAnswer(imageQuestion.getCorrectAnswer());
+    transformedQuestion.setIncorrectAnswers(imageQuestion.getIncorrectAnswers());
+    transformedQuestion.setAllAnswers(imageQuestion.getAllAnswers());
+    transformedQuestion.setQuestionString(imageQuestion.getQuestion());
+
+    given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+    given(templateImageQuestionService.getRandomImageQuestion()).willReturn(imageQuestion);
+    given(questionService.createImageQuestion(prepTextDuelGame.getGameId(), imageQuestion.getApiId(), imageQuestion.getCorrectAnswer(), imageQuestion.getQuestion(), imageQuestion.getIncorrectAnswers(), imageQuestion.getAllAnswers())).willReturn(transformedQuestion);
+    given(questionService.existsQuestionByApiIdAndGameId(transformedQuestion)).willReturn(false);
+    given(questionService.saveQuestion(transformedQuestion)).willReturn(transformedQuestion);
+
+    Question returnedQuestion = gameControllerService.getImageQuestion(prepTextDuelGame.getGameId());
+
+    verify(questionService, times(1)).existsQuestionByApiIdAndGameId(transformedQuestion);
+
+    assertEquals(prepTextDuelGame.getGameId(), returnedQuestion.getGameId());
+    assertEquals(transformedQuestion.getQuestionId(), returnedQuestion.getQuestionId());
+    assertEquals(transformedQuestion.getApiId(), returnedQuestion.getApiId());
+    assertEquals(transformedQuestion.getCorrectAnswer(), returnedQuestion.getCorrectAnswer());
+    assertEquals(transformedQuestion.getIncorrectAnswers().size(), returnedQuestion.getIncorrectAnswers().size());
+    assertTrue(returnedQuestion.getIncorrectAnswers().containsAll(transformedQuestion.getIncorrectAnswers()));
+    assertEquals(transformedQuestion.getAllAnswers().size(), returnedQuestion.getAllAnswers().size());
+    assertTrue(returnedQuestion.getAllAnswers().containsAll(transformedQuestion.getAllAnswers()));
+    assertEquals(transformedQuestion.getQuestionString(), returnedQuestion.getQuestionString());
+  }
+
+  @Test
+  void getImageQuestion_questionExists_infiniteLoop_breakout() {
+    prepTextDuelGame.setQuizType(QuizType.IMAGE);
+
+    TemplateImageQuestion imageQuestion = new TemplateImageQuestion();
+    imageQuestion.setTemplateImageQuestionId(123L);
+    imageQuestion.setApiId("apiIdForSomeStupidImageQuestion");
+    imageQuestion.setCorrectAnswer("dark");
+    imageQuestion.setIncorrectAnswers(Arrays.asList("bright", "money", "sexy"));
+    imageQuestion.setAllAnswers(Arrays.asList("frog", "money", "dark", "sexy"));
+    imageQuestion.setQuestion("What does your future look like?");
+
+    Question transformedQuestion = new Question();
+    transformedQuestion.setQuestionId(234L);
+    transformedQuestion.setGameId(prepTextDuelGame.getGameId());
+    transformedQuestion.setApiId(imageQuestion.getApiId());
+    transformedQuestion.setCorrectAnswer(imageQuestion.getCorrectAnswer());
+    transformedQuestion.setIncorrectAnswers(imageQuestion.getIncorrectAnswers());
+    transformedQuestion.setAllAnswers(imageQuestion.getAllAnswers());
+    transformedQuestion.setQuestionString(imageQuestion.getQuestion());
+
+    given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+    given(templateImageQuestionService.getRandomImageQuestion()).willReturn(imageQuestion);
+    given(questionService.createImageQuestion(prepTextDuelGame.getGameId(), imageQuestion.getApiId(), imageQuestion.getCorrectAnswer(), imageQuestion.getQuestion(), imageQuestion.getIncorrectAnswers(), imageQuestion.getAllAnswers())).willReturn(transformedQuestion);
+    given(questionService.existsQuestionByApiIdAndGameId(transformedQuestion)).willReturn(true);
+    given(questionService.saveQuestion(transformedQuestion)).willReturn(transformedQuestion);
+
+    Question returnedQuestion = gameControllerService.getImageQuestion(prepTextDuelGame.getGameId());
+
+    verify(questionService, times(7)).existsQuestionByApiIdAndGameId(transformedQuestion);
+
+    assertEquals(prepTextDuelGame.getGameId(), returnedQuestion.getGameId());
+    assertEquals(transformedQuestion.getQuestionId(), returnedQuestion.getQuestionId());
+    assertEquals(transformedQuestion.getApiId(), returnedQuestion.getApiId());
+    assertEquals(transformedQuestion.getCorrectAnswer(), returnedQuestion.getCorrectAnswer());
+    assertEquals(transformedQuestion.getIncorrectAnswers().size(), returnedQuestion.getIncorrectAnswers().size());
+    assertTrue(returnedQuestion.getIncorrectAnswers().containsAll(transformedQuestion.getIncorrectAnswers()));
+    assertEquals(transformedQuestion.getAllAnswers().size(), returnedQuestion.getAllAnswers().size());
+    assertTrue(returnedQuestion.getAllAnswers().containsAll(transformedQuestion.getAllAnswers()));
+    assertEquals(transformedQuestion.getQuestionString(), returnedQuestion.getQuestionString());
+  }
+
+  @Test
+  void getImageQuestion_questionIsNull_infiniteLoop_breakout() {
+    prepTextDuelGame.setQuizType(QuizType.IMAGE);
+
+    TemplateImageQuestion imageQuestion = new TemplateImageQuestion();
+    imageQuestion.setTemplateImageQuestionId(123L);
+    imageQuestion.setApiId("apiIdForSomeStupidImageQuestion");
+    imageQuestion.setCorrectAnswer("dark");
+    imageQuestion.setIncorrectAnswers(Arrays.asList("bright", "money", "sexy"));
+    imageQuestion.setAllAnswers(Arrays.asList("frog", "money", "dark", "sexy"));
+    imageQuestion.setQuestion("What does your future look like?");
+
+    given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+    given(templateImageQuestionService.getRandomImageQuestion()).willReturn(imageQuestion);
+    given(questionService.createImageQuestion(prepTextDuelGame.getGameId(), imageQuestion.getApiId(), imageQuestion.getCorrectAnswer(), imageQuestion.getQuestion(), imageQuestion.getIncorrectAnswers(), imageQuestion.getAllAnswers())).willReturn(null);
+    given(questionService.saveQuestion(Mockito.isNull())).willReturn(null);
+
+    Question returnedQuestion = gameControllerService.getImageQuestion(prepTextDuelGame.getGameId());
+
+    assertNull(returnedQuestion);
+  }
+
     @Test
-    public void answerQuestion_bothCorrect_success() {
+    void answerQuestion_bothCorrect_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
 
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
@@ -387,41 +476,6 @@ class GameControllerServiceTest {
         gameControllerService.answerQuestion(answer);
         assertEquals("CorrectAnswer",answer.getAnswerString());
     }
-/*
-    @Test
-    public void finishGame_success() {
-        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-        given(questionService.deleteQuestions(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
-
-        Answer invitingAnswer = new Answer();
-        invitingAnswer.setId(1L);
-        invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
-        invitingAnswer.setUserId(invitingUser.getId());
-        invitingAnswer.setAnswer(createdQuestion.getIncorrectAnswers().get(1));
-        invitingAnswer.setAnsweredTime(200L);
-
-        Answer invitedAnswer = new Answer();
-        invitedAnswer.setId(2L);
-        invitedAnswer.setQuestionId(createdQuestion.getQuestionId());
-        invitedAnswer.setUserId(invitedUser.getId());
-        invitedAnswer.setAnswer(createdQuestion.getCorrectAnswer());
-        invitedAnswer.setAnsweredTime(300L);
-
-        List<UserResultTupleDTO> finalResult = gameControllerService.finishGame(prepTextDuelGame.getGameId());
-
-        for (UserResultTupleDTO userResultTupleDTO : finalResult) {
-            assertEquals(prepTextDuelGame.getGameId(), userResultTupleDTO.getGameId());
-            assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
-            assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
-            assertEquals(prepTextDuelGame.getInvitedUserId(), invitedAnswer.getUserId());
-            assertEquals(350L, userResultTupleDTO.getInvitedPlayerResult());
-        }
-
-        assertThrows(ResponseStatusException.class, () -> {
-            assertNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
-        });
-    }
-    */
 
     @Test
     void intermediateResults_OnlyOneUserAnswered_success() {
