@@ -429,44 +429,36 @@ class GameControllerTest {
         // create DTO of result tuple
         UserResultTupleDTO userResultTupleDTO = new UserResultTupleDTO();
         userResultTupleDTO.setGameId(userResultTuple.getGameId());
-        userResultTupleDTO.setInvitingPlayerId(
-                userResultTuple.getInvitingPlayerId());
-        userResultTupleDTO.setInvitingPlayerResult(
-                userResultTuple.getInvitingPlayerResult());
-        userResultTupleDTO.setInvitedPlayerId(
-                userResultTuple.getInvitedPlayerId());
-        userResultTupleDTO.setInvitedPlayerResult(
-                userResultTuple.getInvitedPlayerResult());
+        userResultTupleDTO.setInvitingPlayerId(userResultTuple.getInvitingPlayerId());
+        userResultTupleDTO.setInvitingPlayerResult(userResultTuple.getInvitingPlayerResult());
+        userResultTupleDTO.setInvitedPlayerId(userResultTuple.getInvitedPlayerId());
+        userResultTupleDTO.setInvitedPlayerResult(userResultTuple.getInvitedPlayerResult());
 
         // put DTO of userResult to Array
         List<UserResultTupleDTO> userResultTupleDTOs = new ArrayList<>();
         userResultTupleDTOs.add(userResultTupleDTO);
 
         // mock token verification
-        given(userService.verifyToken(invitingUser.getToken()))
-                .willReturn(invitingUser);
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
 
         // mock call to service class for finishing game
-        given(
-                gameControllerService.getEndResult(game.getGameId()))
-                .willReturn(userResultTupleDTOs);
+        given(gameControllerService.getEndResult(game.getGameId())).willReturn(userResultTupleDTOs);
 
-        // prepare delete request with url, body and header
+        // prepare get request with url, body and header
         MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/finish")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
-        // execute delete request and check if returned DTO matches set up
+        // execute get request and check if returned DTO matches set up
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].gameId", is((int) game.getGameId())))
-                .andExpect(jsonPath("$[0].invitingPlayerId",
-                        is((int) invitingUser.getId())))
-                .andExpect(jsonPath("$[0].invitingPlayerResult",
-                        is((int) userResultTuple.getInvitingPlayerResult())))
-                .andExpect(jsonPath("$[0].invitedPlayerId",
-                        is((int) game.getInvitedUserId())))
-                .andExpect(jsonPath("$[0].invitedPlayerResult",
-                        is((int) userResultTuple.getInvitedPlayerResult())));
+                .andExpect(jsonPath("$[0].invitingPlayerId", is((int) invitingUser.getId())))
+                .andExpect(jsonPath("$[0].invitingPlayerResult", is((int) userResultTuple.getInvitingPlayerResult())))
+                .andExpect(jsonPath("$[0].invitedPlayerId", is((int) game.getInvitedUserId())))
+                .andExpect(jsonPath("$[0].invitedPlayerResult", is((int) userResultTuple.getInvitedPlayerResult())));
+
+        verify(webSocketController).resultToUser(eq(game.getGameId()), Mockito.anyList());
+        verify(gameControllerService).setInGamePlayersToOnline(game.getGameId());
     }
 
     @Test
