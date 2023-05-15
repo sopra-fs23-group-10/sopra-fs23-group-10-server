@@ -25,7 +25,7 @@ public class GameController {
   private final UserService userService;
   private final WebSocketController webSocketController;
   private final Logger log = LoggerFactory.getLogger(GameController.class);
-  private final static String NO_GAME_FOUND = "No game with ID: {} found";
+  private static final String NO_GAME_FOUND = "No game with ID: {} found";
 
   GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
     this.gameControllerService = gameControllerService;
