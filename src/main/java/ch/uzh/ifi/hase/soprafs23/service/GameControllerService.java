@@ -94,7 +94,7 @@ public class GameControllerService {
 
     public Question getQuestion(Category category, Long gameId) {
         Question question = this.getQuestionFromExternalApi(category, gameId);
-        for (int i = 0; i <= 5; i++) {
+        for (int i = 0; i < 6; i++) {
             if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
                 break;
             }
@@ -102,18 +102,6 @@ public class GameControllerService {
         }
         return questionService.saveQuestion(question);
     }
-
-  public Question getImageQuestion(Long gameId) {
-    Question question = this.getImageQuestionFromApi(gameId);
-    for (int i = 0; i <= 6; i++) {
-      if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
-        break;
-      }
-      question = this.getImageQuestionFromApi(gameId);
-    }
-
-    return questionService.saveQuestion(question);
-  }
 
   private Question getImageQuestionFromApi(Long gameId){
     Game game = gameService.searchGameById(gameId);
@@ -129,6 +117,18 @@ public class GameControllerService {
       log.error("Question not found");
       return null;
     }
+  }
+
+  public Question getImageQuestion(Long gameId) {
+    Question question = this.getImageQuestionFromApi(gameId);
+    for (int i = 0; i < 7; i++) {
+      if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
+        break;
+      }
+      question = this.getImageQuestionFromApi(gameId);
+    }
+
+    return questionService.saveQuestion(question);
   }
 
     public Game searchGame(Long gameId) {
