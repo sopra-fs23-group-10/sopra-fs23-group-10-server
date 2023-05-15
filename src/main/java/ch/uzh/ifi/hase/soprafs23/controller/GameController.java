@@ -33,7 +33,7 @@ public class GameController {
     this.webSocketController = webSocketController;
   }
 
-  @PostMapping("/game/creation")
+  @PostMapping("/games")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public GameDTO createGame(@RequestBody GameDTO requestedGameDTO, @RequestHeader("token") String token) {
@@ -55,7 +55,7 @@ public class GameController {
     return createdGameDTO;
   }
 
-  @PostMapping("/game/invitation/{gameId}")
+  @PostMapping("/games/{gameId}/invitation")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Map<Long, Boolean> respondInvitation(@PathVariable Long gameId, @RequestBody Boolean response, @RequestHeader("token") String token){
@@ -77,7 +77,7 @@ public class GameController {
       return answer;
   }
 
-  @GetMapping("/game/topics/{gameId}")
+  @GetMapping("/games/{gameId}/topics")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Map<String, List<Category>> getTopicSelection(@PathVariable Long gameId, @RequestHeader("token") String token) {
@@ -85,7 +85,7 @@ public class GameController {
       return gameControllerService.getRandomTopics(gameId);
   }
 
-  @GetMapping("/game/topics/all")
+  @GetMapping("/games/topics/all")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Map<String, List<Category>> getAllTopics(@RequestHeader("token") String token) {
@@ -93,7 +93,7 @@ public class GameController {
       return gameControllerService.getAllTopics();
   }
 
-  @PostMapping("/game/topics")
+  @PostMapping("/games/topics")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public QuestionDTO createQuestion(@RequestBody QuestionDTO questionDTO, @RequestHeader("token") String token){
@@ -115,7 +115,7 @@ public class GameController {
     return questionDTOReturn;
   }
 
-  @PutMapping("/game/question/{gameId}")
+  @PutMapping("/games/{gameId}/question")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public Map<String, String> answerQuestion(@PathVariable long gameId, @RequestBody AnswerDTO answerDTO, @RequestHeader("token") String token) {
@@ -124,7 +124,8 @@ public class GameController {
       return Collections.singletonMap("correctAnswer", gameControllerService.answerQuestion(answer));
   }
 
-  @GetMapping("/game/online/{gameId}")
+  //TODO: Is this even called in frontend?
+  @GetMapping("/games/{gameId}/online")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Map<String, Boolean> allUsersConnected(@PathVariable long gameId, @RequestHeader("token") String token){
@@ -132,7 +133,7 @@ public class GameController {
       return gameControllerService.allUsersConnected(gameId);
   }
 
-  @GetMapping("/game/finish/{gameId}")
+  @GetMapping("/games/{gameId}/finish")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<UserResultTupleDTO> finishGame(@PathVariable long gameId, @RequestHeader("token") String token) {
@@ -148,7 +149,9 @@ public class GameController {
       return userResultTupleDTOList;
   }
 
-  @DeleteMapping("/game/finish/{gameId}")
+
+  //TODO: Not required anymore, contained in finishGame
+  @DeleteMapping("/games/{gameId}/finish")
   @ResponseStatus(HttpStatus.OK)
   public void terminateFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
       userService.verifyToken(token);
@@ -159,7 +162,7 @@ public class GameController {
       }
   }
 
-  @GetMapping("/game/intermediate/{gameId}")
+  @GetMapping("/games/{gameId}/intermediate")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<UserResultTupleDTO> intermediateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
@@ -179,9 +182,9 @@ public class GameController {
       return gameControllerService.getAllUsersOfGame(gameId);
   }
 
-  @DeleteMapping("/games/{gameId}/deletions")
+  @PostMapping("/games/{gameId}/termination")
   @ResponseStatus(HttpStatus.OK)
-  public GameDTO deleteGame(@PathVariable long gameId, @RequestHeader("token") String token) {
+  public GameDTO terminateGame(@PathVariable long gameId, @RequestHeader("token") String token) {
       userService.verifyToken(token);
       Game deletedGame = gameControllerService.searchGame(gameId);
       gameControllerService.setInGamePlayersToOnline(gameId);

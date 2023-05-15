@@ -137,7 +137,7 @@ class GameControllerTest {
         given(userService.searchUserById(gameDTO.getInvitingUserId())).willReturn(invitingUser);
         given(gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType())).willReturn(game);
 
-        MockHttpServletRequestBuilder postRequest = post("/game/creation")
+        MockHttpServletRequestBuilder postRequest = post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(gameDTO))
                 .header("token", invitingUser.getToken());
@@ -167,7 +167,7 @@ class GameControllerTest {
         given(userService.searchUserById(gameDTO.getInvitingUserId())).willReturn(invitingUser);
         given(gameControllerService.createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType())).willReturn(game);
 
-        MockHttpServletRequestBuilder postRequest = post("/game/creation")
+        MockHttpServletRequestBuilder postRequest = post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(gameDTO))
                 .header("token", invitingUser.getToken());
@@ -185,7 +185,7 @@ class GameControllerTest {
     given(userService.verifyToken(invitedUser.getToken())).willReturn(invitedUser);
     given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
 
-    MockHttpServletRequestBuilder postRequest = post("/game/invitation/" + game.getGameId())
+    MockHttpServletRequestBuilder postRequest = post("/games/" + game.getGameId() + "/invitation")
             .contentType(MediaType.APPLICATION_JSON)
             .content(String.valueOf(true))
             .header("token", invitedUser.getToken());
@@ -205,7 +205,7 @@ class GameControllerTest {
     given(userService.verifyToken(invitedUser.getToken())).willReturn(invitedUser);
     given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
 
-    MockHttpServletRequestBuilder postRequest = post("/game/invitation/" + game.getGameId())
+    MockHttpServletRequestBuilder postRequest = post("/games/" + game.getGameId() + "/invitation")
             .contentType(MediaType.APPLICATION_JSON)
             .content(String.valueOf(false))
             .header("token", invitedUser.getToken());
@@ -227,7 +227,7 @@ class GameControllerTest {
         given(gameControllerService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId())).willReturn(question);
 
 
-        MockHttpServletRequestBuilder postRequest = post("/game/topics")
+        MockHttpServletRequestBuilder postRequest = post("/games/topics")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(questionDTO))
                 .header("token", "helloToken");
@@ -253,7 +253,7 @@ class GameControllerTest {
         given(gameControllerService.getQuestion(questionDTO.getCategory(), questionDTO.getGameId())).willReturn(question);
 
 
-        MockHttpServletRequestBuilder postRequest = post("/game/topics")
+        MockHttpServletRequestBuilder postRequest = post("/games/topics")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(questionDTO))
                 .header("token", "helloToken");
@@ -271,7 +271,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.getRandomTopics(0L)).willReturn(Collections.singletonMap("topics", categories));
 
-        MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/topics")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -293,7 +293,7 @@ class GameControllerTest {
         when(userService.verifyToken(invalidToken)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
         given(userService.searchUserById(invitingUser.getId())).willReturn(invitingUser);
 
-        MockHttpServletRequestBuilder getRequest = get("/game/topics/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/topics")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invalidToken);
 
@@ -307,7 +307,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.getAllTopics()).willReturn(topics);
 
-        MockHttpServletRequestBuilder getRequest = get("/game/topics/all")
+        MockHttpServletRequestBuilder getRequest = get("/games/topics/all")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -325,7 +325,7 @@ class GameControllerTest {
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
         given(gameControllerService.answerQuestion(Mockito.any())).willReturn(question.getCorrectAnswer());
 
-        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
+        MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(answerDTO))
                 .header("token", invitingUser.getToken());
@@ -342,7 +342,7 @@ class GameControllerTest {
         Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.")).when(gameControllerService).answerQuestion(Mockito.any(Answer.class));
 
 
-        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
+        MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(answerDTO))
                 .header("token", invitingUser.getToken());
@@ -361,7 +361,7 @@ class GameControllerTest {
         given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
         Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.")).when(gameControllerService).answerQuestion(Mockito.any(Answer.class));
 
-        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
+        MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(answerDTO))
                 .header("token", invitingUser.getToken());
@@ -374,7 +374,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.allUsersConnected(game.getGameId())).willReturn(Collections.singletonMap("status", true));
 
-        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/online")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -387,7 +387,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.allUsersConnected(game.getGameId())).willReturn(Collections.singletonMap("status", false));
 
-        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/online")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -400,7 +400,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
         given(gameControllerService.allUsersConnected(game.getGameId())).willReturn(Collections.singletonMap("status", true));
 
-        MockHttpServletRequestBuilder getRequest = get("/game/online/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/online")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -447,8 +447,7 @@ class GameControllerTest {
                 .willReturn(userResultTupleDTOs);
 
         // prepare delete request with url, body and header
-        MockHttpServletRequestBuilder getRequest = get("/game/finish/"
-                + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/finish")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -489,7 +488,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
         given(gameControllerService.getEndResult(game.getGameId())).willReturn(userResultTupleDTOs);
 
-        MockHttpServletRequestBuilder getRequest = get("/game/finish/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/finish")
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(getRequest).andExpect(status().isUnauthorized());
@@ -516,7 +515,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.intermediateResults(game.getGameId())).willReturn(userResultTupleDTOs);
 
-        MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/intermediate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -549,7 +548,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Provided token is invalid."));
         given(gameControllerService.intermediateResults(game.getGameId())).willReturn(userResultTupleDTOs);
 
-        MockHttpServletRequestBuilder getRequest = get("/game/intermediate/" + game.getGameId())
+        MockHttpServletRequestBuilder getRequest = get("/games/" + game.getGameId() + "/intermediate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
@@ -577,7 +576,7 @@ class GameControllerTest {
 
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
 
-        MockHttpServletRequestBuilder putRequest = put("/game/question/" + game.getGameId())
+        MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(answerDTO))
                 .header("token", invitingUser.getToken());
@@ -611,15 +610,15 @@ class GameControllerTest {
     }
 
     @Test
-    void deleteGame_success() throws Exception {
+    void terminateGame_success() throws Exception {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
 
-        MockHttpServletRequestBuilder deleteRequest = delete("/games/" + game.getGameId() + "/deletions")
+        MockHttpServletRequestBuilder postRequest = post("/games/" + game.getGameId() + "/termination")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
-        mockMvc.perform(deleteRequest)
+        mockMvc.perform(postRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
                 .andExpect(jsonPath("$.invitedUserId", is((int) game.getInvitedUserId())))
@@ -633,7 +632,7 @@ class GameControllerTest {
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.searchGame(game.getGameId())).willReturn(game);
 
-        MockHttpServletRequestBuilder deleteRequest = delete("/game/finish/" + game.getGameId())
+        MockHttpServletRequestBuilder deleteRequest = delete("/games/" + game.getGameId() + "/finish")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("token", invitingUser.getToken());
 
