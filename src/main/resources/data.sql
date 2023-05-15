@@ -79,5 +79,5 @@ VALUES
   (56, 'Tuba,Tenor Horn,Trumpet,French Horn', 'zg5glJP', 'French Horn', 'Tuba,Tenor Horn,Trumpet', 'What instrument was captured in this image?'),
   (57, 'Black Widow,Red Racer,Ferrari,Red Pig', 'v81Ei16', 'Red Pig', 'Black Widow,Red Racer,Ferrari', 'How was it called?'),
   (58, 'Antoni Gaudi,Frank Gehry,Frank Lloyd Wright,Le Corbusier', 'm80ecgE', 'Le Corbusier', 'Antoni Gaudi,Frank Gehry,Frank Lloyd Wright', 'What architect build this house?'),
-  (59, 'Milky Way,Mount K2,Polar Star,Mount Fuji', 'ooMJAQn', 'Mount Fuji', 'Milky Way,Mount K2,Polar Star', 'What was captured in this image?'),
-  (60, 'Squirrel,Cotton,Flower,Bird', 'tXfvx', 'Squirrel', 'Cotton,Flower,Bird', 'What object was captured in this awesome image?');;
+  (59, 'Candle,Mount K2,Polar Star,Mount Fuji', 'ooMJAQn', 'Mount Fuji', 'Candle,Mount K2,Polar Star', 'What was captured in this image?'),
+  (60, 'Squirrel,Cotton,Flower,Bird', 'tXfvx', 'Squirrel', 'Cotton,Flower,Bird', 'What object was captured in this awesome image?');
