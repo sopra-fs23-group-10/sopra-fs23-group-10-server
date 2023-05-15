@@ -312,7 +312,7 @@ class GameControllerServiceTest {
     }
 
   */
-/*
+
     @Test
     public void answerQuestion_bothCorrect_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
@@ -324,31 +324,23 @@ class GameControllerServiceTest {
         invitingAnswer.setId(1L);
         invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
         invitingAnswer.setUserId(invitingUser.getId());
-        invitingAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        invitingAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
         invitingAnswer.setAnsweredTime(200L);
 
         Answer invitedAnswer = new Answer();
         invitedAnswer.setId(2L);
         invitedAnswer.setQuestionId(createdQuestion.getQuestionId());
         invitedAnswer.setUserId(invitedUser.getId());
-        invitedAnswer.setAnswer(createdQuestion.getCorrectAnswer());
+        invitedAnswer.setAnswerString(createdQuestion.getCorrectAnswer());
         invitedAnswer.setAnsweredTime(300L);
 
-        given(answerService.searchAnswerByQuestionIdAndUserId(Mockito.any(), Mockito.any())).willReturn(null);
-        given(questionService.searchQuestionByQuestionId(Mockito.any())).willReturn(createdQuestion);
+      given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), invitedAnswer.getUserId())).willReturn(null);
+      given(answerService.searchAnswerByQuestionIdAndUserId(createdQuestion.getQuestionId(), invitingAnswer.getUserId())).willReturn(null);
+        given(questionService.searchQuestionByQuestionId(createdQuestion.getQuestionId())).willReturn(createdQuestion);
 
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), invitingAnswer);
-        gameControllerService.answerQuestion(prepTextDuelGame.getGameId(), invitedAnswer);
-
-        assertEquals(invitingAnswer.getUserId(), results.get(invitingUser.getId()).getUserId());
-        assertEquals(invitingAnswer.getQuestionId(), results.get(invitingUser.getId()).getQuestionId());
-        assertEquals(invitingAnswer.getAnswer(), results.get(invitingUser.getId()).getAnswer());
-        assertEquals(invitingAnswer.getAnsweredTime(), results.get(invitingUser.getId()).getAnsweredTime());
-        assertEquals(invitedAnswer.getUserId(), results.get(invitedUser.getId()).getUserId());
-        assertEquals(invitedAnswer.getQuestionId(), results.get(invitedUser.getId()).getQuestionId());
-        assertEquals(invitedAnswer.getAnswer(), results.get(invitedUser.getId()).getAnswer());
-        assertEquals(invitedAnswer.getAnsweredTime(), results.get(invitedUser.getId()).getAnsweredTime());
-    }*/
+      assertEquals(createdQuestion.getCorrectAnswer(), gameControllerService.answerQuestion(invitingAnswer));
+      assertEquals(createdQuestion.getCorrectAnswer(), gameControllerService.answerQuestion(invitedAnswer));
+    }
 
     @Test
     void answerQuestion_nullAnswer_throwsException() {
