@@ -150,6 +150,7 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
                 .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
 
+      verify(gameControllerService).createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType());
         verify(webSocketController).inviteUser(eq(invitedUser.getId()), Mockito.any(GameDTO.class));
     }
 
@@ -175,6 +176,9 @@ class GameControllerTest {
                 .header("token", invitingUser.getToken());
 
         mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+
+        verify(gameControllerService, never()).createGame(invitingUser.getId(), invitedUser.getId(), gameDTO.getQuizType(), gameDTO.getModeType());
+        verify(webSocketController, never()).inviteUser(eq(game.getInvitedUserId()), Mockito.any(GameDTO.class));
     }
 
   @Test
@@ -196,6 +200,7 @@ class GameControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$." + game.getGameId(), is(true)));
 
+    verify(gameControllerService, never()).setInGamePlayersToOnline(game.getGameId());
     verify(webSocketController).sendInvitationRespond(eq(game.getInvitedUserId()), any());
     verify(webSocketController).sendInvitationRespond(eq(game.getInvitingUserId()), any());
   }
@@ -220,6 +225,8 @@ class GameControllerTest {
             .andExpect(jsonPath("$." + game.getGameId(), is(false)));
 
     verify(gameControllerService).setInGamePlayersToOnline(game.getGameId());
+    verify(webSocketController).sendInvitationRespond(eq(game.getInvitedUserId()), Mockito.any());
+    verify(webSocketController).sendInvitationRespond(eq(game.getInvitingUserId()), Mockito.any());
   }
 
     @Test
@@ -246,6 +253,8 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.incorrectAnswers").value(nullValue()))
                 .andExpect(jsonPath("$.allAnswers", containsInAnyOrder("me", "you", "allOfUs", "WhoKnows?")))
                 .andExpect(jsonPath("$.question", is(question.getQuestionString())));
+
+        verify(webSocketController).questionToUsers(eq(questionDTO.getGameId()), Mockito.any(QuestionDTO.class));
     }
 
     @Test
@@ -264,6 +273,8 @@ class GameControllerTest {
                 .header("token", "helloToken");
 
         mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
+
+        verify(gameControllerService, never()).getQuestion(questionDTO.getCategory(), questionDTO.getGameId());
     }
 
     @Test
@@ -337,6 +348,8 @@ class GameControllerTest {
 
         mockMvc.perform(putRequest).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.correctAnswer", is(question.getCorrectAnswer())));
+
+        verify(gameControllerService).answerQuestion(Mockito.any(Answer.class));
     }
 
     @Test
