@@ -327,7 +327,7 @@ class GameControllerTest {
         answerDTO.setAnswerString(question.getCorrectAnswer());
         answerDTO.setAnsweredTime(112L);
 
-        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.answerQuestion(Mockito.any())).willReturn(question.getCorrectAnswer());
 
         MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")

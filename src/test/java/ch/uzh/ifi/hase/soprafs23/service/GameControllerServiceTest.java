@@ -284,34 +284,43 @@ class GameControllerServiceTest {
         assertEquals(givenCategory, categoryCaptor.getValue());
 
     }
-/*
+
     @Test
     public void getQuestionFromExternalAPI_checkTopics_success() {
-        gameControllerService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+      given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+      given(questionService.createQuestion(Mockito.any(Long.class), Mockito.any(String.class), Mockito.any(Category.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(List.class))).willReturn(new Question());
 
-        when(userService.searchUserById(Mockito.any())).thenReturn(new User());
+      when(userService.searchUserById(invitingUser.getId())).thenReturn(invitingUser);
+      when(userService.searchUserById(invitedUser.getId())).thenReturn(invitedUser);
 
-        List<Category> allTopics = new ArrayList<>(Arrays.asList(Category.values()));
+      List<Category> allTopics = new ArrayList<>(Arrays.asList(Category.values()));
 
-        for (Category category : allTopics) {
-            Question receivedQuestion = gameControllerService.getQuestionFromExternalApi(category, prepTextDuelGame.getGameId());
-            assertNotNull(receivedQuestion);
-            assertEquals(category, receivedQuestion.getCategory());
-        }
+      for (Category category : allTopics) {
+        gameControllerService.getQuestionFromExternalApi(category, prepTextDuelGame.getGameId());
+        verify(questionService, atLeastOnce()).createQuestion(gameIdCaptor.capture(), apiIdCaptor.capture(), categoryCaptor.capture(), correctAnswerCaptor.capture(), questionCaptor.capture(), incorrectAnswersCaptor.capture());
+        assertEquals(prepTextDuelGame.getGameId(), gameIdCaptor.getValue());
+        assertEquals(category, categoryCaptor.getValue());
+      }
     }
 
     @Test
-    public void getQuestion_invalidID_throwsException() {
-        gameControllerService.createGame(prepTextDuelGame.getInvitingUserId(), prepTextDuelGame.getInvitedUserId(), prepTextDuelGame.getQuizType(), prepTextDuelGame.getModeType());
+    public void getQuestion_everythingValid_success() {
+      doReturn(createdQuestion).when(gameControllerService).getQuestionFromExternalApi(Category.MUSIC, prepTextDuelGame.getGameId());
+      given(questionService.existsQuestionByApiIdAndGameId(createdQuestion)).willReturn(true);
+      given(questionService.saveQuestion(createdQuestion)).willReturn(createdQuestion);
 
-        when(userService.searchUserById(Mockito.any())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with specified ID does not exist."));
+      Question returned = gameControllerService.getQuestion(Category.MUSIC, prepTextDuelGame.getGameId());
 
-        assertThrows(ResponseStatusException.class, () -> {
-            gameControllerService.getQuestionString(Category.MUSIC, prepTextDuelGame.getGameId());
-        });
+      assertEquals(createdQuestion.getQuestionId(), returned.getQuestionId());
+      assertEquals(createdQuestion.getQuestionString(), returned.getQuestionString());
+      assertEquals(createdQuestion.getGameId(), returned.getGameId());
+      assertEquals(createdQuestion.getCategory(), returned.getCategory());
+      assertEquals(createdQuestion.getCorrectAnswer(), returned.getCorrectAnswer());
+      assertEquals(createdQuestion.getIncorrectAnswers().size(), returned.getIncorrectAnswers().size());
+      assertTrue(returned.getIncorrectAnswers().containsAll(createdQuestion.getIncorrectAnswers()));
+      assertEquals(createdQuestion.getAllAnswers().size(), returned.getAllAnswers().size());
+      assertTrue(returned.getAllAnswers().containsAll(createdQuestion.getAllAnswers()));
     }
-
-  */
 
     @Test
     public void answerQuestion_bothCorrect_success() {
