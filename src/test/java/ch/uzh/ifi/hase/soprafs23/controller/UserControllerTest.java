@@ -260,7 +260,8 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].token").isEmpty())
                 .andExpect(jsonPath("$[0].id", is((int) user.getId())))
                 .andExpect(jsonPath("$[0].password").doesNotExist())
-                .andExpect(jsonPath("$[0].email").doesNotExist());
+                .andExpect(jsonPath("$[0].email").doesNotExist())
+                .andExpect(jsonPath("$[0].rank", is((int) user.getRank())));
     }
 
     @Test

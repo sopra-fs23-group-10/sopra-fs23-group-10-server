@@ -149,6 +149,8 @@ class GameControllerTest {
                 .andExpect(jsonPath("$.invitingUserId", is((int) game.getInvitingUserId())))
                 .andExpect(jsonPath("$.modeType", is(game.getModeType().toString())))
                 .andExpect(jsonPath("$.quizType", is(game.getQuizType().toString())));
+
+        verify(webSocketController).inviteUser(eq(invitedUser.getId()), Mockito.any(GameDTO.class));
     }
 
     @Test
@@ -658,8 +660,8 @@ class GameControllerTest {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.gameId", is((int) game.getGameId())))
             .andExpect(jsonPath("$.questionId", is((int) imageQuestion.getQuestionId())))
-            .andExpect(jsonPath("$.correctAnswer").value(nullValue()))
-            .andExpect(jsonPath("$.incorrectAnswers").value(nullValue()))
+            .andExpect(jsonPath("$.correctAnswer").doesNotExist())
+            .andExpect(jsonPath("$.incorrectAnswers").doesNotExist())
             .andExpect(jsonPath("$.allAnswers", containsInAnyOrder("me", "you", "allOfUs", "WhoKnows?")))
             .andExpect(jsonPath("$.question", is(imageQuestion.getQuestionString())));
   }
