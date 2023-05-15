@@ -62,8 +62,6 @@ class GameControllerServiceTest {
 
     private Answer correctAnswer;
 
-    private Random random = new Random();
-
     private final List<String> incorrectAnswers = Arrays.asList("Neil Young", "Eric Clapton", "Elton John");
     private final List<String> allAnswers = Arrays.asList("Neil Young", "Bob Dylan", "Eric Clapton", "Elton John");
 
@@ -252,20 +250,6 @@ class GameControllerServiceTest {
         assertEquals(counterInvited, counterInviting);
     }
 
-    /*
-    @Test
-    void getRandomTopics_requestedTwice_throwsException() {
-        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-
-        Map<String, List<Category>> topicsMap = gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId());
-        prepTextDuelGame.setCurrentPlayer(invitingUser.getId());
-        List<Category> topicsList = topicsMap.get("topics");
-
-        assertEquals(3, topicsList.size());
-        assertThrows(ResponseStatusException.class, () -> gameControllerService.getRandomTopics(prepTextDuelGame.getGameId(), prepTextDuelGame.getInvitedUserId()));
-    }
-*/
-
     @Test
     void getQuestionFromExternalApi_validInput_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
@@ -387,41 +371,6 @@ class GameControllerServiceTest {
         gameControllerService.answerQuestion(answer);
         assertEquals("CorrectAnswer",answer.getAnswerString());
     }
-/*
-    @Test
-    public void finishGame_success() {
-        given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
-        given(questionService.deleteQuestions(prepTextDuelGame.getGameId())).willReturn(Arrays.asList(createdQuestion));
-
-        Answer invitingAnswer = new Answer();
-        invitingAnswer.setId(1L);
-        invitingAnswer.setQuestionId(createdQuestion.getQuestionId());
-        invitingAnswer.setUserId(invitingUser.getId());
-        invitingAnswer.setAnswer(createdQuestion.getIncorrectAnswers().get(1));
-        invitingAnswer.setAnsweredTime(200L);
-
-        Answer invitedAnswer = new Answer();
-        invitedAnswer.setId(2L);
-        invitedAnswer.setQuestionId(createdQuestion.getQuestionId());
-        invitedAnswer.setUserId(invitedUser.getId());
-        invitedAnswer.setAnswer(createdQuestion.getCorrectAnswer());
-        invitedAnswer.setAnsweredTime(300L);
-
-        List<UserResultTupleDTO> finalResult = gameControllerService.finishGame(prepTextDuelGame.getGameId());
-
-        for (UserResultTupleDTO userResultTupleDTO : finalResult) {
-            assertEquals(prepTextDuelGame.getGameId(), userResultTupleDTO.getGameId());
-            assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
-            assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
-            assertEquals(prepTextDuelGame.getInvitedUserId(), invitedAnswer.getUserId());
-            assertEquals(350L, userResultTupleDTO.getInvitedPlayerResult());
-        }
-
-        assertThrows(ResponseStatusException.class, () -> {
-            assertNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
-        });
-    }
-    */
 
     @Test
     void intermediateResults_OnlyOneUserAnswered_success() {
