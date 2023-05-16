@@ -41,6 +41,7 @@ public class GameController {
 
     User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
     User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
+    invitingUser.setStatus(UserStatus.ONLINE);
 
     if(invitingUser.getStatus() != UserStatus.ONLINE || (invitedUser.getId() != 0 && invitedUser.getStatus() != UserStatus.ONLINE)){
         throw new ResponseStatusException(HttpStatus.CONFLICT, "One of the users is not online.");
