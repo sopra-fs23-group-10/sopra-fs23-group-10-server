@@ -221,6 +221,7 @@ public class UserService {
    */
   public void setOffline(Long userId) {
     User user = searchUserById(userId);
+    if (user.getId() == 0L){return;}
     user.setStatus(UserStatus.OFFLINE);
     userRepository.save(user);
     userRepository.flush();
@@ -231,6 +232,7 @@ public class UserService {
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User cannot be found.");
     }
+    if (user.getId() == 0L){return;}
     user.setStatus(UserStatus.IN_GAME);
   }
   /**
