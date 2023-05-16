@@ -258,4 +258,10 @@ public class GameControllerService {
         return answer.getAnswerString().equals(question.getCorrectAnswer()) ?
                 (long) (750L - (0.5 * (1500 - ((double)answer.getAnsweredTime()*1000)/10))) : 0L;
     }
+
+    public Boolean bothAnswered(long gameId, long questionId){
+      Game game = gameService.searchGameById(gameId);
+      return answerService.searchAnswerByQuestionIdAndUserId(questionId, game.getInvitingUserId()) != null
+              && answerService.searchAnswerByQuestionIdAndUserId(questionId, game.getInvitedUserId()) != null;
+    }
 }

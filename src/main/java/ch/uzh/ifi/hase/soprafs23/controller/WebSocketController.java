@@ -45,4 +45,8 @@ public class WebSocketController {
     public void informUsersGameDeleted(long gameId) {
         this.webSocketService.sendMessageToClients(GAMES_URL+gameId, "A user has quit the game");
     }
+
+    public void informUsersBothAnswered(long gameId) {
+      this.webSocketService.sendMessageToClients(GAMES_URL+gameId + "/round", "Both users have answered");
+    }
 }

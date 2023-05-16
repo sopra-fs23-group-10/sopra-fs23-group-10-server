@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs23.rest.dto.GameDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.QuestionDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.dto.UserResultTupleDTO;
 import ch.uzh.ifi.hase.soprafs23.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs23.service.AnswerService;
 import ch.uzh.ifi.hase.soprafs23.service.GameControllerService;
 import ch.uzh.ifi.hase.soprafs23.service.UserService;
 import org.slf4j.Logger;
@@ -24,13 +25,15 @@ public class GameController {
   private final GameControllerService gameControllerService;
   private final UserService userService;
   private final WebSocketController webSocketController;
+  private final AnswerService answerService;
   private final Logger log = LoggerFactory.getLogger(GameController.class);
   private static final String NO_GAME_FOUND = "No game with ID: {} found";
 
-  GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
+  GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController, AnswerService answerService) {
     this.gameControllerService = gameControllerService;
     this.userService = userService;
     this.webSocketController = webSocketController;
+    this.answerService = answerService;
   }
 
   @PostMapping("/games")
@@ -38,9 +41,9 @@ public class GameController {
   @ResponseBody
   public GameDTO createGame(@RequestBody GameDTO requestedGameDTO, @RequestHeader("token") String token) {
     userService.verifyToken(token);
-
     User invitedUser = userService.searchUserById(requestedGameDTO.getInvitedUserId());
     User invitingUser = userService.searchUserById(requestedGameDTO.getInvitingUserId());
+    userService.setOnline(invitingUser.getId());
 
     if(invitingUser.getStatus() != UserStatus.ONLINE || (invitedUser.getId() != 0 && invitedUser.getStatus() != UserStatus.ONLINE)){
         throw new ResponseStatusException(HttpStatus.CONFLICT, "One of the users is not online.");
@@ -121,6 +124,9 @@ public class GameController {
   public Map<String, String> answerQuestion(@PathVariable long gameId, @RequestBody AnswerDTO answerDTO, @RequestHeader("token") String token) {
       userService.verifyToken(token);
       Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(answerDTO);
+      if (gameControllerService.bothAnswered(gameId, answer.getQuestionId())){
+        webSocketController.informUsersBothAnswered(gameId);
+      }
       return Collections.singletonMap("correctAnswer", gameControllerService.answerQuestion(answer));
   }
 
