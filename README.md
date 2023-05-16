@@ -169,4 +169,4 @@ We would like to thank our tutor [jemaie](https://github.com/jemaie) and the who
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/blob/main/LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/blob/main/LICENSE) file for details.
