@@ -25,15 +25,13 @@ public class GameController {
   private final GameControllerService gameControllerService;
   private final UserService userService;
   private final WebSocketController webSocketController;
-  private final AnswerService answerService;
   private final Logger log = LoggerFactory.getLogger(GameController.class);
   private static final String NO_GAME_FOUND = "No game with ID: {} found";
 
-  GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController, AnswerService answerService) {
+  GameController(GameControllerService gameControllerService, UserService userService, WebSocketController webSocketController) {
     this.gameControllerService = gameControllerService;
     this.userService = userService;
     this.webSocketController = webSocketController;
-    this.answerService = answerService;
   }
 
   @PostMapping("/games")
