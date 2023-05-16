@@ -151,9 +151,9 @@ Once your changes are pushed onto the main branch, they automatically get deploy
 
 Features that new developers who want to contribute to our project could add.
 
-- new Game mode music quiz<br>
-- convert to iOS & Android native app
-- add new records to our image database
+- new Game mode music quiz.<br>
+- convert to iOS & Android native app.
+- add new records to our image database.
 
 ## Authors & Acknowledgments
 
