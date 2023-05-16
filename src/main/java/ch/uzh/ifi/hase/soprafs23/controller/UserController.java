@@ -54,7 +54,8 @@ public class UserController {
     @ResponseBody
     public List<UserGetDTO> getOnlineUsers(@RequestHeader("token") String token) {
         // verify token
-        userService.verifyToken(token);
+        User requestingUser = userService.verifyToken(token);
+        userService.setOnline(requestingUser.getId());
 
         // fetch all users in the internal representation
         List<User> users = userService.getOnlineUsers();
