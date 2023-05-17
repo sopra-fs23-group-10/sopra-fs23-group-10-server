@@ -107,9 +107,9 @@ public class GameControllerService {
     Game game = gameService.searchGameById(gameId);
     userService.searchUserById(game.getInvitedUserId());
     userService.searchUserById(game.getInvitingUserId());
-
     try{
       TemplateImageQuestion templateImageQuestion = templateImageQuestionService.getRandomImageQuestion();
+      if (templateImageQuestion == null){return null;}
       return questionService.createImageQuestion(game.getGameId(), templateImageQuestion.getApiId(),
               templateImageQuestion.getCorrectAnswer(), templateImageQuestion.getQuestion(),
               templateImageQuestion.getIncorrectAnswers(), templateImageQuestion.getAllAnswers());
@@ -128,6 +128,16 @@ public class GameControllerService {
       question = this.getImageQuestionFromApi(gameId);
     }
 
+    if (question == null){
+      return questionService.createImageQuestion(
+              gameId,
+              "sjpa0Gg",
+              "Dog",
+              "What kind of animal do you see?",
+              Arrays.asList("Cat,Mouse,Hamster".split(",")),
+              Arrays.asList("Cat,Mouse,Hamster,Dog".split(","))
+      );
+    }
     return questionService.saveQuestion(question);
   }
 

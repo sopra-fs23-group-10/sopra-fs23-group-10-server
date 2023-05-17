@@ -390,6 +390,48 @@ class GameControllerServiceTest {
   }
 
   @Test
+  void getImageQuestion_questionExists_infiniteLoop_getDefault() {
+    prepTextDuelGame.setQuizType(QuizType.IMAGE);
+
+    TemplateImageQuestion imageQuestion = new TemplateImageQuestion();
+    imageQuestion.setTemplateImageQuestionId(123L);
+    imageQuestion.setApiId("sjpa0Gg");
+    imageQuestion.setCorrectAnswer("Dog");
+    imageQuestion.setIncorrectAnswers(Arrays.asList("Cat", "Mouse", "Hamster"));
+    imageQuestion.setAllAnswers(Arrays.asList("Cat", "Mouse", "Hamster", "Dog"));
+    imageQuestion.setQuestion("What kind of animal do you see?");
+
+    Question transformedQuestion = new Question();
+    transformedQuestion.setQuestionId(234L);
+    transformedQuestion.setGameId(prepTextDuelGame.getGameId());
+    transformedQuestion.setApiId(imageQuestion.getApiId());
+    transformedQuestion.setCorrectAnswer(imageQuestion.getCorrectAnswer());
+    transformedQuestion.setIncorrectAnswers(imageQuestion.getIncorrectAnswers());
+    transformedQuestion.setAllAnswers(imageQuestion.getAllAnswers());
+    transformedQuestion.setQuestionString(imageQuestion.getQuestion());
+
+    given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
+    given(templateImageQuestionService.getRandomImageQuestion()).willReturn(null);
+    given(questionService.createImageQuestion(prepTextDuelGame.getGameId(), imageQuestion.getApiId(), imageQuestion.getCorrectAnswer(), imageQuestion.getQuestion(), imageQuestion.getIncorrectAnswers(), imageQuestion.getAllAnswers())).willReturn(transformedQuestion);
+    //given(questionService.existsQuestionByApiIdAndGameId(transformedQuestion)).willReturn(true);
+    given(questionService.saveQuestion(transformedQuestion)).willReturn(transformedQuestion);
+
+    Question returnedQuestion = gameControllerService.getImageQuestion(prepTextDuelGame.getGameId());
+    verify(questionService, times(1)).createImageQuestion(prepTextDuelGame.getGameId(), imageQuestion.getApiId(), imageQuestion.getCorrectAnswer(), imageQuestion.getQuestion(), imageQuestion.getIncorrectAnswers(), imageQuestion.getAllAnswers());
+    verify(questionService, times(0)).existsQuestionByApiIdAndGameId(transformedQuestion);
+
+    assertEquals(prepTextDuelGame.getGameId(), returnedQuestion.getGameId());
+    assertEquals(transformedQuestion.getQuestionId(), returnedQuestion.getQuestionId());
+    assertEquals(transformedQuestion.getApiId(), returnedQuestion.getApiId());
+    assertEquals(transformedQuestion.getCorrectAnswer(), returnedQuestion.getCorrectAnswer());
+    assertEquals(transformedQuestion.getIncorrectAnswers().size(), returnedQuestion.getIncorrectAnswers().size());
+    assertTrue(returnedQuestion.getIncorrectAnswers().containsAll(transformedQuestion.getIncorrectAnswers()));
+    assertEquals(transformedQuestion.getAllAnswers().size(), returnedQuestion.getAllAnswers().size());
+    assertTrue(returnedQuestion.getAllAnswers().containsAll(transformedQuestion.getAllAnswers()));
+    assertEquals(transformedQuestion.getQuestionString(), returnedQuestion.getQuestionString());
+  }
+
+  @Test
   void getImageQuestion_questionIsNull_infiniteLoop_breakout() {
     prepTextDuelGame.setQuizType(QuizType.IMAGE);
 
