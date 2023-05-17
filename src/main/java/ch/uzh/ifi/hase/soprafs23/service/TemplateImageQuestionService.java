@@ -29,6 +29,6 @@ public class TemplateImageQuestionService {
 
   private int getRandomInt(int max){
     int min = 2;
-    return min + secureRandom.nextInt(max - min + 1);
+    return min + secureRandom.nextInt(max - min);
   }
 }
