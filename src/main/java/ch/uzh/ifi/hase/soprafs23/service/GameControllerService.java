@@ -261,8 +261,6 @@ public class GameControllerService {
 
     public Boolean bothAnswered(long gameId, long questionId){
       Game game = gameService.searchGameById(gameId);
-      Answer a1 = answerService.searchAnswerByQuestionIdAndUserId(questionId, game.getInvitingUserId());
-      Answer a2 = answerService.searchAnswerByQuestionIdAndUserId(questionId, game.getInvitedUserId());
       return answerService.searchAnswerByQuestionIdAndUserId(questionId, game.getInvitingUserId()) != null
               && answerService.searchAnswerByQuestionIdAndUserId(questionId, game.getInvitedUserId()) != null;
     }
