@@ -122,10 +122,11 @@ public class GameController {
   public Map<String, String> answerQuestion(@PathVariable long gameId, @RequestBody AnswerDTO answerDTO, @RequestHeader("token") String token) {
       userService.verifyToken(token);
       Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(answerDTO);
+      String correctAnswer = gameControllerService.answerQuestion(answer);
       if (gameControllerService.bothAnswered(gameId, answer.getQuestionId())){
         webSocketController.informUsersBothAnswered(gameId);
       }
-      return Collections.singletonMap("correctAnswer", gameControllerService.answerQuestion(answer));
+      return Collections.singletonMap("correctAnswer", correctAnswer);
   }
 
   //TODO: Is this even called in frontend?
