@@ -1,4 +1,4 @@
-# BrainBusters <img src="readme_images/Logo.png" height="30"/>
+<img src="readme_images/BrainBusters.png" height="150"/>
 
 ## Table of Content
 
@@ -94,8 +94,7 @@ More Information about [Gradle Wrapper](https://docs.gradle.org/current/userguid
 3. On the new pop-up window click on the left top side on the "+" and select "Gradle".<br>
    <img src="readme_images/launch_deployment/Gradle.png"/>
 4. In the Run field write `bootRun`.
-5. In the Environment variables field write `SPRING_PROFILES_ACTIVE=test`.<br>
-<img src="readme_images/launch_deployment/Configuration.png"/>
+5. In the Environment variables field write `SPRING_PROFILES_ACTIVE=test`.<br><img src="readme_images/launch_deployment/Configuration.png"/>
 6. Write an appropriate name into the Name field.
 7. If everything is correct click on the button "Apply" in the right bottom corner.
 8. Validate your changes by clicking on the button "ok" on the right bottom.
