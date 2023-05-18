@@ -1,4 +1,4 @@
-<img src="readme_images/BrainBusters.png" height="150"/>
+<img src="readme_images/BrainBusters.png" height="100"/>
 
 ## Table of Content
 
