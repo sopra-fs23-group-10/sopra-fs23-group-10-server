@@ -58,6 +58,7 @@ enables to directly inform the client from the server.
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
 
 Clone the client-repository onto your local machine with the help of [Git](https://git-scm.com/downloads).
+Open Git Bash in your folder, where you want to store your project and write the following command:
 
 ```git clone https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server.git```
 
