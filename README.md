@@ -23,7 +23,7 @@ Next to the single mode, the tournament mode adds an exciting element of competi
 
 * [React](https://react.dev/) - Front-end JavaScript library concerning the user interface
 * [Spring](https://spring.io/projects/spring-framework) - Framework that enables running JVM
-* [Gradle](hhttps://gradle.org/) - Build automation tool
+* [Gradle](https://gradle.org/) - Build automation tool
 * [STOMP](https://stomp-js.github.io/stomp-websocket/) - Used for Websockets
 * [The Trivia API](https://the-trivia-api.com/) - API for text questions
 * [Mailjet API](https://www.mailjet.com/) - For sending mails
