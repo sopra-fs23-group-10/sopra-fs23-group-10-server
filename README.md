@@ -67,8 +67,7 @@ git clone https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server.git
 ```
 
 #### Run
-The Spring Boot profile for a local H2-DB is used for non-persistent DB
-Server should be up and running on `localhost:8080`.
+Server should be up and running on `localhost:8080` with a non-persistent H2-DB.
 ```bash 
 ./gradlew bootRun -DSPRING_PROFILES_ACTIVE=test
 ```
