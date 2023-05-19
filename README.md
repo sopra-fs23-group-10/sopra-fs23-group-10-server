@@ -4,8 +4,8 @@
 
 - [Introduction](#introduction)
 - [Built With](#built-with)
-- [Main Components](#main-components)
-- [Launch](#launch)
+- [Components](#main-components)
+- [Local Development](#deploy-locally)
 - [Deployment](#deployment)
 - [Roadmap](#roadmap)
 - [Authors & Acknowledgments](#authors--acknowledgments)
@@ -21,152 +21,90 @@ Next to the single mode, the tournament mode adds an exciting element of competi
 
 ## Built With
 
-* [React](https://react.dev/) - Front-end JavaScript library concerning the user interface
+* [React](https://react.dev/) - Front-end JavaScript library
 * [Spring](https://spring.io/projects/spring-framework) - Framework that enables running JVM
 * [Gradle](https://gradle.org/) - Build automation tool
-* [STOMP](https://stomp-js.github.io/stomp-websocket/) - Used for Websockets
-* [The Trivia API](https://the-trivia-api.com/) - API for text questions
-* [Mailjet API](https://www.mailjet.com/) - For sending mails
+* [STOMP](https://stomp-js.github.io/stomp-websocket/) - Bidirectional real time communication
+* [The Trivia API](https://the-trivia-api.com/) - REAST API for retreiving text questions
+* [Mailjet API](https://www.mailjet.com/) - REST API for sending mails
+* [PostgreSQL](https://www.postgresql.org/) - Persistent Open Source DB
 
 ## Main Components
 
-### User
+#### User
 The [User](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs23/entity/User.java)
 entity is a core part of BrainBuster, since else in order to participate in a game one has to be able to log in, log out and getting their achieved points.
 Additionally, an important factor is that one gets recognized and is able to keep the points in their game und thus being able to compare their rank/effort with other users.
 
-### UserController
+#### UserController
 The [UserController](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs23/controller/UserController.java)
 handles requests from the front-end regarding users and fulfills their requests.
 
-### Game
+#### Game
 The [Game](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs23/entity/Game.java)
 entity is a crucial part of BainBusters since without a game the users would not be able to play and obtain their points.
 Nor being able to retrieve the appropriate questions.
 
-### GameController
+#### GameController
 The [GameController](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/blob/main/src/main/java/ch/uzh/ifi/hase/soprafs23/controller/GameController.java)
 responds to requests from the front-end regarding Games and fulfills their requests.
 
-### Websockets
+#### Websockets
 The [Websockets](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/tree/main/src/main/java/ch/uzh/ifi/hase/soprafs23/websockets)
 enables to directly inform the client from the server.
 
-## Launch
-
-### Getting Started
+## Deploy Locally with Gradle
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
 
+#### Clone Repository
 Clone the client-repository onto your local machine with the help of [Git](https://git-scm.com/downloads).
-Open Git Bash in your folder, where you want to store your project and write the following command:
-
-```git clone https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server.git```
-
-### IntelliJ
-1. "File" -> "Open..." -> sopra-fs23-group-10-server
-2. Accept to import the project as a `gradle project`
-3. To build right-click the `build.gradle` file and choose `Run Build`
-
-### VS Code
-The following extensions can help you get started more easily:
--   `vmware.vscode-spring-boot`
--   `vscjava.vscode-spring-initializr`
--   `vscjava.vscode-spring-boot-dashboard`
--   `vscjava.vscode-java-pack`
-
-### Building with Gradle
-You can use the local Gradle Wrapper to build the application.
--   macOS: `./gradlew`
--   Linux: `./gradlew`
--   Windows: `./gradlew.bat`
-
-More Information about [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) and [Gradle](https://gradle.org/docs/).
-
+```bash 
+git clone https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server.git
+```
 #### Build
-```bash
+```bash 
 ./gradlew build
 ```
 
-### Setup Run Configurations
-1. To set up the run configuration go to the right top corner and select the dropdown menu.<br>
-   <img src="readme_images/launch_deployment/Dropdown.png"/>
-2. Click on "Edit Configurations...".<br>
-   <img src="readme_images/launch_deployment/Edit.png"/>
-3. On the new pop-up window click on the left top side on the "+" and select "Gradle".<br>
-   <img src="readme_images/launch_deployment/Gradle.png"/>
-4. In the Run field write `bootRun`.
-5. In the Environment variables field write `SPRING_PROFILES_ACTIVE=test`.<br><img src="readme_images/launch_deployment/Configuration.png"/>
-6. Write an appropriate name into the Name field.
-7. If everything is correct click on the button "Apply" in the right bottom corner.
-8. Validate your changes by clicking on the button "ok" on the right bottom.
+#### Run
+The Spring Boot profile for a local H2-DB is used for non-persistent DB
+Server should be up and running on `localhost:8080`.
+```bash 
+./gradlew bootRun -DSPRING_PROFILES_ACTIVE=test
+```
 
-You can verify that the server is running by visiting `localhost:8080` in your browser.
-
-### Setup Test Configurations
-1. To set up the run configuration go to the right top corner and select the dropdown menu.<br>
-   <img src="readme_images/launch_deployment/Dropdown.png"/>
-2. Click on "Edit Configurations...".<br>
-   <img src="readme_images/launch_deployment/Edit.png"/>
-3. On the new pop-up window click on the left top side on the "+" and select "Gradle".<br>
-   <img src="readme_images/launch_deployment/Gradle.png"/>
-4. In the Run field write `test`.<br>
-   <img src="readme_images/launch_deployment/Test.png"/>
-5. Write an appropriate name into the Name field.
-6. If everything is correct click on the button "Apply" in the right bottom corner.
-7. Validate your changes by clicking on the button "ok" on the right bottom.
-
-### API Endpoint Testing with Postman
-We recommend using [Postman](https://www.getpostman.com) to test your API Endpoints.
-
-### Debugging
-If something is not working and/or you don't know what is going on. We recommend using a debugger and step-through the process step-by-step.
-
-To configure a debugger for SpringBoot's Tomcat servlet (i.e. the process you start with `./gradlew bootRun` command), do the following:
-
-1. Open Tab: **Run**/Edit Configurations
-2. Add a new Remote Configuration and name it properly
-3. Start the Server in Debug mode: `./gradlew bootRun --debug-jvm`
-4. Press `Shift + F9` or the use **Run**/Debug "Name of your task"
-5. Set breakpoints in the application where you need it
-6. Step through the process one step at a time
+#### Test
+```bash 
+./gradlew test
+```
 
 ## Deployment
-
-Once your changes are pushed onto the main branch, they automatically get deployed onto Google Cloud.
+- the main branch is automatically mirrored onto Google Cloud App Engine via GitHub workflow
+- Google SQL PostgreSQL instance is hosted on Google Cloud
+- Credentials for Google App Engine and SQL instances are replaced with GitHub Secrets
 
 ### Create Releases
-1. Navigate to the main page of the repository and click on the right of the page on "Releases".<br>
-   <img src="readme_images/releases/ReleasesButton.png"/>
-2. On the new page click on "Draft a new release".<br>
-   <img src="readme_images/releases/Draft.png"/>
-3. Choose an appropriate tag with the dropdown menu or create a new one.
-4. Choose the appropriate branch that you want to release (main branch).
-5. Write an appropriate title for the release in the "Release title" field.
-6. Write an appropriate description in the "Describe this release" field or click on "Generate release notes" to autogenerate the description.<br>
-   <img src="readme_images/releases/CreateRelease.png"/>
-7. If everything is correct and can be released, press the button at the bottom "Publish release".<br>
-   <img src="readme_images/releases/PublishRelease.png"/>
+- [follow GitHub documentation](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
+- database is reset during a release with the current settings!
 
 ## Roadmap
-
 Features that new developers who want to contribute to our project could add.
-
 - new Game mode music quiz.<br>
-- convert to iOS & Android native app.
-- add new records to our image database.
+- convert to iOS & Android native app
+- increase responsiveness for mobile browsers
+- add new records to our image database
 
 ## Authors & Acknowledgments
 
 ### Authors
-* **Sarah Egger** - *Initial work* - [saeie07](https://github.com/saeie07)
-* **Linn Spitz** - *Initial work* - [ringdinglinn](https://github.com/ringdinglinn)
-* **Patrick Widmer** - *Initial work* - [Chopstew](https://github.com/Chopstew)
-* **Sandrin Hunkeler** - *Initial work* - [Altishofer](https://github.com/Altishofer)
-* **Cédric Lüchinger** - *Initial work* - [dattes](https://github.com/dattes)
+* **Sarah Egger** - *Frontend* - [saeie07](https://github.com/saeie07)
+* **Linn Spitz** - *Frontend* - [ringdinglinn](https://github.com/ringdinglinn)
+* **Patrick Widmer** - *Backend* - [Chopstew](https://github.com/Chopstew)
+* **Sandrin Hunkeler** - *Backend* - [Altishofer](https://github.com/Altishofer)
+* **Cédric Lüchinger** - *Backend* - [dattes](https://github.com/dattes)
 
 ### Acknowledgments
-We would like to thank our tutor [jemaie](https://github.com/jemaie) and the whole team of the module Software Engineering Lab from the University of Zurich.
+We would like to thank our tutor [jemaie](https://github.com/jemaie) and the whole team of the course Software Engineering Lab from the University of Zurich.
 
 ## License
-
 This project is licensed under the Apache License 2.0 - see the [LICENSE](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/blob/main/LICENSE) file for details.
