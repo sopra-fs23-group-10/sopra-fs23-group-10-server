@@ -41,8 +41,6 @@ public class User implements Serializable {
     private String token;
     @Column(nullable = false)
     private String profilePicture;
-    @Column(nullable = false)
-    private boolean backgroundMusic;
-    @Column(nullable = false)
+  @Column(nullable = false)
     private long rank;
 }
