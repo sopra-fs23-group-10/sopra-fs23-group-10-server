@@ -1,4 +1,4 @@
-<img src="readme_images/BrainBusters.png" height="150"/>
+<img src="readme_images/BrainBusters.png" height="100"/>
 
 ## Table of Content
 
@@ -23,7 +23,7 @@ Next to the single mode, the tournament mode adds an exciting element of competi
 
 * [React](https://react.dev/) - Front-end JavaScript library concerning the user interface
 * [Spring](https://spring.io/projects/spring-framework) - Framework that enables running JVM
-* [Gradle](hhttps://gradle.org/) - Build automation tool
+* [Gradle](https://gradle.org/) - Build automation tool
 * [STOMP](https://stomp-js.github.io/stomp-websocket/) - Used for Websockets
 * [The Trivia API](https://the-trivia-api.com/) - API for text questions
 * [Mailjet API](https://www.mailjet.com/) - For sending mails
@@ -58,6 +58,7 @@ enables to directly inform the client from the server.
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
 
 Clone the client-repository onto your local machine with the help of [Git](https://git-scm.com/downloads).
+Open Git Bash in your folder, where you want to store your project and write the following command:
 
 ```git clone https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server.git```
 
