@@ -1,3 +1,9 @@
+[![Deploy Project to App Engine](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/actions/workflows/main.yml/badge.svg)](https://github.com/sopra-fs23-group-10/sopra-fs23-group-10-server/actions/workflows/main.yml)
+[![Lombok](https://img.shields.io/badge/Lombok-6.5.0--rc1-green.svg)](https://projectlombok.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.4.13-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring WebSocket](https://img.shields.io/badge/Spring%20WebSocket-latest-blue.svg)](https://spring.io/projects/spring-websocket)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-42.3.1-blue.svg)](https://www.postgresql.org/)
+
 <img src="readme_images/BrainBusters.png" height="100"/>
 
 ## Table of Content
