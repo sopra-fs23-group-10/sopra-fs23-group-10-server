@@ -123,7 +123,7 @@ public class GameController {
       userService.verifyToken(token);
       Answer answer = DTOMapper.INSTANCE.convertUserAnswerDTOtoEntity(answerDTO);
       String correctAnswer = gameControllerService.answerQuestion(answer);
-      if (gameControllerService.bothAnswered(gameId, answer.getQuestionId())){
+      if (gameControllerService.bothAnswered(gameId, answer.getQuestionId())) {
         webSocketController.informUsersBothAnswered(gameId);
       }
       return Collections.singletonMap("correctAnswer", correctAnswer);

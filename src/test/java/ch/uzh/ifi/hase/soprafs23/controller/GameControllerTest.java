@@ -405,6 +405,7 @@ class GameControllerTest {
 
         given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         given(gameControllerService.answerQuestion(Mockito.any())).willReturn(question.getCorrectAnswer());
+        given(gameControllerService.bothAnswered(game.getGameId(), answerDTO.getQuestionId())).willReturn(false);
 
         MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -417,11 +418,35 @@ class GameControllerTest {
         verify(gameControllerService).answerQuestion(Mockito.any(Answer.class));
     }
 
+  @Test
+  void answerQuestion_whenBothAnswered_thenWebSocketCall_201() throws Exception {
+    AnswerDTO answerDTO = new AnswerDTO();
+    answerDTO.setUserId(invitingUser.getId());
+    answerDTO.setQuestionId(question.getQuestionId());
+    answerDTO.setAnswerString(question.getCorrectAnswer());
+    answerDTO.setAnsweredTime(112L);
+
+    given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+    given(gameControllerService.answerQuestion(Mockito.any())).willReturn(question.getCorrectAnswer());
+    given(gameControllerService.bothAnswered(game.getGameId(), answerDTO.getQuestionId())).willReturn(true);
+
+    MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(answerDTO))
+            .header("token", invitingUser.getToken());
+
+    mockMvc.perform(putRequest).andExpect(status().isCreated())
+            .andExpect(jsonPath("$.correctAnswer", is(question.getCorrectAnswer())));
+
+    verify(gameControllerService).answerQuestion(Mockito.any(Answer.class));
+    verify(webSocketController).informUsersBothAnswered(game.getGameId());
+  }
+
     @Test
     void answerQuestion_whenNullAnswer_thenNotAcceptable_406() throws Exception {
         AnswerDTO answerDTO = new AnswerDTO();
 
-        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The received answer cannot be null.")).when(gameControllerService).answerQuestion(Mockito.any(Answer.class));
 
 
@@ -441,7 +466,7 @@ class GameControllerTest {
         answerDTO.setAnswerString(question.getAllAnswers().get(2));
         answerDTO.setAnsweredTime(112L);
 
-        given(userService.verifyToken(Mockito.any())).willReturn(invitingUser);
+        given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
         Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User has already answered this question.")).when(gameControllerService).answerQuestion(Mockito.any(Answer.class));
 
         MockHttpServletRequestBuilder putRequest = put("/games/" + game.getGameId() + "/question")
