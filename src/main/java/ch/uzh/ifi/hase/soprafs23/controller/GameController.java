@@ -129,7 +129,6 @@ public class GameController {
       return Collections.singletonMap("correctAnswer", correctAnswer);
   }
 
-  //TODO: Is this even called in frontend?
   @GetMapping("/games/{gameId}/online")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
@@ -154,8 +153,6 @@ public class GameController {
       return userResultTupleDTOList;
   }
 
-
-  //TODO: Not required anymore, contained in finishGame
   @DeleteMapping("/games/{gameId}/finish")
   @ResponseStatus(HttpStatus.OK)
   public void terminateFinishedGame(@PathVariable long gameId, @RequestHeader("token") String token) {
