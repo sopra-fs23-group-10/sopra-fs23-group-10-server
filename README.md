@@ -10,8 +10,8 @@
 
 - [Introduction](#introduction)
 - [Built With](#built-with)
-- [Components](#main-components)
-- [Local Development](#deploy-locally)
+- [Main Components](#main-components)
+- [Deploy Locally with Gradle](#deploy-locally-with-gradle)
 - [Deployment](#deployment)
 - [Roadmap](#roadmap)
 - [Authors & Acknowledgments](#authors--acknowledgments)
