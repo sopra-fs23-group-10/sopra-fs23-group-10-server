@@ -541,7 +541,7 @@ class GameControllerServiceTest {
       for (UserResultTupleDTO userResultTupleDTO : intermediateResult) {
         assertEquals(prepTextDuelGame.getGameId(), userResultTupleDTO.getGameId());
         assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
-        assertEquals(27L, userResultTupleDTO.getInvitingPlayerResult());
+        assertEquals(25L, userResultTupleDTO.getInvitingPlayerResult());
         assertEquals(prepTextDuelGame.getInvitedUserId(), correctAnswer.getUserId());
         assertEquals(0L, userResultTupleDTO.getInvitedPlayerResult());
       }
@@ -576,7 +576,7 @@ class GameControllerServiceTest {
             assertEquals(invitingUser.getId(), userResultTupleDTO.getInvitingPlayerId());
             assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
             assertEquals(prepTextDuelGame.getInvitedUserId(), invitedAnswer.getUserId());
-            assertEquals(22L, userResultTupleDTO.getInvitedPlayerResult());
+            assertEquals(15L, userResultTupleDTO.getInvitedPlayerResult());
         }
         assertNotNull(gameControllerService.searchGame(prepTextDuelGame.getGameId()));
     }
@@ -635,7 +635,7 @@ class GameControllerServiceTest {
         assertEquals(invitingAnswer.getUserId(), userResultTupleDTO.getInvitingPlayerId());
         assertEquals(invitedAnswer.getUserId(), userResultTupleDTO.getInvitedPlayerId());
         assertEquals(0L, userResultTupleDTO.getInvitingPlayerResult());
-        assertEquals(26L, userResultTupleDTO.getInvitedPlayerResult());
+        assertEquals(23L, userResultTupleDTO.getInvitedPlayerResult());
       }
     }
 
