@@ -213,13 +213,17 @@ public class GameControllerService {
     }
 
     public List<UserResultTupleDTO> intermediateResults(long gameId) {
-        Game game = gameService.searchGameById(gameId);
+      Game game = gameService.searchGameById(gameId);
 
-        List<UserResultTupleDTO> userResultTupleDTOList= new ArrayList<>();
+      List<UserResultTupleDTO> userResultTupleDTOList= new ArrayList<>();
 
-        List<Question> questions = questionService.searchQuestionsByGameId(gameId);
+      List<Question> questions = questionService.searchQuestionsByGameId(gameId);
 
-        for (Question question : questions) {
+      if (questions != null && !questions.isEmpty()) {
+        questions.sort((q1, q2) -> Long.compare(q1.getQuestionId(), q2.getQuestionId()));
+      }
+
+      for (Question question : questions) {
             UserResultTuple userResultTuple = new UserResultTuple(game.getGameId(), game.getInvitingUserId(), game.getInvitedUserId());
 
             Answer invitingAnswer = answerService.searchAnswerByQuestionIdAndUserId(question.getQuestionId(), game.getInvitingUserId());
