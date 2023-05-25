@@ -92,15 +92,35 @@ public class GameControllerService {
         }
     }
 
+    protected Question getTemplateQuestion(Category category, Long gameId){
+      return questionService.createQuestion(
+              gameId,
+              "62433573cfaae40c129614a9",
+              category,
+              "Buzz Aldrin",
+              "Who was the second person walking on the Moon?",
+              List.of("Neil Armstrong", "Vladimir Komarov", "Yuri Gagarin")
+      );
+    }
+
     public Question getQuestion(Category category, Long gameId) {
-        Question question = this.getQuestionFromExternalApi(category, gameId);
+      Question question;
+      try{
+        question = this.getQuestionFromExternalApi(category, gameId);
         for (int i = 0; i < 6; i++) {
-            if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
-                break;
-            }
-            question = this.getQuestionFromExternalApi(category, gameId);
+          if (question != null && !questionService.existsQuestionByApiIdAndGameId(question)) {
+            break;
+          }
+          question = this.getQuestionFromExternalApi(category, gameId);
+        }
+        if (question == null){
+          question = getTemplateQuestion(category, gameId);
         }
         return questionService.saveQuestion(question);
+      } catch (Exception e){
+        question = getTemplateQuestion(category, gameId);
+      }
+      return questionService.saveQuestion(question);
     }
 
   private Question getImageQuestionFromApi(Long gameId){

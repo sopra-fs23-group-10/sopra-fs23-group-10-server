@@ -126,6 +126,35 @@ class GameControllerServiceTest {
         verify(questionService, times(1)).saveQuestion(createdQuestion);
     }
 
+  @Test
+  public void createQuestion_returnsQuestionDTOW_EvenIfTriviaApiException() {
+
+    given(userService.verifyToken(invitingUser.getToken())).willReturn(invitingUser);
+    given(gameService.searchGameById(prepTextDuelGame.getGameId())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "general exception for testing"));
+    given(questionService.existsQuestionByApiIdAndGameId(createdQuestion)).willReturn(true, false);
+    given(questionService.saveQuestion(createdQuestion)).willReturn(createdQuestion);
+    given(questionService.createQuestion(
+            prepTextDuelGame.getGameId(),
+            "62433573cfaae40c129614a9",
+            createdQuestion.getCategory(),
+            "Buzz Aldrin",
+            "Who was the second person walking on the Moon?",
+            List.of("Neil Armstrong", "Vladimir Komarov", "Yuri Gagarin")
+    )).willReturn(createdQuestion);
+
+
+    Question returnedQuestion = gameControllerService.getQuestion(createdQuestion.getCategory(), prepTextDuelGame.getGameId());
+    assertEquals(returnedQuestion.getApiId(), createdQuestion.getApiId());
+    assertEquals(returnedQuestion.getCategory(), createdQuestion.getCategory());
+    assertEquals(returnedQuestion.getCorrectAnswer(), createdQuestion.getCorrectAnswer());
+    assertEquals(returnedQuestion.getQuestionString(), createdQuestion.getQuestionString());
+    assertEquals(returnedQuestion.getAllAnswers().size(), 4);
+    assertTrue(returnedQuestion.getAllAnswers().containsAll(createdQuestion.getAllAnswers()));
+    verify(gameControllerService, times(1)).getTemplateQuestion(createdQuestion.getCategory(), createdQuestion.getGameId());
+    verify(gameControllerService, times(1)).getQuestionFromExternalApi(createdQuestion.getCategory(), createdQuestion.getGameId());
+    verify(questionService, times(1)).saveQuestion(createdQuestion);
+  }
+
     @Test
     void searchGame_validInput_success() {
         given(gameService.searchGameById(prepTextDuelGame.getGameId())).willReturn(prepTextDuelGame);
